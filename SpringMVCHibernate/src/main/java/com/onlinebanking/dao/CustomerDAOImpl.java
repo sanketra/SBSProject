@@ -39,7 +39,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 	@Override
 	public List<Customer> listPersons() {
 		Session session = this.sessionFactory.getCurrentSession();
-		List<Customer> personsList = session.createQuery("from Person").list();
+		List<Customer> personsList = session.createQuery("from Customer").list();
 		for(Customer p : personsList){
 			logger.info("Person List::"+p);
 		}
