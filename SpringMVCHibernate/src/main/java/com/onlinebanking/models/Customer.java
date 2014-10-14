@@ -1,4 +1,4 @@
-package com.journaldev.spring.model;
+package com.onlinebanking.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +15,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="PERSON")
-public class Person {
+public class Customer {
 
 	@Id
 	@Column(name="id")

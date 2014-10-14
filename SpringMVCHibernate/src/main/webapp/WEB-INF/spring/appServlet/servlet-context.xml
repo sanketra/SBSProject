@@ -31,7 +31,7 @@
 		<beans:property name="url"
 			value="jdbc:mysql://127.0.0.1:3306/test" />
 		<beans:property name="username" value="root" />
-		<beans:property name="password" value="sbsproject" />
+		<beans:property name="password" value="sradder" />
 	</beans:bean>
 
 	<!-- Hibernate 4 SessionFactory Bean definition -->
@@ -40,7 +40,7 @@
 		<beans:property name="dataSource" ref="dataSource" />
 		<beans:property name="annotatedClasses">
 			<beans:list>
-				<beans:value>com.journaldev.spring.model.Person</beans:value>
+				<beans:value>com.onlinebanking.models.Customer</beans:value>
 			</beans:list>
 		</beans:property>
 		<beans:property name="hibernateProperties">
@@ -52,13 +52,13 @@
 		</beans:property>
 	</beans:bean>
 	
-	<beans:bean id="personDAO" class="com.journaldev.spring.dao.PersonDAOImpl">
+	<beans:bean id="personDAO" class="com.onlinebanking.dao.CustomerDAOImpl">
 		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
-	<beans:bean id="personService" class="com.journaldev.spring.service.PersonServiceImpl">
+	<beans:bean id="personService" class="com.onlinebanking.services.CustomerServiceImpl">
 		<beans:property name="personDAO" ref="personDAO"></beans:property>
 	</beans:bean>
-	<context:component-scan base-package="com.journaldev.spring" />
+	<context:component-scan base-package="com.onlinebanking.controllers" />
 	
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	

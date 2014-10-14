@@ -1,4 +1,4 @@
-package com.journaldev.spring;
+package com.onlinebanking.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,30 +9,30 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.journaldev.spring.model.Person;
-import com.journaldev.spring.service.PersonService;
+import com.onlinebanking.models.Customer;
+import com.onlinebanking.services.CustomerService;
 
 @Controller
-public class PersonController {
+public class IndividualController {
 	
-	private PersonService personService;
+	private CustomerService personService;
 	
 	@Autowired(required=true)
 	@Qualifier(value="personService")
-	public void setPersonService(PersonService ps){
+	public void setPersonService(CustomerService ps){
 		this.personService = ps;
 	}
 	
 	@RequestMapping(value = "/persons", method = RequestMethod.GET)
 	public String listPersons(Model model) {
-		model.addAttribute("person", new Person());
+		model.addAttribute("person", new Customer());
 		model.addAttribute("listPersons", this.personService.listPersons());
 		return "person";
 	}
 	
 	//For add and update person both
 	@RequestMapping(value= "/person/add", method = RequestMethod.POST)
-	public String addPerson(@ModelAttribute("person") Person p){
+	public String addPerson(@ModelAttribute("person") Customer p){
 		
 		if(p.getId() == 0){
 			//new person, add it

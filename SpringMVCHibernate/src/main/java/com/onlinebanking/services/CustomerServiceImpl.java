@@ -1,43 +1,43 @@
-package com.journaldev.spring.service;
+package com.onlinebanking.services;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.journaldev.spring.dao.PersonDAO;
-import com.journaldev.spring.model.Person;
+import com.onlinebanking.dao.CustomerDAO;
+import com.onlinebanking.models.Customer;
 
 @Service
-public class PersonServiceImpl implements PersonService {
+public class CustomerServiceImpl implements CustomerService {
 	
-	private PersonDAO personDAO;
+	private CustomerDAO personDAO;
 
-	public void setPersonDAO(PersonDAO personDAO) {
+	public void setPersonDAO(CustomerDAO personDAO) {
 		this.personDAO = personDAO;
 	}
 
 	@Override
 	@Transactional
-	public void addPerson(Person p) {
+	public void addPerson(Customer p) {
 		this.personDAO.addPerson(p);
 	}
 
 	@Override
 	@Transactional
-	public void updatePerson(Person p) {
+	public void updatePerson(Customer p) {
 		this.personDAO.updatePerson(p);
 	}
 
 	@Override
 	@Transactional
-	public List<Person> listPersons() {
+	public List<Customer> listPersons() {
 		return this.personDAO.listPersons();
 	}
 
 	@Override
 	@Transactional
-	public Person getPersonById(int id) {
+	public Customer getPersonById(int id) {
 		return this.personDAO.getPersonById(id);
 	}
 

@@ -1,4 +1,4 @@
-package com.journaldev.spring.dao;
+package com.onlinebanking.dao;
 
 import java.util.List;
 
@@ -8,12 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.journaldev.spring.model.Person;
+import com.onlinebanking.models.Customer;
 
 @Repository
-public class PersonDAOImpl implements PersonDAO {
+public class CustomerDAOImpl implements CustomerDAO {
 	
-	private static final Logger logger = LoggerFactory.getLogger(PersonDAOImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(CustomerDAOImpl.class);
 
 	private SessionFactory sessionFactory;
 	
@@ -22,14 +22,14 @@ public class PersonDAOImpl implements PersonDAO {
 	}
 
 	@Override
-	public void addPerson(Person p) {
+	public void addPerson(Customer p) {
 		Session session = this.sessionFactory.getCurrentSession();
 		session.persist(p);
 		logger.info("Person saved successfully, Person Details="+p);
 	}
 
 	@Override
-	public void updatePerson(Person p) {
+	public void updatePerson(Customer p) {
 		Session session = this.sessionFactory.getCurrentSession();
 		session.update(p);
 		logger.info("Person updated successfully, Person Details="+p);
@@ -37,19 +37,19 @@ public class PersonDAOImpl implements PersonDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Person> listPersons() {
+	public List<Customer> listPersons() {
 		Session session = this.sessionFactory.getCurrentSession();
-		List<Person> personsList = session.createQuery("from Person").list();
-		for(Person p : personsList){
+		List<Customer> personsList = session.createQuery("from Person").list();
+		for(Customer p : personsList){
 			logger.info("Person List::"+p);
 		}
 		return personsList;
 	}
 
 	@Override
-	public Person getPersonById(int id) {
+	public Customer getPersonById(int id) {
 		Session session = this.sessionFactory.getCurrentSession();		
-		Person p = (Person) session.load(Person.class, new Integer(id));
+		Customer p = (Customer) session.load(Customer.class, new Integer(id));
 		logger.info("Person loaded successfully, Person details="+p);
 		return p;
 	}
@@ -57,7 +57,7 @@ public class PersonDAOImpl implements PersonDAO {
 	@Override
 	public void removePerson(int id) {
 		Session session = this.sessionFactory.getCurrentSession();
-		Person p = (Person) session.load(Person.class, new Integer(id));
+		Customer p = (Customer) session.load(Customer.class, new Integer(id));
 		if(null != p){
 			session.delete(p);
 		}
