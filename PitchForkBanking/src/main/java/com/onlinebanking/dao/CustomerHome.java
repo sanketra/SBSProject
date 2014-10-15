@@ -1,4 +1,4 @@
-package com.onlinebanking.autogen;
+package com.onlinebanking.dao;
 
 // Generated Oct 14, 2014 1:20:06 AM by Hibernate Tools 4.0.0
 
@@ -9,7 +9,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.onlinebanking.models.Customer;
 
 /**
  * Home object for domain model class Customer.
@@ -49,7 +50,6 @@ public class CustomerHome {
 	}
 
 	@SuppressWarnings("deprecation")
-	@Autowired
 	public void attachClean(Customer instance) {
 		log.debug("attaching clean Customer instance");
 		try {
@@ -89,7 +89,7 @@ public class CustomerHome {
 		log.debug("getting Customer instance with id: " + id);
 		try {
 			Customer instance = (Customer) sessionFactory.getCurrentSession()
-					.get("com.autogen.Customer", id);
+					.get("com.onlinebanking.models.Customer", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {
@@ -107,8 +107,23 @@ public class CustomerHome {
 		log.debug("finding Customer instance by example");
 		try {
 			List<Customer> results = sessionFactory.getCurrentSession()
-					.createCriteria("com.autogen.Customer")
+					.createCriteria("com.onlinebanking.models.Customer")
 					.add(Example.create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Customer> findAll() {
+		log.debug("finding Customer instance by example");
+		try {
+			String queryString = "Select * from customer";
+			List<Customer> results = sessionFactory.getCurrentSession().createSQLQuery(queryString).addEntity(Customer.class).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());
 			return results;

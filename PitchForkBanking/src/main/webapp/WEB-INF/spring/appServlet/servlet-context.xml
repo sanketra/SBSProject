@@ -52,11 +52,11 @@
 		</beans:property>
 	</beans:bean>
 	
-	<beans:bean id="personDAO" class="com.onlinebanking.dao.CustomerDAOImpl">
+	<beans:bean id="personHome" class="com.onlinebanking.dao.CustomerHome">
 		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
 	<beans:bean id="personService" class="com.onlinebanking.services.CustomerServiceImpl">
-		<beans:property name="personDAO" ref="personDAO"></beans:property>
+		<beans:property name="personHome" ref="personHome"></beans:property>
 	</beans:bean>
 	<context:component-scan base-package="com.onlinebanking.controllers" />
 	

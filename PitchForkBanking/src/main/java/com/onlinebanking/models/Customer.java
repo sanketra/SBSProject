@@ -7,12 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- * Entity bean with JPA annotations
- * Hibernate provides JPA implementation
- * @author Sanket Radder
- *
- */
 @Entity
 @Table(name="CUSTOMER")
 public class Customer {
