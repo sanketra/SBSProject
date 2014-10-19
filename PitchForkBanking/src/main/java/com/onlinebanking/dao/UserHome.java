@@ -10,16 +10,16 @@ import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 
-import com.onlinebanking.models.Customer;
+import com.onlinebanking.models.User;
 
 /**
- * Home object for domain model class Customer.
- * @see com.onlinebanking.dao.Customer
+ * Home object for domain model class User.
+ * @see com.onlinebanking.dao.User
  * @author Hibernate Tools
  */
-public class CustomerHome {
+public class UserHome {
 
-	private static final Log log = LogFactory.getLog(CustomerHome.class);
+	private static final Log log = LogFactory.getLog(UserHome.class);
 
 	private SessionFactory sessionFactory;
 	
@@ -27,8 +27,8 @@ public class CustomerHome {
 		this.sessionFactory = sf;
 	}
 
-	public void persist(Customer transientInstance) {
-		log.debug("persisting Customer instance");
+	public void persist(User transientInstance) {
+		log.debug("persisting User instance");
 		try {
 			sessionFactory.getCurrentSession().persist(transientInstance);
 			log.debug("persist successful");
@@ -38,8 +38,8 @@ public class CustomerHome {
 		}
 	}
 
-	public void attachDirty(Customer instance) {
-		log.debug("attaching dirty Customer instance");
+	public void attachDirty(User instance) {
+		log.debug("attaching dirty User instance");
 		try {
 			sessionFactory.getCurrentSession().saveOrUpdate(instance);
 			log.debug("attach successful");
@@ -50,8 +50,8 @@ public class CustomerHome {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void attachClean(Customer instance) {
-		log.debug("attaching clean Customer instance");
+	public void attachClean(User instance) {
+		log.debug("attaching clean User instance");
 		try {
 			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
 			log.debug("attach successful");
@@ -61,8 +61,8 @@ public class CustomerHome {
 		}
 	}
 
-	public void delete(Customer persistentInstance) {
-		log.debug("deleting Customer instance");
+	public void delete(User persistentInstance) {
+		log.debug("deleting User instance");
 		try {
 			sessionFactory.getCurrentSession().delete(persistentInstance);
 			log.debug("delete successful");
@@ -72,10 +72,10 @@ public class CustomerHome {
 		}
 	}
 
-	public Customer merge(Customer detachedInstance) {
-		log.debug("merging Customer instance");
+	public User merge(User detachedInstance) {
+		log.debug("merging User instance");
 		try {
-			Customer result = (Customer) sessionFactory.getCurrentSession().merge(detachedInstance);
+			User result = (User) sessionFactory.getCurrentSession().merge(detachedInstance);
 			log.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
@@ -84,10 +84,10 @@ public class CustomerHome {
 		}
 	}
 
-	public Customer findById(java.lang.String id) {
-		log.debug("getting Customer instance with id: " + id);
+	public User findById(String id) {
+		log.debug("getting User instance with id: " + id);
 		try {
-			Customer instance = (Customer) sessionFactory.getCurrentSession().get("com.onlinebanking.models.Customer", id);
+			User instance = (User) sessionFactory.getCurrentSession().get("com.onlinebanking.models.User", id);
 			
 			if (instance == null) {
 				log.debug("get successful, no instance found");
@@ -102,10 +102,10 @@ public class CustomerHome {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Customer> findByExample(Customer instance) {
-		log.debug("finding Customer instance by example");
+	public List<User> findByExample(User instance) {
+		log.debug("finding User instance by example");
 		try {
-			List<Customer> results = sessionFactory.getCurrentSession().createCriteria("com.onlinebanking.models.Customer")
+			List<User> results = sessionFactory.getCurrentSession().createCriteria("com.onlinebanking.models.User")
 					.add(Example.create(instance)).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());
@@ -117,11 +117,11 @@ public class CustomerHome {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Customer> findAll() {
-		log.debug("finding Customer instance by example");
+	public List<User> findAll() {
+		log.debug("finding User instance by example");
 		try {
-			String queryString = "Select * from customer";
-			List<Customer> results = sessionFactory.getCurrentSession().createSQLQuery(queryString).addEntity(Customer.class).list();
+			String queryString = "Select * from user";
+			List<User> results = sessionFactory.getCurrentSession().createSQLQuery(queryString).addEntity(User.class).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());
 			return results;

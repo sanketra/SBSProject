@@ -37,6 +37,8 @@
       }
 
     </style>
+    <link href="/resources/css/flaty.bootstrap.min.css"
+	rel="stylesheet" media="screen" />
     <link href="<c:url value="/resources/css/bootstrap-responsive.css" />"rel="stylesheet">
 </head>
 <body>
@@ -44,13 +46,17 @@
 	<p>
 	<br> Hello Admin!! :${name}<br>
 	</p>
-	<c:if test="${pageContext.request.userPrincipal.name != null}">
+	<div id="container">
+		
+			<div class="row-fluid">
+				<jsp:include page="templates/admin_sidebar.jsp" />
+		</div>
+	</div>
 	
 	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
 	
 	<form action="${logoutAction}" method="post">
 		<input type="submit" value="Logout" />
 	</form>
-	</c:if>
 </body>
 </html>

@@ -17,18 +17,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.onlinebanking.models.Customer;
-import com.onlinebanking.services.CustomerService;
+import com.onlinebanking.models.User;
+import com.onlinebanking.services.UserService;
 
 @Controller
 public class MainController {
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
-	private CustomerService personService;
+	private UserService userService;
 	
 	@Autowired(required=true)
-	@Qualifier(value="personService")
-	public void setPersonService(CustomerService ps){
-		this.personService = ps;
+	@Qualifier(value="userService")
+	public void setUserService(UserService ps){
+		this.userService = ps;
 	}
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -60,22 +60,22 @@ public class MainController {
 	}
 	
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
-	public String listPersons(Model model) {
-		model.addAttribute("person", new Customer());
-		model.addAttribute("listPersons", this.personService.listPersons());
-		return "person";
+	public String listUsers(Model model) {
+		model.addAttribute("user", new User());
+		model.addAttribute("listUsers", this.userService.listUsers());
+		return "user";
 	}
 	
 	//For add and update person both
-	@RequestMapping(value= "/person/add", method = RequestMethod.POST)
-	public String addPerson(@ModelAttribute("person") Customer p){
+	@RequestMapping(value= "/user/add", method = RequestMethod.POST)
+	public String addUser(@ModelAttribute("user") User p){
 		
-		if(this.personService.getPersonById(p.getId()) == null){
+		if(this.userService.getUserById(p.getId()) == null){
 			//new person, add it
-			this.personService.addPerson(p);
+			this.userService.addUser(p);
 		}else{
 			//existing person, call update
-			this.personService.updatePerson(p);
+			this.userService.updateUser(p);
 		}
 		
 		return "redirect:/registration";
@@ -83,15 +83,15 @@ public class MainController {
 	}
 	
 	@RequestMapping("/remove/{id}")
-    public String removePerson(@PathVariable("id") String id){
-        this.personService.removePerson(id);
+    public String removeUser(@PathVariable("id") String id){
+        this.userService.removeUser(id);
         return "redirect:/registration";
     }
  
     @RequestMapping("/edit/{id}")
-    public String editPerson(@PathVariable("id") String id, Model model){
-        model.addAttribute("person", this.personService.getPersonById(id));
-        model.addAttribute("listPersons", this.personService.listPersons());
-        return "person";
+    public String editUser(@PathVariable("id") String id, Model model){
+        model.addAttribute("user", this.userService.getUserById(id));
+        model.addAttribute("listUsers", this.userService.listUsers());
+        return "user";
     }
 }

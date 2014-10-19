@@ -42,8 +42,8 @@
 		<authentication-provider>
 		<password-encoder ref="bcryptEncoder"/>
 			<jdbc-user-service data-source-ref="dataSource"
-				users-by-username-query="select username,password,enabled from Customer where username = ?"
-				authorities-by-username-query="select username,role from Customer where username = ?" />
+				users-by-username-query="select username,password,enabled from User where username = ?"
+				authorities-by-username-query="select username,role from User where username = ?" />
 		</authentication-provider>
 	</authentication-manager>
 
@@ -64,7 +64,7 @@
 		<beans:property name="dataSource" ref="dataSource" />
 		<beans:property name="annotatedClasses">
 			<beans:list>
-				<beans:value>com.onlinebanking.models.Customer</beans:value>
+				<beans:value>com.onlinebanking.models.User</beans:value>
 			</beans:list>
 		</beans:property>
 		<beans:property name="hibernateProperties">
@@ -76,11 +76,11 @@
 		</beans:property>
 	</beans:bean>
 	
-	<beans:bean id="personHome" class="com.onlinebanking.dao.CustomerHome">
+	<beans:bean id="userHome" class="com.onlinebanking.dao.UserHome">
 		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
-	<beans:bean id="personService" class="com.onlinebanking.services.CustomerServiceImpl">
-		<beans:property name="personHome" ref="personHome"></beans:property>
+	<beans:bean id="userService" class="com.onlinebanking.services.UserServiceImpl">
+		<beans:property name="userHome" ref="userHome"></beans:property>
 	</beans:bean>
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	

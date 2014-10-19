@@ -46,9 +46,9 @@
 	Register
 </h1>
 
-<c:url var="addAction" value="/person/add" ></c:url>
+<c:url var="addAction" value="/user/add" ></c:url>
 <div class="container">
-<form:form action="${addAction}" commandName="person" class="form-signin">
+<form:form action="${addAction}" commandName="user" class="form-signin">
 <table>
 			<tr>
 			<td>
@@ -86,13 +86,13 @@
 			</tr>
 			<tr>
 			<td rowspan="2">
-			<c:if test="${!empty person.username}">
+			<c:if test="${!empty user.username}">
 				<input type="submit"
-					value="<spring:message text="Edit Person" />" class="btn btn-lg btn-primary" />
+					value="<spring:message text="Edit" />" class="btn btn-lg btn-primary" />
 			</c:if>
-			<c:if test="${empty person.username}">
+			<c:if test="${empty user.username}">
 				<input type="submit"
-					value="<spring:message text="Add Person" />" class="btn btn-lg btn-primary" />
+					value="<spring:message text="Register" />" class="btn btn-lg btn-primary" />
 			</c:if>
 			</td>	
 			</tr>
@@ -104,26 +104,26 @@
 </div>
 <br>
 <br>
-<h3>Persons List</h3>
+<h3>user's List</h3>
  <div class="col-md-6">
-<c:if test="${!empty listPersons}">
+<c:if test="${!empty listUsers}">
 	<table class="table table-bordered">
 	<thead>
 	<tr>
-		<th width="120">Person Name</th>
-		<th width="120">Person Country</th>
-		<th width="120">Person Role</th>
+		<th width="120">User Name</th>
+		<th width="120">User Country</th>
+		<th width="120">User Role</th>
 		<th width="60">Edit</th>
 		<th width="60">Delete</th>
 	</tr>
 	</thead>
-	<c:forEach items="${listPersons}" var="person">
+	<c:forEach items="${listUsers}" var="user">
 		<tr>
-			<td>${person.username}</td>
-			<td>${person.country}</td>
-			<td>${person.role}</td>
-			<td><a href="<c:url value='/edit/${person.id}' />" >Edit</a></td>
-			<td><a href="<c:url value='/remove/${person.id}' />" >Delete</a></td>
+			<td>${user.username}</td>
+			<td>${user.country}</td>
+			<td>${user.role}</td>
+			<td><a href="<c:url value='/edit/${user.id}' />" >Edit</a></td>
+			<td><a href="<c:url value='/remove/${user.id}' />" >Delete</a></td>
 		</tr>
 	</c:forEach>
 	</table>
