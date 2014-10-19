@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- Configuring RoleVoter bean to use custom access roles, by default roles 
+		should be in the form ROLE_{XXX} -->
+	<beans:bean id="roleVoter"
+		class="org.springframework.security.access.vote.RoleVoter">
+		<beans:property name="rolePrefix" value=""></beans:property>
+	</beans:bean>
+
+	<beans:bean id="accessDecisionManager"
+		class="org.springframework.security.access.vote.AffirmativeBased">
+		<beans:constructor-arg name="decisionVoters"
+			ref="roleVoter" />
+	</beans:bean>
+
+	<http authentication-manager-ref="jdbc-auth"
+		access-decision-manager-ref="accessDecisionManager">	
+		<intercept-url pattern="/admin/**" access="Admin" />
+		<intercept-url pattern="/home" access="User" />
+		<form-login login-page="/login" authentication-failure-url="/denied"
+			username-parameter="username" password-parameter="password"
+		    authentication-success-handler-ref="authSuccessHandler"/>
+		<logout invalidate-session="true" logout-success-url="/login"
+			logout-url="/j_spring_security_logout" />
+		<access-denied-handler error-page="/denied"/>
+		<session-management invalid-session-url="/login">
+			<concurrency-control max-sessions="1"
+				expired-url="/login" />
+		</session-management>
+	</http>
+
+	<beans:bean name="bcryptEncoder"
+    	class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    	
+	<authentication-manager id="jdbc-auth">
+		<authentication-provider>
+		<password-encoder ref="bcryptEncoder"/>
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="select username,password,enabled from Customer where username = ?"
+				authorities-by-username-query="select username,role from Customer where username = ?" />
+		</authentication-provider>
+	</authentication-manager>
+
+	<!-- MySQL DB DataSource -->
+	<beans:bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<beans:property name="url"
+			value="jdbc:mysql://localhost:3306/test" />
+		<beans:property name="username" value="root" />
+		<beans:property name="password" value="sradder" />
+	</beans:bean>
+
+		<!-- Hibernate 4 SessionFactory Bean definition -->
+	<beans:bean id="hibernate4AnnotatedSessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="annotatedClasses">
+			<beans:list>
+				<beans:value>com.onlinebanking.models.Customer</beans:value>
+			</beans:list>
+		</beans:property>
+		<beans:property name="hibernateProperties">
+			<beans:props>
+				<beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect
+				</beans:prop>
+				<beans:prop key="hibernate.show_sql">true</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean>
+	
+	<beans:bean id="personHome" class="com.onlinebanking.dao.CustomerHome">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean>
+	<beans:bean id="personService" class="com.onlinebanking.services.CustomerServiceImpl">
+		<beans:property name="personHome" ref="personHome"></beans:property>
+	</beans:bean>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<beans:bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean>
+	<beans:bean id="authSuccessHandler" class="com.onlinebanking.controllers.AuthSuccessHandler">
+	</beans:bean>
+
+</beans:beans>

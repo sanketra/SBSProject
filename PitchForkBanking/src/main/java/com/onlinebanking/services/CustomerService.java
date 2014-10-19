@@ -9,7 +9,7 @@ public interface CustomerService {
 	public void addPerson(Customer p);
 	public void updatePerson(Customer p);
 	public List<Customer> listPersons();
-	public Customer getPersonById(int id);
-	public void removePerson(int id);
+	public Customer getPersonById(String id);
+	public void removePerson(String id);
 	
 }

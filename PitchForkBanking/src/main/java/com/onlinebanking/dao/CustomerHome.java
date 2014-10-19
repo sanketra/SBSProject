@@ -1,6 +1,6 @@
 package com.onlinebanking.dao;
 
-// Generated Oct 14, 2014 1:20:06 AM by Hibernate Tools 4.0.0
+// Generated Oct 18, 2014 8:48:50 AM by Hibernate Tools 3.4.0.CR1
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import com.onlinebanking.models.Customer;
 
 /**
  * Home object for domain model class Customer.
- * @see com.autogen.Customer
- * @author Hibernate Toolsp
+ * @see com.onlinebanking.dao.Customer
+ * @author Hibernate Tools
  */
 public class CustomerHome {
 
@@ -23,7 +23,7 @@ public class CustomerHome {
 
 	private SessionFactory sessionFactory;
 	
-	public void setSessionFactory(SessionFactory sf){
+	public void setSessionFactory(SessionFactory sf) {
 		this.sessionFactory = sf;
 	}
 
@@ -75,8 +75,7 @@ public class CustomerHome {
 	public Customer merge(Customer detachedInstance) {
 		log.debug("merging Customer instance");
 		try {
-			Customer result = (Customer) sessionFactory.getCurrentSession()
-					.merge(detachedInstance);
+			Customer result = (Customer) sessionFactory.getCurrentSession().merge(detachedInstance);
 			log.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
@@ -85,11 +84,11 @@ public class CustomerHome {
 		}
 	}
 
-	public Customer findById(java.lang.Integer id) {
+	public Customer findById(java.lang.String id) {
 		log.debug("getting Customer instance with id: " + id);
 		try {
-			Customer instance = (Customer) sessionFactory.getCurrentSession()
-					.get("com.onlinebanking.models.Customer", id);
+			Customer instance = (Customer) sessionFactory.getCurrentSession().get("com.onlinebanking.models.Customer", id);
+			
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {
@@ -106,8 +105,7 @@ public class CustomerHome {
 	public List<Customer> findByExample(Customer instance) {
 		log.debug("finding Customer instance by example");
 		try {
-			List<Customer> results = sessionFactory.getCurrentSession()
-					.createCriteria("com.onlinebanking.models.Customer")
+			List<Customer> results = sessionFactory.getCurrentSession().createCriteria("com.onlinebanking.models.Customer")
 					.add(Example.create(instance)).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());

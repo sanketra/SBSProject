@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.dao.CustomerHome;
+import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.models.Customer;
 
 @Service
@@ -20,6 +21,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	@Transactional
 	public void addPerson(Customer p) {
+		p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
 		this.personHome.persist(p);
 	}
 
@@ -37,13 +39,13 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	@Transactional
-	public Customer getPersonById(int id) {
+	public Customer getPersonById(String id) {
 		return this.personHome.findById(id);
 	}
 
 	@Override
 	@Transactional
-	public void removePerson(int id) {
+	public void removePerson(String id) {
 		this.personHome.delete(this.personHome.findById(id));
 	}
 
