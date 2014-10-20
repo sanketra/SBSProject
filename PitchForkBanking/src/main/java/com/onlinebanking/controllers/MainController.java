@@ -36,12 +36,12 @@ public class MainController {
 		return "login";
 	}
 	
-	@RequestMapping(value = "/home", method = RequestMethod.GET)
+	@RequestMapping(value = "/user_home", method = RequestMethod.GET)
 	public String handleRequest(Locale locale, Model model) {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("name", auth.getName());
-		return "home";
+		return "user/user_home";
 	}
 	
 	@RequestMapping(value="/login")
@@ -63,14 +63,14 @@ public class MainController {
 	public String listUsers(Model model) {
 		model.addAttribute("user", new User());
 		model.addAttribute("listUsers", this.userService.listUsers());
-		return "user";
+		return "user_registration";
 	}
 	
 	//For add and update person both
 	@RequestMapping(value= "/user/add", method = RequestMethod.POST)
 	public String addUser(@ModelAttribute("user") User p){
 		
-		if(this.userService.getUserById(p.getId()) == null){
+		if(this.userService.getUserById(p.getUserId()) == null){
 			//new person, add it
 			this.userService.addUser(p);
 		}else{
@@ -92,6 +92,6 @@ public class MainController {
     public String editUser(@PathVariable("id") String id, Model model){
         model.addAttribute("user", this.userService.getUserById(id));
         model.addAttribute("listUsers", this.userService.listUsers());
-        return "user";
+        return "user_home";
     }
 }

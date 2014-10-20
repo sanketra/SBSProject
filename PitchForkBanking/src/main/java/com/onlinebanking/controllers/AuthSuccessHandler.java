@@ -18,14 +18,14 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 	public void onAuthenticationSuccess(HttpServletRequest arg0,
 			HttpServletResponse arg1, Authentication arg2) throws IOException,
 			ServletException {
-		String redirectUrl = "/PitchForkBanking/home";
+		String redirectUrl = "/PitchForkBanking/user_home";
 		
 		Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
 		for (GrantedAuthority authority : authorities) {
 			if (authority.getAuthority().equals("Admin")) {
 				redirectUrl = "/PitchForkBanking/admin";
 			} else {
-				redirectUrl = "/PitchForkBanking/home";
+				redirectUrl = "/PitchForkBanking/user_home";
 			}
 		}
 		

@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class EmployeeController {
 	
-	@RequestMapping(value = {"/staff", "/staff/*"}, method = RequestMethod.GET)
+	@RequestMapping(value = {"/emp", "/emp/*"}, method = RequestMethod.GET)
 	public String handleAdminDashboardRequests(Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("name", auth.getName());
-		return "staffHome";
+		return "emp_home";
 	}
 }

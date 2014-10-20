@@ -45,7 +45,7 @@
 	<c:url var="loginUrl" value="/j_spring_security_check"></c:url>
 	<form class="form-signin" action="${loginUrl}" method="POST">
 			<h2 class="form-signin-heading">Pitch Fork Banking</h2>
-			<input type='text' name='username' class="input-block-level" placeholder="Email address"/>
+			<input type='text' name='emailId' class="input-block-level" placeholder="Email address"/>
 			<input type='password' name='password' class="input-block-level" placeholder="Password"/>
 			<input name="submit" type="submit" value="Login" class="btn btn-large btn-primary" />
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

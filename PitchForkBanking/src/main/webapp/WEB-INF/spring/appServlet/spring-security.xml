@@ -22,9 +22,9 @@
 	<http authentication-manager-ref="jdbc-auth"
 		access-decision-manager-ref="accessDecisionManager">	
 		<intercept-url pattern="/admin/**" access="Admin" />
-		<intercept-url pattern="/home" access="User" />
+		<intercept-url pattern="/user_home" access="User" />
 		<form-login login-page="/login" authentication-failure-url="/denied"
-			username-parameter="username" password-parameter="password"
+			username-parameter="emailId" password-parameter="password"
 		    authentication-success-handler-ref="authSuccessHandler"/>
 		<logout invalidate-session="true" logout-success-url="/login"
 			logout-url="/j_spring_security_logout" />
@@ -42,8 +42,8 @@
 		<authentication-provider>
 		<password-encoder ref="bcryptEncoder"/>
 			<jdbc-user-service data-source-ref="dataSource"
-				users-by-username-query="select username,password,enabled from User where username = ?"
-				authorities-by-username-query="select username,role from User where username = ?" />
+				users-by-username-query="select emailId,password,enabled from User where emailId = ? and enabled = 1"
+				authorities-by-username-query="select emailId,role from User where emailId = ?" />
 		</authentication-provider>
 	</authentication-manager>
 
@@ -53,9 +53,9 @@
 
 		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<beans:property name="url"
-			value="jdbc:mysql://localhost:3306/test" />
+			value="jdbc:mysql://localhost:3306/pitchforkbank" />
 		<beans:property name="username" value="root" />
-		<beans:property name="password" value="root" />
+		<beans:property name="password" value="sradder" />
 	</beans:bean>
 
 		<!-- Hibernate 4 SessionFactory Bean definition -->
@@ -64,7 +64,13 @@
 		<beans:property name="dataSource" ref="dataSource" />
 		<beans:property name="annotatedClasses">
 			<beans:list>
+				<beans:value>com.onlinebanking.models.Account</beans:value>
+				<beans:value>com.onlinebanking.models.Requests</beans:value>
+				<beans:value>com.onlinebanking.models.RequestsId</beans:value>
+				<beans:value>com.onlinebanking.models.Transaction</beans:value>
 				<beans:value>com.onlinebanking.models.User</beans:value>
+				<beans:value>com.onlinebanking.models.Userotp</beans:value>
+				<beans:value>com.onlinebanking.models.UserPublicKey</beans:value>
 			</beans:list>
 		</beans:property>
 		<beans:property name="hibernateProperties">

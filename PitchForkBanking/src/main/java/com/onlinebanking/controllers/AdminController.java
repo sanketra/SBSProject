@@ -19,7 +19,7 @@ public class AdminController {
 	public String handleAdminDashboardRequests(Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("name", auth.getName());
-		return "adminHome";
+		return "admin/admin_home";
 	}
 	
 	@RequestMapping(value = "/admin/post/{to_do}", method = RequestMethod.POST)

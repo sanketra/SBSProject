@@ -49,7 +49,7 @@
 	<div id="container">
 		
 			<div class="row-fluid">
-				<jsp:include page="templates/admin_sidebar.jsp" />
+				<jsp:include page="admin_sidebar.jsp" />
 		</div>
 	</div>
 	

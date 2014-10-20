@@ -52,12 +52,12 @@
 <table>
 			<tr>
 			<td>
-			<form:label path="username">
+			<form:label path="emailId">
 				<spring:message text="Name"/>
 			</form:label>
 	        </td>
 	        <td>
-			<form:input path="username" class="form-control" placeholder="Username"/></td>
+			<form:input path="emailId" class="form-control" placeholder="Email Id"/></td>
 		    </tr>
 		    <tr>
 		    <td>
@@ -70,11 +70,11 @@
 			</tr>
 			<tr>
 			<td>
-			<form:label path="country">
-				<spring:message text="Country"/>
+			<form:label path="fname">
+				<spring:message text="First Name"/>
 			</form:label>
 		</td><td>
-			<form:input path="country" class="form-control" placeholder="Country"/></td>
+			<form:input path="fname" class="form-control" placeholder="First Name"/></td>
 			</tr>
 			<tr>
 			<td>
@@ -86,11 +86,11 @@
 			</tr>
 			<tr>
 			<td rowspan="2">
-			<c:if test="${!empty user.username}">
+			<c:if test="${!empty user.emailId}">
 				<input type="submit"
 					value="<spring:message text="Edit" />" class="btn btn-lg btn-primary" />
 			</c:if>
-			<c:if test="${empty user.username}">
+			<c:if test="${empty user.emailId}">
 				<input type="submit"
 					value="<spring:message text="Register" />" class="btn btn-lg btn-primary" />
 			</c:if>
@@ -104,14 +104,14 @@
 </div>
 <br>
 <br>
-<h3>user's List</h3>
+<h3>Registered Users</h3>
  <div class="col-md-6">
 <c:if test="${!empty listUsers}">
 	<table class="table table-bordered">
 	<thead>
 	<tr>
-		<th width="120">User Name</th>
-		<th width="120">User Country</th>
+		<th width="120">User EmailId</th>
+		<th width="120">User First Name</th>
 		<th width="120">User Role</th>
 		<th width="60">Edit</th>
 		<th width="60">Delete</th>
@@ -119,11 +119,11 @@
 	</thead>
 	<c:forEach items="${listUsers}" var="user">
 		<tr>
-			<td>${user.username}</td>
-			<td>${user.country}</td>
+			<td>${user.emailId}</td>
+			<td>${user.fname}</td>
 			<td>${user.role}</td>
-			<td><a href="<c:url value='/edit/${user.id}' />" >Edit</a></td>
-			<td><a href="<c:url value='/remove/${user.id}' />" >Delete</a></td>
+			<td><a href="<c:url value='/edit/${user.userId}' />" >Edit</a></td>
+			<td><a href="<c:url value='/remove/${user.userId}' />" >Delete</a></td>
 		</tr>
 	</c:forEach>
 	</table>
