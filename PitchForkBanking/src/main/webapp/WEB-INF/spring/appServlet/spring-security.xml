@@ -18,9 +18,9 @@
 		<beans:constructor-arg name="decisionVoters"
 			ref="roleVoter" />
 	</beans:bean>
-
+  
 	<http authentication-manager-ref="jdbc-auth"
-		access-decision-manager-ref="accessDecisionManager">	
+		access-decision-manager-ref="accessDecisionManager" >
 		<intercept-url pattern="/admin/**" access="Admin" />
 		<intercept-url pattern="/user_home" access="User" />
 		<form-login login-page="/login" authentication-failure-url="/denied"
@@ -66,7 +66,6 @@
 			<beans:list>
 				<beans:value>com.onlinebanking.models.Account</beans:value>
 				<beans:value>com.onlinebanking.models.Requests</beans:value>
-				<beans:value>com.onlinebanking.models.RequestsId</beans:value>
 				<beans:value>com.onlinebanking.models.Transaction</beans:value>
 				<beans:value>com.onlinebanking.models.User</beans:value>
 				<beans:value>com.onlinebanking.models.Userotp</beans:value>
@@ -82,12 +81,32 @@
 		</beans:property>
 	</beans:bean>
 	
+	<!-- DAO beans -->
+	<beans:bean id="accountHome" class="com.onlinebanking.dao.AccountHome">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean>
+	<beans:bean id="requestsHome" class="com.onlinebanking.dao.RequestsHome">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean>
+	<beans:bean id="transactionHome" class="com.onlinebanking.dao.TransactionHome">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean>
 	<beans:bean id="userHome" class="com.onlinebanking.dao.UserHome">
 		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
+	<beans:bean id="userOtp" class="com.onlinebanking.dao.UserotpHome">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean>
+	<beans:bean id="userPublicKey" class="com.onlinebanking.dao.UserPublicKeyHome">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean>
+	
+	<!-- Service Layer -->
 	<beans:bean id="userService" class="com.onlinebanking.services.UserServiceImpl">
 		<beans:property name="userHome" ref="userHome"></beans:property>
 	</beans:bean>
+	
+	<!-- Transactions -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	
 	<beans:bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
