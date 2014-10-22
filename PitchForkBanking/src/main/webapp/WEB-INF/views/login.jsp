@@ -4,7 +4,7 @@
 
 <head>
 <title>Login Page</title>
-<link href="<c:url value="/resources/css/bootstrap.css" />" rel="stylesheet">
+<link href="<c:url value="/resources/dist/css/bootstrap.css" />" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 40px;
@@ -38,10 +38,13 @@
       }
 
     </style>
-    <link href="<c:url value="/resources/css/bootstrap-responsive.css" />"rel="stylesheet">
+   <link href="<c:url value="/resources/css/bootstrap-responsive.css" />"rel="stylesheet">
 </head>
 <body>
 	<div class="container">
+	<	<div class="row-fluid">
+				<jsp:include page="/WEB-INF/views/common/header.jsp" />
+		</div>
 	<c:url var="loginUrl" value="/j_spring_security_check"></c:url>
 	<form class="form-signin" action="${loginUrl}" method="POST">
 			<h2 class="form-signin-heading">Pitch Fork Banking</h2>

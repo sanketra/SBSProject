@@ -94,4 +94,10 @@ public class MainController {
         model.addAttribute("listUsers", this.userService.listUsers());
         return "user_home";
     }
+    
+	@RequestMapping(value="/header")
+	public String header(HttpServletRequest request, Model model){
+		return "header";
+	}
+	
 }
