@@ -5,7 +5,7 @@
 <html>
 <head>
 	<title>Registration</title>
-<link href="<c:url value="/resources/css/bootstrap.css" />" rel="stylesheet">
+<link href="<c:url value="/resources/dist/css/bootstrap.css" />" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 40px;
@@ -39,7 +39,7 @@
       }
 
     </style>
-    <link href="<c:url value="/resources/css/bootstrap-responsive.css" />"rel="stylesheet">
+    <link href="<c:url value="/resources/dist/css/bootstrap-responsive.css" />"rel="stylesheet">
 </head>
 <body>
 <h1 align="center">

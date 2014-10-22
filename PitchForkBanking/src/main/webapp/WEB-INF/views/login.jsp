@@ -42,9 +42,9 @@
 </head>
 <body>
 	<div class="container">
-	<	<div class="row-fluid">
-				<jsp:include page="/WEB-INF/views/common/header.jsp" />
-		</div>
+	<%-- <	<div class="row-fluid">
+				<jsp:include page="/WEB-INF/views/common/header_admin.jsp" />
+		</div> --%>
 	<c:url var="loginUrl" value="/j_spring_security_check"></c:url>
 	<form class="form-signin" action="${loginUrl}" method="POST">
 			<h2 class="form-signin-heading">Pitch Fork Banking</h2>
