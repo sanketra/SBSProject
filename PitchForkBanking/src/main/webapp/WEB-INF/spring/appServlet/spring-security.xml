@@ -21,8 +21,14 @@
   
 	<http authentication-manager-ref="jdbc-auth"
 		access-decision-manager-ref="accessDecisionManager" >
-		<intercept-url pattern="/admin/**" access="Admin" />
+		<intercept-url pattern="/admin" access="Admin" />
+		<intercept-url pattern="/admin/*" access="Admin" />
+		<intercept-url pattern="/admin/*/*" access="Admin" />
+		<intercept-url pattern="/admin/*/*/*" access="Admin" />
 		<intercept-url pattern="/user_home" access="User" />
+		<intercept-url pattern="/user_home/*" access="User" />
+		<intercept-url pattern="/user_home/*/*" access="User" />
+		<intercept-url pattern="/user_home/*/*/*" access="User" />
 		<form-login login-page="/login" authentication-failure-url="/denied"
 			username-parameter="emailId" password-parameter="password"
 		    authentication-success-handler-ref="authSuccessHandler"/>
@@ -105,6 +111,9 @@
 	<beans:bean id="userService" class="com.onlinebanking.services.UserServiceImpl">
 		<beans:property name="userHome" ref="userHome"></beans:property>
 	</beans:bean>
+	<beans:bean id="accountService" class="com.onlinebanking.services.AccountServiceImpl">
+		<beans:property name="accountHome" ref="accountHome"></beans:property>
+	</beans:bean>
 	
 	<!-- Transactions -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
@@ -112,6 +121,7 @@
 	<beans:bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
+	
 	<beans:bean id="authSuccessHandler" class="com.onlinebanking.controllers.AuthSuccessHandler">
 	</beans:bean>
 

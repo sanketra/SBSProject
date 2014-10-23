@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%              
   response.setHeader("pragma", "no-cache");              
   response.setHeader("Cache-control", "no-cache, no-store, must-revalidate");             
@@ -46,36 +47,39 @@
 </head>
 <body>
 	<h1>Welcome to Pitch Fork Banking</h1>
-	<P><br> Hello :${fname}<br></P>
+	<P><br> Hello :${user.fname}<br></P>
 	<br>
 	<br>
-	<table class="table table-hover">
-	<thead>
-		<tr>
-			<td>Bank Account ID</td>
-			<td>Available Balance</td>
-			<td>Account Type</td>
-			<td></td>
-		</tr>
-	</thead>
-	<tbody>
-		<c:forEach items="${accounts}" var="_account">
+	<div >
+				<jsp:include page="user_sidebar.jsp" />
+			</div>
+	<c:url var="editAction" value="/user/edit" ></c:url>
+<table class="table">
+	<tr>
+		<td>Email Id</td>
+		<td>${user.emailId}</td>
+	</tr>
+	<tr>
+		<td>First Name</td>
+		<td>${user.fname}</td>
+	</tr>
+	<tr>
+		<td>Role</td>
+		<td>${user.role}</td>
+	</tr>
 			<tr>
-				<td>${_account.accountNum}</td>
-				<td><fmt:formatNumber value="${_account.amount}" type="currency"/></td>
-				<td><c:choose>
-						<c:when test="${_account.accountType == \"Checking\" }">Checking Account </c:when>
-						<c:when test="${_account.accountType == \"Savings\" }">Saving Account </c:when>
-						<c:otherwise> Undefined </c:otherwise>
-					</c:choose></td>
-				<td><a class="btn btn-success"
-					href="${page.url_host}${page.url_apppath}user_home/account_details?${_account.accountNum}">Select</a></td>
+			<td rowspan="3">
+			<c:if test="${!empty user.emailId}">
+				<input type="submit"
+					value="<spring:message text="Edit" />" class="btn btn-lg btn-primary" />
+			</c:if>
+			<c:if test="${empty user.emailId}">
+				<input type="submit"
+					value="<spring:message text="Register" />" class="btn btn-lg btn-primary" />
+			</c:if>
+			</td>	
 			</tr>
-		</c:forEach>
-	</tbody>
-</table>
-					<br>
-					<br>
+			</table>
 	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
 	
 	<form action="${logoutAction}" method="post">

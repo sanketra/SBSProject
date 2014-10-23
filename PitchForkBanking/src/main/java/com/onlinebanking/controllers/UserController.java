@@ -1,11 +1,9 @@
 package com.onlinebanking.controllers;
 
-import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
@@ -17,14 +15,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.onlinebanking.models.Account;
 import com.onlinebanking.models.User;
+import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.UserService;
 
 @Controller
-public class MainController {
-	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+public class UserController {
 	private UserService userService;
+	private AccountService accountService;
 	
+	@Autowired(required=true)
+	@Qualifier(value="accountService")
+	public void setAccountService(AccountService accountService) {
+		this.accountService = accountService;
+	}
+
 	@Autowired(required=true)
 	@Qualifier(value="userService")
 	public void setUserService(UserService ps){
@@ -37,11 +43,27 @@ public class MainController {
 	}
 	
 	@RequestMapping(value = "/user_home", method = RequestMethod.GET)
-	public String handleRequest(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
+	public String handleRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		model.addAttribute("name", auth.getName());
+		User u = this.userService.getUserByEmailId(auth.getName());
+		Account a = new Account();
+		a.setAccountNum(1002);
+		a.setAccountType("Checking");
+		a.setAmount(1000);
+		a.setUser(u);
+		//this.accountService.addAccount(a);
+		model.addAttribute("accounts", this.accountService.getUserAccounts(u.getUserId()));
+		session.setAttribute("emailId", u.getEmailId());
+		model.addAttribute("fname", u.getFname());
 		return "user/user_home";
+	}
+	
+	@RequestMapping(value = {"/user_home/*", "/user_home/*/*"}, method = RequestMethod.GET)
+	public String handleDashboardRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		model.addAttribute("user", this.userService.getUserByEmailId((String)session.getAttribute("emailId")));
+		return "user/account_details";
 	}
 	
 	@RequestMapping(value="/login")

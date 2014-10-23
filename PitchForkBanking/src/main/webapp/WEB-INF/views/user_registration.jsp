@@ -53,7 +53,7 @@
 			<tr>
 			<td>
 			<form:label path="emailId">
-				<spring:message text="Name"/>
+				<spring:message text="Email Id"/>
 			</form:label>
 	        </td>
 	        <td>
