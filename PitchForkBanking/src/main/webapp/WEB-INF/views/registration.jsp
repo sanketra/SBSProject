@@ -100,7 +100,7 @@
 </form:form>
 </div>
 <div class="container" align="center">
-<a href="http://localhost:8080/PitchForkBanking/" rel="nofollow">Login into PitchForkBanking</a>
+<a href="${page.url_host}login" rel="nofollow">Login into PitchForkBanking</a>
 </div>
 <br>
 <br>

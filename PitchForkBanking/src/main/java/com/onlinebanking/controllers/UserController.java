@@ -62,8 +62,9 @@ public class UserController {
 	@RequestMapping(value = {"/user_home/*", "/user_home/*/*"}, method = RequestMethod.GET)
 	public String handleDashboardRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
+		model.addAttribute("contentView", "user_profile");
 		model.addAttribute("user", this.userService.getUserByEmailId((String)session.getAttribute("emailId")));
-		return "user/account_details";
+		return "user/user_template";
 	}
 	
 	@RequestMapping(value="/login")
@@ -85,7 +86,7 @@ public class UserController {
 	public String listUsers(Model model) {
 		model.addAttribute("user", new User());
 		model.addAttribute("listUsers", this.userService.listUsers());
-		return "user_registration";
+		return "registration";
 	}
 	
 	//For add and update person both

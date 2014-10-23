@@ -49,7 +49,7 @@
 			<input type='password' name='password' class="input-block-level" placeholder="Password"/>
 			<input name="submit" type="submit" value="Login" class="btn btn-large btn-primary" />
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<a href="http://localhost:8080/PitchForkBanking/registration" rel="nofollow">New User? Register</a>
+			<a href="${page.url_host}registration" rel="nofollow">Register</a>
 	</form>
 	</div>
 </body>
