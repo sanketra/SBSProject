@@ -120,6 +120,7 @@ public class RequestsHome {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Requests> getAllRequestsFromUser(String userId) {
 		log.debug("finding all requests from user "+userId);
 		try {
@@ -135,6 +136,7 @@ public class RequestsHome {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<String> getApprovedTransactionRequestsForUser(String userId) {
 		log.debug("finding transaction ids of approved requests from user "+userId);
 		try {

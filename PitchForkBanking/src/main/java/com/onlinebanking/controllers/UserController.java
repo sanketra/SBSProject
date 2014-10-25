@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.onlinebanking.models.Account;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.UserService;
@@ -42,29 +41,23 @@ public class UserController {
 		return "login";
 	}
 	
-	@RequestMapping(value = "/user_home", method = RequestMethod.GET)
+	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public String handleRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User u = this.userService.getUserByEmailId(auth.getName());
-		Account a = new Account();
-		a.setAccountNum(1002);
-		a.setAccountType("Checking");
-		a.setAmount(1000);
-		a.setUser(u);
-		//this.accountService.addAccount(a);
 		model.addAttribute("accounts", this.accountService.getUserAccounts(u.getUserId()));
 		session.setAttribute("emailId", u.getEmailId());
 		model.addAttribute("fname", u.getFname());
-		return "user/user_home";
+		return "user/home";
 	}
 	
-	@RequestMapping(value = {"/user_home/*", "/user_home/*/*"}, method = RequestMethod.GET)
+	@RequestMapping(value = {"/home/*", "/home/*/*"}, method = {RequestMethod.GET, RequestMethod.POST})
 	public String handleDashboardRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
-		model.addAttribute("contentView", "user_profile");
+		model.addAttribute("contentView", "profile");
 		model.addAttribute("user", this.userService.getUserByEmailId((String)session.getAttribute("emailId")));
-		return "user/user_template";
+		return "user/template";
 	}
 	
 	@RequestMapping(value="/login")
@@ -115,12 +108,11 @@ public class UserController {
     public String editUser(@PathVariable("id") String id, Model model){
         model.addAttribute("user", this.userService.getUserById(id));
         model.addAttribute("listUsers", this.userService.listUsers());
-        return "user_home";
+        return "registration";
     }
     
 	@RequestMapping(value="/header")
 	public String header(HttpServletRequest request, Model model){
 		return "header";
 	}
-	
 }
