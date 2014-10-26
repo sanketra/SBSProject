@@ -57,6 +57,11 @@
 						placeholder="Phone Number" /></td>
 			</tr>
 			<tr>
+				<td>Phone Number</td>
+				<td><form:input path="phoneno" class="input-xlarge"
+						placeholder="Phone Number" /></td>
+			</tr>
+			<tr>
 				<td colspan="2"><c:if test="${!empty user.emailId}">
 						<input type="submit" value="<spring:message text="Submit" />"
 							class="btn btn-lg btn-primary" />
