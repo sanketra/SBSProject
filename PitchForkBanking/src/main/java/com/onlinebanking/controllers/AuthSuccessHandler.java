@@ -12,20 +12,22 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.onlinebanking.models.Role;
+
 public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest arg0,
 			HttpServletResponse arg1, Authentication arg2) throws IOException,
 			ServletException {
-		String redirectUrl = "/PitchForkBanking/user_home";
+		String redirectUrl = "/PitchForkBanking/user/home";
 		
 		Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
 		for (GrantedAuthority authority : authorities) {
-			if (authority.getAuthority().equals("Admin")) {
+			if (authority.getAuthority().equals(Role.ADMIN)) {
 				redirectUrl = "/PitchForkBanking/admin";
 			} else {
-				redirectUrl = "/PitchForkBanking/user_home";
+				redirectUrl = "/PitchForkBanking/user/home";
 			}
 		}
 		

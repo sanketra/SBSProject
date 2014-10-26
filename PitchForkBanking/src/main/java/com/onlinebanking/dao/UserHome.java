@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.models.User;
 
@@ -130,4 +131,34 @@ public class UserHome {
 			throw re;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public User getUserByEmailId(String emailId) {
+		log.debug("getting User instance with emailId: " + emailId);
+		try {
+			User instance = null;
+			String queryString = "Select * from user U where U.emailId = :emailId";
+			List<User> results = sessionFactory.getCurrentSession().
+					createSQLQuery(queryString).
+					addEntity(User.class).
+					setParameter("emailId", emailId).
+					list();
+			
+			if (results.size() > 0) {
+				instance = results.get(0);
+			}
+			
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
 }

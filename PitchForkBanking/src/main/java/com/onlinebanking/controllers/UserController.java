@@ -1,11 +1,9 @@
 package com.onlinebanking.controllers;
 
-import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
@@ -18,13 +16,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.onlinebanking.models.User;
+import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.UserService;
 
 @Controller
-public class MainController {
-	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+public class UserController {
 	private UserService userService;
+	private AccountService accountService;
 	
+	@Autowired(required=true)
+	@Qualifier(value="accountService")
+	public void setAccountService(AccountService accountService) {
+		this.accountService = accountService;
+	}
+
 	@Autowired(required=true)
 	@Qualifier(value="userService")
 	public void setUserService(UserService ps){
@@ -36,12 +41,47 @@ public class MainController {
 		return "login";
 	}
 	
-	@RequestMapping(value = "/user_home", method = RequestMethod.GET)
-	public String handleRequest(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
+	@RequestMapping(value = "/user/home", method = RequestMethod.GET)
+	public String handleRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		model.addAttribute("name", auth.getName());
-		return "user/user_home";
+		User u = this.userService.getUserByEmailId(auth.getName());
+		model.addAttribute("accounts", this.accountService.getUserAccounts(u.getUserId()));
+		session.setAttribute("emailId", u.getEmailId());
+		model.addAttribute("fname", u.getFname());
+		return "user/home";
+	}
+	
+	@RequestMapping(value = {"/user/*", "/user/*/*", "/user/*/*/*"}, method = {RequestMethod.GET, RequestMethod.POST})
+	public String handleDashboardRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		model.addAttribute("contentView", "profile");
+		model.addAttribute("user", this.userService.getUserByEmailId((String)session.getAttribute("emailId")));
+		return "user/template";
+	}
+	
+	@RequestMapping(value="/user/profile/edit")
+	public String userEdit(HttpServletRequest request, Model model){
+		HttpSession session = request.getSession();
+		model.addAttribute("contentView", "editprofile");
+		model.addAttribute("user", this.userService.getUserByEmailId((String)session.getAttribute("emailId")));
+		return "user/template";
+	}
+	
+	//For add and update person both
+	@RequestMapping(value= "/user/profile/update", method = {RequestMethod.GET, RequestMethod.POST})
+	public String addUserProfile(@ModelAttribute("user") User p){
+		
+		if(this.userService.getUserById(p.getUserId()) == null){
+			//new person, add it
+			this.userService.addUser(p);
+		}else{
+			//existing person, call update
+			this.userService.updateUser(p);
+		}
+		
+		return "redirect:/user/profile";
+		
 	}
 	
 	@RequestMapping(value="/login")
@@ -63,11 +103,11 @@ public class MainController {
 	public String listUsers(Model model) {
 		model.addAttribute("user", new User());
 		model.addAttribute("listUsers", this.userService.listUsers());
-		return "user_registration";
+		return "registration";
 	}
 	
 	//For add and update person both
-	@RequestMapping(value= "/user/add", method = RequestMethod.POST)
+	@RequestMapping(value= "/add", method = RequestMethod.POST)
 	public String addUser(@ModelAttribute("user") User p){
 		
 		if(this.userService.getUserById(p.getUserId()) == null){
@@ -87,17 +127,9 @@ public class MainController {
         this.userService.removeUser(id);
         return "redirect:/registration";
     }
- 
-    @RequestMapping("/edit/{id}")
-    public String editUser(@PathVariable("id") String id, Model model){
-        model.addAttribute("user", this.userService.getUserById(id));
-        model.addAttribute("listUsers", this.userService.listUsers());
-        return "user_home";
-    }
     
 	@RequestMapping(value="/header")
 	public String header(HttpServletRequest request, Model model){
 		return "header";
 	}
-	
 }

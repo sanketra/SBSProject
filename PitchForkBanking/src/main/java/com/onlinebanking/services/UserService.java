@@ -11,5 +11,5 @@ public interface UserService {
 	public List<User> listUsers();
 	public User getUserById(String id);
 	public void removeUser(String id);
-	
+	public User getUserByEmailId(String emailId);
 }

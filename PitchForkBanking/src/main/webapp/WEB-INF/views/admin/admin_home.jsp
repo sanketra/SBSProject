@@ -50,7 +50,7 @@
 		
 			<div class="row-fluid">
 				<jsp:include page="admin_sidebar.jsp" />
-		</div>
+			</div>
 	</div>
 	
 	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>

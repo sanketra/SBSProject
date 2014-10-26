@@ -48,5 +48,11 @@ public class UserServiceImpl implements UserService {
 	public void removeUser(String id) {
 		this.userHome.delete(this.userHome.findById(id));
 	}
+	
+	@Override
+	@Transactional
+	public User getUserByEmailId(String emailId) {
+		return this.userHome.getUserByEmailId(emailId);
+	}
 
 }

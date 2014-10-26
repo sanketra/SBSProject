@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 
@@ -30,7 +31,8 @@ public class AccountHome {
 	public void persist(Account transientInstance) {
 		log.debug("persisting Account instance");
 		try {
-			sessionFactory.getCurrentSession().persist(transientInstance);
+			Session s = sessionFactory.getCurrentSession();
+			s.persist(transientInstance);
 			log.debug("persist successful");
 		} catch (RuntimeException re) {
 			log.error("persist failed", re);
@@ -108,6 +110,25 @@ public class AccountHome {
 		try {
 			List<Account> results = sessionFactory.getCurrentSession().createCriteria("com.onlinebanking.models.Account")
 					.add(Example.create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Account> getUserAccounts(String userId) {
+		log.debug("finding User instance by example");
+		try {
+			String queryString = "Select * from account A where A.userId = :userId";
+			Session s = sessionFactory.getCurrentSession();
+			List<Account> results = s.createSQLQuery(queryString).
+					addEntity(Account.class).
+					setParameter("userId", userId).
+					list();
 			log.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
