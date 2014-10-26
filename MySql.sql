@@ -8,7 +8,7 @@ CREATE TABLE `pitchforkbank`.`user` (
   `address` VARCHAR(45) NOT NULL,
   `city` VARCHAR(45) NOT NULL,
   `state` VARCHAR(45) NOT NULL,
-  `zipcode` INT NOT NULL,
+  `zipcode` VARCHAR(10) NOT NULL,
   `ssn` VARCHAR(45) NOT NULL,
   `phoneno` VARCHAR(45) NOT NULL,
   `enabled` INT NOT NULL,
