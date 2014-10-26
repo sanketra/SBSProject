@@ -28,7 +28,7 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-						<input type="submit" value="<spring:message text="Submit" />"
+						<input type="submit" value="<spring:message text="Transfer" />"
 							class="btn btn-lg btn-primary" /></td>
 			</tr>
 		</table>

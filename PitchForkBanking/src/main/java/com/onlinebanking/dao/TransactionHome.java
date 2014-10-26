@@ -138,4 +138,24 @@ public class TransactionHome {
 			throw re;
 		}
 	}
+	
+	// TODO: Logic for user payments
+	@SuppressWarnings("unchecked")
+	public List<Transaction> getAllPaymentsForAccountId(int id) {
+		log.debug("finding User instance by example");
+		try {
+			String queryString = "Select * from transaction T where T.fromAcountNum = :id AND T.transactionStatus = :status";
+			Session s = sessionFactory.getCurrentSession();
+			List<Transaction> results = s.createSQLQuery(queryString).
+					addEntity(Transaction.class).
+					setParameter("id", id).setParameter("status", "User Pending").
+					list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
 }

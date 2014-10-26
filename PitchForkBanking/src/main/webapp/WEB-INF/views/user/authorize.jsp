@@ -7,24 +7,23 @@
 		<thead>
 			<tr>
 				<th>From</th>
-				<th>To</th>
-				<th>Amount</th>
 				<th>Type</th>
-				<th>Status</th>
+				<th>Accept</th>
+				<th>Decline</th>
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach items="${transactions}" var="_transaction">
+			<c:forEach items="${requests}" var="_request">
 				<tr>
-					<td>${_transaction.accountByFromAcountNum.accountNum}</td>
-					<td>${_transaction.accountByToAccountNum.accountNum}</td>
-					<td>${_transaction.transactionAmount}</td>
-					<td>${_transaction.transactionType}</td>
-					<td>${_transaction.transactionStatus}</td>
+					<td>${_request.userByFromUserId.fname}</td>
+					<td>${_request.type}</td>
+					<td><a class="btn btn-success"
+						href="${pageContext.request.contextPath}/user/authorize">Accept</a></td>
+					<td><a class="btn btn-danger"
+						href="${pageContext.request.contextPath}/user/authorize">Decline</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>
 	</table>
-	<br>
-	<br>
+	<br> <br>
 </div>
