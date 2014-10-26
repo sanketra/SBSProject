@@ -197,6 +197,7 @@ public class UserController {
 		model.addAttribute("contentView", "editprofile");
 		model.addAttribute("user", this.userService
 				.getUserByEmailId((String) session.getAttribute("emailId")));
+
 		return "user/template";
 	}
 
@@ -204,8 +205,8 @@ public class UserController {
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
 	public String addUserProfile(@ModelAttribute("user") User p,
-			HttpServletRequest request) {
-		
+			HttpServletRequest request, final RedirectAttributes attributes) {
+
 		// get the responses from the user
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
@@ -222,9 +223,15 @@ public class UserController {
 				// existing person, call update
 				this.userService.updateUser(p);
 			}
-		} else {
+		}
+		// Wrong Captcha
+		else {
+			attributes.addFlashAttribute("response", new Response("error",
+					"Wrong captcha, please try again!"));
 			return "redirect:/user/profile/edit";
 		}
+		attributes.addFlashAttribute("response", new Response("success",
+				"Profile edited successflly!"));
 		return "redirect:/user/profile";
 	}
 
