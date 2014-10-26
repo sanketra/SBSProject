@@ -79,15 +79,6 @@ CREATE TABLE `pitchforkbank`.`transaction` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-ALTER TABLE `pitchforkbank`.`requests` 
-ADD INDEX `transactionId_idx` (`transactionId` ASC);
-ALTER TABLE `pitchforkbank`.`requests` 
-ADD CONSTRAINT `transactionId`
-  FOREIGN KEY (`transactionId`)
-  REFERENCES `pitchforkbank`.`transaction` (`transactionId`)
-  ON DELETE CASCADE
-  ON UPDATE CASCADE;
-
 CREATE TABLE `pitchforkbank`.`userotp` (
   `userId` VARCHAR(36) NOT NULL,
   `oneTimePassword` VARCHAR(45) NOT NULL,
