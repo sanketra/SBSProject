@@ -56,11 +56,13 @@ public class UserController {
 	
 	@RequestMapping(value = "/user/home", method = RequestMethod.GET)
 	public String handleRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
+		URLHelper.logRequest(request);
 		HttpSession session = request.getSession();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User u = this.userService.getUserByEmailId(auth.getName());
-		model.addAttribute("accounts", this.accountService.getUserAccounts(u.getUserId()));
+		session.setAttribute("userId", u.getUserId());
 		session.setAttribute("emailId", u.getEmailId());
+		model.addAttribute("accounts", this.accountService.getUserAccounts(u.getUserId()));
 		model.addAttribute("fname", u.getFname());
 		return "user/home";
 	}
@@ -101,7 +103,6 @@ public class UserController {
 			
 			if (urls.get("url_3") != null && !urls.get("url_3").toString().equals("")) {
 				account_id = Integer.parseInt(urls.get("url_3"));
-				System.out.println("My Account: " + account_id);
 				session.setAttribute("account_id", account_id);
 			}
 			
