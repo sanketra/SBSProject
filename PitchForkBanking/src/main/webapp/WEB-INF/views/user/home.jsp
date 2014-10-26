@@ -43,10 +43,10 @@ body {
 	<table class="table table-bordered">
 		<thead>
 			<tr>
-				<td>Bank Account ID</td>
-				<td>Available Balance</td>
-				<td>Account Type</td>
-				<td></td>
+				<th>Bank Account ID</th>
+				<th>Available Balance</th>
+				<th>Account Type</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>

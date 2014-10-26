@@ -1,6 +1,5 @@
 package com.onlinebanking.controllers;
 
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.onlinebanking.helpers.URLHelper;
-import com.onlinebanking.models.Transaction;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.TransactionService;
@@ -80,16 +78,9 @@ public class UserController {
 			String toAccount = request.getParameter("account_to").toString();
 			String toEmailId = request.getParameter("emailId").toString();
 			int amount = Integer.parseInt(request.getParameter("amount").toString());
-			String from = session.getAttribute("account_id").toString();
-			System.out.println(name +" " + toAccount + " " + toEmailId + " " + amount + " " + from);
-			Transaction t = new Transaction();
-			t.setAccountByFromAcountNum(this.accountService.getAccountById(Integer.parseInt(from)));
-			t.setAccountByToAccountNum(this.accountService.getAccountById(Integer.parseInt(toAccount)));
-			t.setTransactionAmount(amount);
-			t.setTransactionStatus("success");
-			t.setTransactionType("credit");
-			t.setTransactionTime(new Date());
-			this.transactionService.addTransaction(t);
+			String fromAccount = session.getAttribute("account_id").toString();
+			System.out.println(name +" " + toAccount + " " + toEmailId + " " + amount + " " + fromAccount);
+			this.transactionService.createTransaction(fromAccount, toAccount, amount);
 			return "redirect:/user/transfer";
 		}
 		
@@ -97,6 +88,11 @@ public class UserController {
 		// Handle all get requests
 		if (urls.get("url_2").toString().equalsIgnoreCase("transfer")) {
 			model.addAttribute("contentView", "transfer");
+			return "user/template";
+		} if (urls.get("url_2").toString().equalsIgnoreCase("transactions")) {
+			int account_id = (Integer) session.getAttribute("account_id");
+			model.addAttribute("transactions", this.transactionService.getAllTransactionsForAccountId(account_id));
+			model.addAttribute("contentView", "transactions");
 			return "user/template";
 		} else {
 			int account_id = 0;

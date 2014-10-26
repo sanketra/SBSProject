@@ -1,10 +1,12 @@
 package com.onlinebanking.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.onlinebanking.dao.AccountHome;
 import com.onlinebanking.dao.RequestsHome;
 import com.onlinebanking.dao.TransactionHome;
 import com.onlinebanking.models.Requests;
@@ -14,6 +16,11 @@ public class TransactionServiceImpl implements TransactionService {
 
 	private RequestsHome requestsHome;
 	private TransactionHome transactionHome;
+	private AccountHome accountHome;
+	
+	public void setAccountHome(AccountHome accountHome) {
+		this.accountHome = accountHome;
+	}
 
 	public void setRequestsHome(RequestsHome requestsDAO) {
 		this.requestsHome = requestsDAO;
@@ -53,9 +60,16 @@ public class TransactionServiceImpl implements TransactionService {
 	
 	@Override
 	@Transactional
-	public void addTransaction(Transaction transaction)
+	public void createTransaction(String fromAccount, String toAccount, int amount)
 	{
-		transactionHome.persist(transaction);
+		Transaction t = new Transaction();
+		t.setAccountByFromAcountNum(this.accountHome.findById(Integer.parseInt(fromAccount)));
+		t.setAccountByToAccountNum(this.accountHome.findById(Integer.parseInt(toAccount)));
+		t.setTransactionAmount(amount);
+		t.setTransactionStatus("success");
+		t.setTransactionType("credit");
+		t.setTransactionTime(new Date());
+		transactionHome.persist(t);
 	}
 	
 	@Override
@@ -70,5 +84,11 @@ public class TransactionServiceImpl implements TransactionService {
 	public void deleteTransaction(Transaction transaction)
 	{
 		transactionHome.delete(transaction);
+	}
+	
+	@Override
+	@Transactional
+	public List<Transaction> getAllTransactionsForAccountId(int id) {
+		return this.transactionHome.getAllTransactionsForAccountId(id);
 	}
 }

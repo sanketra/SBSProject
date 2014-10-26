@@ -5,14 +5,21 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.onlinebanking.dao.AccountHome;
 import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.helpers.CryptoHelper;
+import com.onlinebanking.models.Account;
 import com.onlinebanking.models.User;
 
 @Service
 public class UserServiceImpl implements UserService {
 	
 	private UserHome userHome;
+	private AccountHome accountHome;
+	
+	public void setAccountHome(AccountHome accountHome) {
+		this.accountHome = accountHome;
+	}
 
 	public void setUserHome(UserHome userDAO) {
 		this.userHome = userDAO;
@@ -23,6 +30,12 @@ public class UserServiceImpl implements UserService {
 	public void addUser(User p) {
 		p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
 		this.userHome.persist(p);
+		Account a = new Account();
+		a.setAccountType("Checking");
+		a.setAmount(1000);
+		a.setUser(p);
+		this.accountHome.persist(a);
+		
 	}
 
 	@Override
