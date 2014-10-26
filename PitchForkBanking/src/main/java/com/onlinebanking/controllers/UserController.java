@@ -23,14 +23,22 @@ import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
+import com.onlinebanking.services.CaptchaService;
 import com.onlinebanking.services.TransactionService;
 import com.onlinebanking.services.UserService;
 
 @Controller
 public class UserController {
 	private UserService userService;
+	private CaptchaService captchaService;
 	private AccountService accountService;
 	private TransactionService transactionService;
+
+	@Autowired(required = true)
+	@Qualifier(value = "captchaService")
+	public void setCaptchaService(CaptchaService captchaService) {
+		this.captchaService = captchaService;
+	}
 
 	@Autowired(required = true)
 	@Qualifier(value = "transactionService")
@@ -74,7 +82,8 @@ public class UserController {
 	@RequestMapping(value = { "/user/*", "/user/*/*", "/user/*/*/*" }, method = {
 			RequestMethod.GET, RequestMethod.POST })
 	public String handleDashboardRequest(Model model,
-			HttpServletRequest request, HttpServletResponse response, final RedirectAttributes attributes) {
+			HttpServletRequest request, HttpServletResponse response,
+			final RedirectAttributes attributes) {
 		URLHelper.logRequest(request);
 
 		HashMap<String, String> urls = URLHelper.analyseRequest(request);
@@ -84,39 +93,49 @@ public class UserController {
 		if (URLHelper.isPOSTRequest(request)) {
 			if (urls.get("url_2").toString().equals("transfer")) {
 				// TODO: User name and emailId to validate receiver
-				/*String name = request.getParameter("name").toString();
-				String toEmailId = request.getParameter("emailId").toString();*/
-				
-				String toAccount = request.getParameter("account_to").toString();
-				
+				/*
+				 * String name = request.getParameter("name").toString(); String
+				 * toEmailId = request.getParameter("emailId").toString();
+				 */
+
+				String toAccount = request.getParameter("account_to")
+						.toString();
+
 				int amount = Integer.parseInt(request.getParameter("amount")
 						.toString());
-				String fromAccount = session.getAttribute("account_id").toString();
-				
+				String fromAccount = session.getAttribute("account_id")
+						.toString();
+
 				if (toAccount.equals(fromAccount)) {
-					attributes.addFlashAttribute("response", new Response("error", "Cannot transfer to own account!!"));
+					attributes.addFlashAttribute("response", new Response(
+							"error", "Cannot transfer to own account!!"));
 					return "redirect:/user/transfer";
 				}
-				
-				this.transactionService.createTransaction(fromAccount, toAccount,
-						amount, TransactionType.TRANSFER);
-				attributes.addFlashAttribute("response", new Response("success", "Transfer successfully!!"));
+
+				this.transactionService.createTransaction(fromAccount,
+						toAccount, amount, TransactionType.TRANSFER);
+				attributes.addFlashAttribute("response", new Response(
+						"success", "Transfer successfully!!"));
 				return "redirect:/user/transfer";
 			} else if (urls.get("url_2").toString().equals("credit")) {
-				String fromAccount = session.getAttribute("account_id").toString();
+				String fromAccount = session.getAttribute("account_id")
+						.toString();
 				int amount = Integer.parseInt(request.getParameter("amount")
 						.toString());
-				this.transactionService.createTransaction(fromAccount, fromAccount,
-						amount, TransactionType.CREDIT);
-				attributes.addFlashAttribute("response", new Response("success", "Account credited successfully!!"));
+				this.transactionService.createTransaction(fromAccount,
+						fromAccount, amount, TransactionType.CREDIT);
+				attributes.addFlashAttribute("response", new Response(
+						"success", "Account credited successfully!!"));
 				return "redirect:/user/credit";
 			} else if (urls.get("url_2").toString().equals("debit")) {
-				String fromAccount = session.getAttribute("account_id").toString();
+				String fromAccount = session.getAttribute("account_id")
+						.toString();
 				int amount = Integer.parseInt(request.getParameter("amount")
 						.toString());
-				this.transactionService.createTransaction(fromAccount, fromAccount,
-						amount, TransactionType.DEBIT);
-				attributes.addFlashAttribute("response", new Response("success", "Debit credited successfully!!"));
+				this.transactionService.createTransaction(fromAccount,
+						fromAccount, amount, TransactionType.DEBIT);
+				attributes.addFlashAttribute("response", new Response(
+						"success", "Debit credited successfully!!"));
 				return "redirect:/user/debit";
 			} else if (urls.get("url_2").toString().equals("payment")) {
 				// TODO: Accept or Decline flow.
@@ -138,7 +157,8 @@ public class UserController {
 			model.addAttribute("contentView", "debit");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("payment")) {
-			// TODO: Need to decide how to store and retrieve merchant payment requests
+			// TODO: Need to decide how to store and retrieve merchant payment
+			// requests
 			int account_id = (Integer) session.getAttribute("account_id");
 			System.out.println("Payment Requests for Account: " + account_id);
 			model.addAttribute("transactions", null);
@@ -183,18 +203,29 @@ public class UserController {
 	// For add and update person both
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
-	public String addUserProfile(@ModelAttribute("user") User p) {
-
-		if (this.userService.getUserById(p.getUserId()) == null) {
-			// new person, add it
-			this.userService.addUser(p);
+	public String addUserProfile(@ModelAttribute("user") User p,
+			HttpServletRequest request) {
+		
+		// get the responses from the user
+		String challenge = request.getParameter("recaptcha_challenge_field");
+		String uresponse = request.getParameter("recaptcha_response_field");
+		String remoteAddress = request.getRemoteAddr();
+		// verify Captcha
+		Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
+				uresponse, remoteAddress);
+		// redirect logic
+		if (verifyStatus == true) {
+			if (this.userService.getUserById(p.getUserId()) == null) {
+				// new person, add it
+				this.userService.addUser(p);
+			} else {
+				// existing person, call update
+				this.userService.updateUser(p);
+			}
 		} else {
-			// existing person, call update
-			this.userService.updateUser(p);
+			return "redirect:/user/profile/edit";
 		}
-
 		return "redirect:/user/profile";
-
 	}
 
 	@RequestMapping(value = "/login")

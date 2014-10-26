@@ -115,6 +115,9 @@
 	<beans:bean id="accountService" class="com.onlinebanking.services.AccountServiceImpl">
 		<beans:property name="accountHome" ref="accountHome"></beans:property>
 	</beans:bean>
+	<beans:bean id="captchaService" class="com.onlinebanking.services.CaptchaServiceImpl">
+		
+	</beans:bean>
 	
 	<beans:bean id="transactionService" class="com.onlinebanking.services.TransactionServiceImpl">
 		<beans:property name="transactionHome" ref="transactionHome"></beans:property>
