@@ -41,7 +41,7 @@ public class UserController {
 		return "login";
 	}
 	
-	@RequestMapping(value = "/home", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/home", method = RequestMethod.GET)
 	public String handleRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -52,12 +52,36 @@ public class UserController {
 		return "user/home";
 	}
 	
-	@RequestMapping(value = {"/home/*", "/home/*/*"}, method = {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value = {"/user/*", "/user/*/*", "/user/*/*/*"}, method = {RequestMethod.GET, RequestMethod.POST})
 	public String handleDashboardRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		model.addAttribute("contentView", "profile");
 		model.addAttribute("user", this.userService.getUserByEmailId((String)session.getAttribute("emailId")));
 		return "user/template";
+	}
+	
+	@RequestMapping(value="/user/profile/edit")
+	public String userEdit(HttpServletRequest request, Model model){
+		HttpSession session = request.getSession();
+		model.addAttribute("contentView", "editprofile");
+		model.addAttribute("user", this.userService.getUserByEmailId((String)session.getAttribute("emailId")));
+		return "user/template";
+	}
+	
+	//For add and update person both
+	@RequestMapping(value= "/user/profile/update", method = {RequestMethod.GET, RequestMethod.POST})
+	public String addUserProfile(@ModelAttribute("user") User p){
+		
+		if(this.userService.getUserById(p.getUserId()) == null){
+			//new person, add it
+			this.userService.addUser(p);
+		}else{
+			//existing person, call update
+			this.userService.updateUser(p);
+		}
+		
+		return "redirect:/user/profile";
+		
 	}
 	
 	@RequestMapping(value="/login")
@@ -83,7 +107,7 @@ public class UserController {
 	}
 	
 	//For add and update person both
-	@RequestMapping(value= "/user/add", method = RequestMethod.POST)
+	@RequestMapping(value= "/add", method = RequestMethod.POST)
 	public String addUser(@ModelAttribute("user") User p){
 		
 		if(this.userService.getUserById(p.getUserId()) == null){
@@ -102,13 +126,6 @@ public class UserController {
     public String removeUser(@PathVariable("id") String id){
         this.userService.removeUser(id);
         return "redirect:/registration";
-    }
- 
-    @RequestMapping("/edit/{id}")
-    public String editUser(@PathVariable("id") String id, Model model){
-        model.addAttribute("user", this.userService.getUserById(id));
-        model.addAttribute("listUsers", this.userService.listUsers());
-        return "registration";
     }
     
 	@RequestMapping(value="/header")

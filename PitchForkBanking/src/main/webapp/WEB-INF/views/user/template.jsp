@@ -20,7 +20,7 @@ body {
 }
 
 .form-signin {
-	max-width: 400px;
+	max-width: 600px;
 	padding: 19px 29px 29px;
 	margin: 0 auto 20px;
 	background-color: #fff;
@@ -39,19 +39,23 @@ body {
 
 .form-signin input[type="text"], .form-signin input[type="password"] {
 	font-size: 16px;
-	height: auto;
+	height: 600px;
 	margin-bottom: 15px;
 	padding: 7px 9px;
 }
 </style>
-<link href="<c:url value="/resources/dist/css/bootstrap.css" />"
-	rel="stylesheet">
 <link
-	href="<c:url value="/resources/dist/css/bootstrap-responsive.css" />"
+	href="<c:url value="/resources/bootstrap/css/bootstrap-responsive.css" />"
+	rel="stylesheet">
+
+<link href="<c:url value="/resources/bootstrap/css/bootstrap.css" />"
 	rel="stylesheet">
 
 </head>
 <body id="body-site">
+	<div class="container-fluid" align="right">
+		<jsp:include page="../common/header.jsp" />
+	</div>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span2">
@@ -61,6 +65,9 @@ body {
 				<jsp:include page="${contentView}.jsp" />
 			</div>
 		</div>
+	</div>
+	<div class="container-fluid" align="left">
+		<jsp:include page="../common/footer.jsp" />
 	</div>
 </body>
 </html>

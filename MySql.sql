@@ -10,7 +10,7 @@ CREATE TABLE `pitchforkbank`.`user` (
   `state` VARCHAR(45) NOT NULL,
   `zipcode` INT NOT NULL,
   `ssn` VARCHAR(45) NOT NULL,
-  `phoneno` BIGINT NOT NULL,
+  `phoneno` VARCHAR(45) NOT NULL,
   `enabled` INT NOT NULL,
   `ques1` VARCHAR(100) NOT NULL,
   `answer1` VARCHAR(100) NOT NULL,
@@ -44,7 +44,6 @@ CREATE TABLE `pitchforkbank`.`requests` (
   `fromUserId` VARCHAR(36) NOT NULL,
   `toUserId` VARCHAR(36) NOT NULL,
   `type` VARCHAR(45) NOT NULL,
-  `transactionId` VARCHAR(36) NOT NULL,
   PRIMARY KEY (`fromUserId`, `toUserId`),
   INDEX `toUserId_idx` (`toUserId` ASC),
   CONSTRAINT `fromUserId`

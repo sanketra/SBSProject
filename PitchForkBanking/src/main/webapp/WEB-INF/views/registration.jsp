@@ -5,7 +5,7 @@
 <html>
 <head>
 <title>Registration</title>
-<link href="<c:url value="/resources/dist/css/bootstrap.css" />"
+<link href="<c:url value="/resources/bootstrap/css/bootstrap.css" />"
 	rel="stylesheet">
 <style type="text/css">
 body {
@@ -45,8 +45,7 @@ body {
 </head>
 <body>
 	<h1 align="center">Register</h1>
-
-	<c:url var="addAction" value="/user/add"></c:url>
+	<c:url var="addAction" value="/add"></c:url>
 	<div class="container">
 		<form:form action="${addAction}" commandName="user"
 			class="form-signin">
@@ -55,28 +54,35 @@ body {
 					<td><form:label path="emailId">
 							<spring:message text="Email Id" />
 						</form:label></td>
-					<td><form:input path="emailId" class="form-control"
+					<td><form:input path="emailId" class="input-xlarge"
 							placeholder="Email Id" /></td>
-				</tr>
-				<tr>
-					<td><form:label path="password">
-							<spring:message text="Password" />
-						</form:label></td>
-					<td><form:input type='password' path="password"
-							class="form-control" placeholder="Password" /></td>
 				</tr>
 				<tr>
 					<td><form:label path="fname">
 							<spring:message text="First Name" />
 						</form:label></td>
-					<td><form:input path="fname" class="form-control"
+					<td><form:input path="fname" class="input-xlarge"
 							placeholder="First Name" /></td>
+				</tr>
+				<tr>
+					<td><form:label path="lname">
+							<spring:message text="Last Name" />
+						</form:label></td>
+					<td><form:input path="lname" class="input-xlarge"
+							placeholder="Last Name" /></td>
+				</tr>
+				<tr>
+					<td><form:label path="password">
+							<spring:message text="Password" />
+						</form:label></td>
+					<td><form:input type="password" path="password" class="input-xlarge"
+							placeholder="Password" /></td>
 				</tr>
 				<tr>
 					<td><form:label path="role">
 							<spring:message text="Role" />
 						</form:label></td>
-					<td><form:input path="role" class="form-control"
+					<td><form:input path="role" class="input-xlarge"
 							placeholder="Role" /></td>
 				</tr>
 				<tr>
@@ -107,7 +113,6 @@ body {
 						<th>Last Name</th>
 						<th>Email Id</th>
 						<th>Role</th>
-						<th>Edit</th>
 						<th>Delete</th>
 					</tr>
 				</thead>
@@ -117,8 +122,7 @@ body {
 						<td>${user.lname}</td>
 						<td>${user.emailId}</td>
 						<td>${user.role}</td>
-						<td><a href="<c:url value='/edit/${user.userId}' />">Edit</a></td>
-						<td><a href="<c:url value='/remove/${user.userId}' />">Delete</a></td>
+						<td><a href="<c:url value='remove/${user.userId}' />">Delete</a></td>
 					</tr>
 				</c:forEach>
 			</table>

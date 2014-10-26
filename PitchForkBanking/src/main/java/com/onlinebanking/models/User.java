@@ -37,9 +37,9 @@ public class User implements java.io.Serializable {
 	private String address;
 	private String city;
 	private String state;
-	private int zipcode;
+	private String zipcode;
 	private String ssn;
-	private long phoneno;
+	private String phoneno;
 	private String role;
 	private int enabled;
 	private String ques1;
@@ -58,9 +58,9 @@ public class User implements java.io.Serializable {
 		this.address = "";
 		this.city = "";
 		this.state = "";
-		this.zipcode = 0;
+		this.zipcode = "";
 		this.ssn = Integer.toString(randomGenerator.nextInt(100));
-		this.phoneno = randomGenerator.nextInt(1000);
+		this.phoneno = "";
 		this.enabled = 1;
 		this.ques1 = "";
 		this.answer1 = "";
@@ -72,7 +72,7 @@ public class User implements java.io.Serializable {
 
 	public User(String userId, String emailId, String password, String fname,
 			String lname, Date dob, String address, String city, String state,
-			int zipcode, String ssn, long phoneno, String role, int enabled,
+			String zipcode, String ssn, String phoneno, String role, int enabled,
 			String ques1, String answer1, String ques2, String answer2,
 			String ques3, String answer3) {
 		this.userId = userId;
@@ -182,11 +182,11 @@ public class User implements java.io.Serializable {
 	}
 
 	@Column(name = "zipcode", nullable = false)
-	public int getZipcode() {
+	public String getZipcode() {
 		return this.zipcode;
 	}
 
-	public void setZipcode(int zipcode) {
+	public void setZipcode(String zipcode) {
 		this.zipcode = zipcode;
 	}
 
@@ -200,11 +200,11 @@ public class User implements java.io.Serializable {
 	}
 
 	@Column(name = "phoneno", unique = true, nullable = false)
-	public long getPhoneno() {
+	public String getPhoneno() {
 		return this.phoneno;
 	}
 
-	public void setPhoneno(long phoneno) {
+	public void setPhoneno(String phoneno) {
 		this.phoneno = phoneno;
 	}
 

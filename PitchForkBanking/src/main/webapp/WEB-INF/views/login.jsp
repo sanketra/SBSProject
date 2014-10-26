@@ -4,7 +4,7 @@
 
 <head>
 <title>Login Page</title>
-<link href="<c:url value="/resources/dist/css/bootstrap.css" />"
+<link href="<c:url value="/resources/bootstrap/css/bootstrap.css" />"
 	rel="stylesheet">
 <style type="text/css">
 body {

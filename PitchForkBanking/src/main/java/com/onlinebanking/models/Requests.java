@@ -26,18 +26,15 @@ public class Requests implements java.io.Serializable {
 	private RequestsId id;
 	private User userByToUserId;
 	private User userByFromUserId;
-	private Transaction transaction;
 	private String type;
 
 	public Requests() {
 	}
 
-	public Requests(RequestsId id, User userByToUserId, User userByFromUserId,
-			Transaction transaction, String type) {
+	public Requests(RequestsId id, User userByToUserId, User userByFromUserId, String type) {
 		this.id = id;
 		this.userByToUserId = userByToUserId;
 		this.userByFromUserId = userByFromUserId;
-		this.transaction = transaction;
 		this.type = type;
 	}
 
@@ -71,16 +68,6 @@ public class Requests implements java.io.Serializable {
 
 	public void setUserByFromUserId(User userByFromUserId) {
 		this.userByFromUserId = userByFromUserId;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "transactionId", nullable = false)
-	public Transaction getTransaction() {
-		return this.transaction;
-	}
-
-	public void setTransaction(Transaction transaction) {
-		this.transaction = transaction;
 	}
 
 	@Column(name = "type", nullable = false, length = 45)

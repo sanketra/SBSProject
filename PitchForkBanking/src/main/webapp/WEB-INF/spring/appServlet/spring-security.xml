@@ -25,10 +25,10 @@
 		<intercept-url pattern="/admin/*" access="Admin" />
 		<intercept-url pattern="/admin/*/*" access="Admin" />
 		<intercept-url pattern="/admin/*/*/*" access="Admin" />
-		<intercept-url pattern="/user_home" access="User" />
-		<intercept-url pattern="/user_home/*" access="User" />
-		<intercept-url pattern="/user_home/*/*" access="User" />
-		<intercept-url pattern="/user_home/*/*/*" access="User" />
+		<intercept-url pattern="/user" access="User" />
+		<intercept-url pattern="/user/*" access="User" />
+		<intercept-url pattern="/user/*/*" access="User" />
+		<intercept-url pattern="/user/*/*/*" access="User" />
 		<form-login login-page="/login" authentication-failure-url="/denied"
 			username-parameter="emailId" password-parameter="password"
 		    authentication-success-handler-ref="authSuccessHandler"/>

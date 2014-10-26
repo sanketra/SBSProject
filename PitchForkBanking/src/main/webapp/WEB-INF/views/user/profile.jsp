@@ -2,10 +2,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<c:url var="editAction" value="/user/edit"></c:url>
-<div class="container">
-	<form:form action="${addAction}" commandName="user" class="form-signin">
-		<table class="table table-striped">
+<c:url var="editAction" value="/user/profile/edit"></c:url>
+<div>
+	<form:form action="${editAction}" commandName="user"
+		class="form-signin">
+		<table class="table table-bordered">
 			<tr>
 				<td>First Name</td>
 				<td>${user.fname}</td>
@@ -13,6 +14,10 @@
 			<tr>
 				<td>Last Name</td>
 				<td>${user.lname}</td>
+			</tr>
+			<tr>
+				<td>SSN</td>
+				<td>${user.ssn}</td>
 			</tr>
 			<tr>
 				<td>Email Id</td>
@@ -27,19 +32,27 @@
 				<td>${user.city}</td>
 			</tr>
 			<tr>
+				<td>State</td>
+				<td>${user.state}</td>
+			</tr>
+			<tr>
+				<td>Zipcode</td>
+				<td>${user.zipcode}</td>
+			</tr>
+			<tr>
+				<td>Phone Number</td>
+				<td>${user.phoneno}</td>
+			</tr>
+			<tr>
 				<td colspan="2"><c:if test="${!empty user.emailId}">
-						<input type="submit" value="<spring:message text="Edit" />"
+						<input type="submit"
+							value="<spring:message text="    Edit    " />"
 							class="btn btn-lg btn-primary" />
 					</c:if> <c:if test="${empty user.emailId}">
-						<input type="submit" value="<spring:message text="Register" />"
+						<input type="submit" value="<spring:message text="  Submit  " />"
 							class="btn btn-lg btn-primary" />
 					</c:if></td>
 			</tr>
 		</table>
 	</form:form>
 </div>
-<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
-
-<form action="${logoutAction}" method="post">
-	<input type="submit" value="Logout" />
-</form>
