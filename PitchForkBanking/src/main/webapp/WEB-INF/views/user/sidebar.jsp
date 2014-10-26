@@ -2,18 +2,18 @@
 <aside id="side_bar">
 	<ul id="user_menu" class="nav nav-tabs nav-stacked">
 		<li><a 
-			href="${page.url_host}${page.url_apppath}profile">Profile</a></li>
+			href="${pageContext.request.contextPath}/user/profile">Profile</a></li>
 		<li><a 
-			href="${page.url_host}${page.url_apppath}transfer">Transfer</a></li>
+			href="${pageContext.request.contextPath}/user/transfer">Transfer</a></li>
 		<li><a
-			href="${page.url_host}${page.url_apppath}debit">Debit</a></li>
+			href="${pageContext.request.contextPath}/user/debit">Debit</a></li>
 		<li><a 
-			href="${page.url_host}${page.url_apppath}credit">Credit</a></li>
+			href="${pageContext.request.contextPath}/user/credit">Credit</a></li>
 		<li><a 
-			href="${page.url_host}${page.url_apppath}payment">Payment</a></li>
+			href="${pageContext.request.contextPath}/user/payment">Payment</a></li>
 		<li><a 
-			href="${page.url_host}${page.url_apppath}transactions">Transactions</a></li>
+			href="${pageContext.request.contextPath}/user/transactions">Transactions</a></li>
 		<li><a 
-			href="${page.url_host}${page.url_apppath}authorize">Authorize</a></li>
+			href="${pageContext.request.contextPath}/user/authorize">Authorize</a></li>
 	</ul>
 </aside>

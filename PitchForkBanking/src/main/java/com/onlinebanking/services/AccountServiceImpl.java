@@ -25,4 +25,9 @@ public class AccountServiceImpl implements AccountService{
 	public List<Account> getUserAccounts(String userId) {
 		return this.accountHome.getUserAccounts(userId);
 	}
+	
+	@Transactional
+	public Account getAccountById(int Id) {
+		return this.accountHome.findById(Id);
+	}
 }

@@ -90,7 +90,7 @@ public class TransactionHome {
 		try {
 			Transaction instance = (Transaction) sessionFactory
 					.getCurrentSession().get(
-							"com.onlinebanking.dao.Transaction", id);
+							"com.onlinebanking.models.Transaction", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {
@@ -108,7 +108,7 @@ public class TransactionHome {
 		log.debug("finding Transaction instance by example");
 		try {
 			List<Transaction> results = sessionFactory.getCurrentSession()
-					.createCriteria("com.onlinebanking.dao.Transaction")
+					.createCriteria("com.onlinebanking.models.Transaction")
 					.add(Example.create(instance)).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());

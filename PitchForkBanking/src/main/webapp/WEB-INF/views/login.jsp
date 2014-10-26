@@ -51,7 +51,7 @@ body {
 			<input name="submit" type="submit" value="Login"
 				class="btn btn-large btn-primary" />
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<a href="${page.url_host}registration" rel="nofollow">Register</a>
+			<a href="${pageContext.request.contextPath}/registration" rel="nofollow">Register</a>
 		</form>
 	</div>
 </body>

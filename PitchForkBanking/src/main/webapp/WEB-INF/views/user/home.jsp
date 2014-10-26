@@ -61,7 +61,7 @@ body {
 							<c:otherwise> Undefined </c:otherwise>
 						</c:choose></td>
 					<td><a class="btn btn-success"
-						href="${page.url_host}${page.url_apppath}profile?${_account.accountNum}">Select</a></td>
+						href="${pageContext.request.contextPath}/user/profile/${_account.accountNum}">Select</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>

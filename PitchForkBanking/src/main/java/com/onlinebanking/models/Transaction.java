@@ -3,6 +3,7 @@ package com.onlinebanking.models;
 // Generated Oct 19, 2014 4:55:42 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,6 +35,7 @@ public class Transaction implements java.io.Serializable {
 	private String transactionStatus;
 
 	public Transaction() {
+		this.transactionId = UUID.randomUUID().toString();
 	}
 
 	public Transaction(String transactionId, Account accountByFromAcountNum,

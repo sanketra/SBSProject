@@ -98,7 +98,7 @@ body {
 		</form:form>
 	</div>
 	<div class="container" align="center">
-		<a href="http://localhost:8080/PitchForkBanking/login">Login into
+		<a href="${pageContext.request.contextPath}/login">Login into
 			PitchForkBanking</a>
 	</div>
 	<br>

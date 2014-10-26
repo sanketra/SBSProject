@@ -1,5 +1,8 @@
 package com.onlinebanking.controllers;
 
+import java.util.Date;
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -15,15 +18,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.onlinebanking.helpers.URLHelper;
+import com.onlinebanking.models.Transaction;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
+import com.onlinebanking.services.TransactionService;
 import com.onlinebanking.services.UserService;
 
 @Controller
 public class UserController {
 	private UserService userService;
 	private AccountService accountService;
+	private TransactionService transactionService;
 	
+	@Autowired(required=true)
+	@Qualifier(value="transactionService")
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
+
 	@Autowired(required=true)
 	@Qualifier(value="accountService")
 	public void setAccountService(AccountService accountService) {
@@ -54,10 +67,48 @@ public class UserController {
 	
 	@RequestMapping(value = {"/user/*", "/user/*/*", "/user/*/*/*"}, method = {RequestMethod.GET, RequestMethod.POST})
 	public String handleDashboardRequest(Model model, HttpServletRequest request, HttpServletResponse response) {
+		URLHelper.logRequest(request);
+		
+		HashMap<String, String> urls = URLHelper.analyseRequest(request);
 		HttpSession session = request.getSession();
-		model.addAttribute("contentView", "profile");
-		model.addAttribute("user", this.userService.getUserByEmailId((String)session.getAttribute("emailId")));
-		return "user/template";
+		
+		// Handle all post requests
+		if (URLHelper.isPOSTRequest(request)) {
+			String name = request.getParameter("name").toString();
+			String toAccount = request.getParameter("account_to").toString();
+			String toEmailId = request.getParameter("emailId").toString();
+			int amount = Integer.parseInt(request.getParameter("amount").toString());
+			String from = session.getAttribute("account_id").toString();
+			System.out.println(name +" " + toAccount + " " + toEmailId + " " + amount + " " + from);
+			Transaction t = new Transaction();
+			t.setAccountByFromAcountNum(this.accountService.getAccountById(Integer.parseInt(from)));
+			t.setAccountByToAccountNum(this.accountService.getAccountById(Integer.parseInt(toAccount)));
+			t.setTransactionAmount(amount);
+			t.setTransactionStatus("success");
+			t.setTransactionType("credit");
+			t.setTransactionTime(new Date());
+			this.transactionService.addTransaction(t);
+			return "redirect:/user/transfer";
+		}
+		
+		
+		// Handle all get requests
+		if (urls.get("url_2").toString().equalsIgnoreCase("transfer")) {
+			model.addAttribute("contentView", "transfer");
+			return "user/template";
+		} else {
+			int account_id = 0;
+			
+			if (urls.get("url_3") != null && !urls.get("url_3").toString().equals("")) {
+				account_id = Integer.parseInt(urls.get("url_3"));
+				System.out.println("My Account: " + account_id);
+				session.setAttribute("account_id", account_id);
+			}
+			
+			model.addAttribute("contentView", "profile");
+			model.addAttribute("user", this.userService.getUserByEmailId((String)session.getAttribute("emailId")));
+			return "user/template";
+		}
 	}
 	
 	@RequestMapping(value="/user/profile/edit")

@@ -53,6 +53,13 @@ public class TransactionServiceImpl implements TransactionService {
 	
 	@Override
 	@Transactional
+	public void addTransaction(Transaction transaction)
+	{
+		transactionHome.persist(transaction);
+	}
+	
+	@Override
+	@Transactional
 	public void updateTransaction(Transaction transaction)
 	{
 		transactionHome.merge(transaction);

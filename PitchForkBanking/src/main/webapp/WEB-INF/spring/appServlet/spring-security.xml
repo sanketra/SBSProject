@@ -115,6 +115,10 @@
 		<beans:property name="accountHome" ref="accountHome"></beans:property>
 	</beans:bean>
 	
+	<beans:bean id="transactionService" class="com.onlinebanking.services.TransactionServiceImpl">
+		<beans:property name="transactionHome" ref="transactionHome"></beans:property>
+	</beans:bean>
+	
 	<!-- Transactions -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	
