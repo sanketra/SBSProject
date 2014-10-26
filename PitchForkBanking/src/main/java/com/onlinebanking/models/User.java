@@ -60,7 +60,7 @@ public class User implements java.io.Serializable {
 		this.state = "";
 		this.zipcode = "";
 		this.ssn = Integer.toString(randomGenerator.nextInt(100));
-		this.phoneno = "";
+		this.phoneno = Integer.toString(randomGenerator.nextInt(100));
 		this.enabled = 1;
 		this.ques1 = "";
 		this.answer1 = "";
