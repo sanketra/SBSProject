@@ -37,6 +37,9 @@ body {
 	<div class="container-fluid" align="right">
 		<jsp:include page="../common/header.jsp" />
 	</div>
+	<div class="container-fluid" align="left">
+		<jsp:include page="../common/response.jsp" />
+	</div>
 	<h1>Welcome to Pitch Fork Banking</h1>
 	<P>
 		<br> Hello :${fname}<br>

@@ -90,7 +90,30 @@ public class UserController {
 
 		HashMap<String, String> urls = URLHelper.analyseRequest(request);
 		HttpSession session = request.getSession();
-
+		ValidationStatus status;
+		
+		int account_id = 0;
+		// Always check if the user has selected account id before going to next page.
+		if (urls.get("url_3") != null
+				&& !urls.get("url_3").toString().equals("")) {
+			account_id = Integer.parseInt(urls.get("url_3"));
+			session.setAttribute("account_id", account_id);
+		} else if (session.getAttribute("account_id") == null) {
+			attributes.addFlashAttribute("response", new Response(
+					"error", "Please select an account to proceed!!"));
+			return "redirect:/user/home";
+		}
+		
+		account_id = (Integer) session.getAttribute("account_id");
+		// Now that user has an account id check if its a valid account of user.
+		status = this.userService.isValidUserAccount(account_id, session.getAttribute("userId").toString());
+		
+		if (!status.getStatus()) {
+			attributes.addFlashAttribute("response", new Response(
+					"error", status.getMessage()));
+			return "redirect:/user/home";
+		}
+		
 		// Handle all post requests
 		if (URLHelper.isPOSTRequest(request)) {
 			if (urls.get("url_2").toString().equals("transfer")) {
@@ -101,6 +124,12 @@ public class UserController {
 				String toAccount = request.getParameter("account_to").toString();
 				String fromAccount = session.getAttribute("account_id").toString();
 				
+				status = this.userService.isValidAccount(Integer.parseInt(toAccount));
+				if(!status.getStatus()) {
+					attributes.addFlashAttribute("response", new Response(
+							"error", status.getMessage()));
+					return "redirect:/user/transfer";
+				}
 				String toUserId = this.accountService.getAccountById(Integer.parseInt(toAccount)).getUser().getUserId();
 				User toUser = this.userService.getUserById(toUserId);
 				
@@ -113,7 +142,7 @@ public class UserController {
 				}
 				
 				// Validating amount
-				ValidationStatus status = ValidationHelper.validateAmount(request.getParameter("amount"));
+				status = ValidationHelper.validateAmount(request.getParameter("amount"));
 				if (!status.getStatus()) {
 					attributes.addFlashAttribute("response", new Response("error", status.getMessage()));
 					return "redirect:/user/transfer";
@@ -161,7 +190,7 @@ public class UserController {
 				return "redirect:/user/authorize";
 			}
 		}
-
+		
 		// Handle all get requests
 		if (urls.get("url_2").toString().equals("transfer")) {
 			model.addAttribute("contentView", "transfer");
@@ -175,13 +204,13 @@ public class UserController {
 		} else if (urls.get("url_2").toString().equals("payment")) {
 			// TODO: Need to decide how to store and retrieve merchant payment
 			// requests
-			int account_id = (Integer) session.getAttribute("account_id");
+			account_id = (Integer) session.getAttribute("account_id");
 			System.out.println("Payment Requests for Account: " + account_id);
 			model.addAttribute("transactions", null);
 			model.addAttribute("contentView", "payment");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("transactions")) {
-			int account_id = (Integer) session.getAttribute("account_id");
+			account_id = (Integer) session.getAttribute("account_id");
 			model.addAttribute("transactions", this.transactionService
 					.getAllTransactionsForAccountId(account_id));
 			model.addAttribute("contentView", "transactions");
@@ -191,19 +220,15 @@ public class UserController {
 			model.addAttribute("requests", null);
 			model.addAttribute("contentView", "authorize");
 			return "user/template";
-		} else {
-			int account_id = 0;
-
-			if (urls.get("url_3") != null
-					&& !urls.get("url_3").toString().equals("")) {
-				account_id = Integer.parseInt(urls.get("url_3"));
-				session.setAttribute("account_id", account_id);
-			}
-
+		} else if (urls.get("url_2").toString().equals("profile")) {
 			model.addAttribute("contentView", "profile");
 			model.addAttribute("user", this.userService
 					.getUserByEmailId((String) session.getAttribute("emailId")));
 			return "user/template";
+		} else {
+			attributes.addFlashAttribute("response", new Response(
+					"error", "Please select an account to proceed!!"));
+			return "redirect:/user/home";
 		}
 	}
 

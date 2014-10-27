@@ -84,7 +84,7 @@ public class TransactionServiceImpl implements TransactionService {
 			fromAcc.setAmount(fromAcc.getAmount() - amount);
 			toAcc.setAmount(toAcc.getAmount() + amount);
 		}
-
+		// All try & catch return ValidationStatus
 		transactionHome.persist(t);
 		this.accountHome.merge(fromAcc);
 		this.accountHome.merge(toAcc);
