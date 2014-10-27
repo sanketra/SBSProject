@@ -4,13 +4,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Welcome!</title>
+<title>Account details</title>
 </head>
 <body>
 
 <%@include file="emp_sidebar.jsp" %>
 
-<h1>This is an employee page</h1>
+<h1>Account Details Page</h1>
 
 </body>
 </html>
