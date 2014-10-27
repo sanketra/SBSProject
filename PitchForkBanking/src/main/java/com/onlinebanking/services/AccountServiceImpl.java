@@ -11,7 +11,6 @@ public class AccountServiceImpl implements AccountService{
 
 	private AccountHome accountHome;
 	
-	
 	public void setAccountHome(AccountHome accountHome) {
 		this.accountHome = accountHome;
 	}
@@ -24,5 +23,10 @@ public class AccountServiceImpl implements AccountService{
 	@Transactional
 	public List<Account> getUserAccounts(String userId) {
 		return this.accountHome.getUserAccounts(userId);
+	}
+	
+	@Transactional
+	public Account getAccountById(int Id) {
+		return this.accountHome.findById(Id);
 	}
 }

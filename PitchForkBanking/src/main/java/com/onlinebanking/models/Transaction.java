@@ -3,6 +3,7 @@ package com.onlinebanking.models;
 // Generated Oct 19, 2014 4:55:42 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,16 +30,17 @@ public class Transaction implements java.io.Serializable {
 	private Account accountByFromAcountNum;
 	private Account accountByToAccountNum;
 	private String transactionType;
-	private int transactionAmount;
+	private double transactionAmount;
 	private Date transactionTime;
 	private String transactionStatus;
 
 	public Transaction() {
+		this.transactionId = UUID.randomUUID().toString();
 	}
 
 	public Transaction(String transactionId, Account accountByFromAcountNum,
 			Account accountByToAccountNum, String transactionType,
-			int transactionAmount, Date transactionTime,
+			double transactionAmount, Date transactionTime,
 			String transactionStatus) {
 		this.transactionId = transactionId;
 		this.accountByFromAcountNum = accountByFromAcountNum;
@@ -89,11 +91,11 @@ public class Transaction implements java.io.Serializable {
 	}
 
 	@Column(name = "transactionAmount", nullable = false)
-	public int getTransactionAmount() {
+	public double getTransactionAmount() {
 		return this.transactionAmount;
 	}
 
-	public void setTransactionAmount(int transactionAmount) {
+	public void setTransactionAmount(double transactionAmount) {
 		this.transactionAmount = transactionAmount;
 	}
 

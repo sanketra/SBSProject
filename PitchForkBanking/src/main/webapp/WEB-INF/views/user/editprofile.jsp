@@ -1,6 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ page import="net.tanesha.recaptcha.ReCaptcha"%>
+<%@ page import="net.tanesha.recaptcha.ReCaptchaFactory"%>
 
 <c:url var="submitAction" value="/user/profile/update"></c:url>
 <div class="container">
@@ -55,6 +57,19 @@
 				<td>Phone Number</td>
 				<td><form:input path="phoneno" class="input-xlarge"
 						placeholder="Phone Number" /></td>
+			</tr>
+			<tr>
+				<td>Captcha</td>
+				<td>
+					<%
+						ReCaptcha c = ReCaptchaFactory
+									.newReCaptcha(
+											"6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS",
+											"6LdU5vsSAAAAAPAyZqM1Bx3Kh12wdMvimkjC5Xqpyour_private_key",
+											false);
+							out.print(c.createRecaptchaHtml(null, null));
+					%>
+				</td>
 			</tr>
 			<tr>
 				<td colspan="2"><c:if test="${!empty user.emailId}">

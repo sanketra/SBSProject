@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 
@@ -90,7 +91,7 @@ public class TransactionHome {
 		try {
 			Transaction instance = (Transaction) sessionFactory
 					.getCurrentSession().get(
-							"com.onlinebanking.dao.Transaction", id);
+							"com.onlinebanking.models.Transaction", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {
@@ -108,8 +109,47 @@ public class TransactionHome {
 		log.debug("finding Transaction instance by example");
 		try {
 			List<Transaction> results = sessionFactory.getCurrentSession()
-					.createCriteria("com.onlinebanking.dao.Transaction")
+					.createCriteria("com.onlinebanking.models.Transaction")
 					.add(Example.create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Transaction> getAllTransactionsForAccountId(int id) {
+		log.debug("finding User instance by example");
+		try {
+			String queryString = "Select * from transaction T where T.fromAcountNum = :id OR T.toAccountNum = :id";
+			Session s = sessionFactory.getCurrentSession();
+			List<Transaction> results = s.createSQLQuery(queryString).
+					addEntity(Transaction.class).
+					setParameter("id", id).
+					list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	// TODO: Logic for user payments
+	@SuppressWarnings("unchecked")
+	public List<Transaction> getAllPaymentsForAccountId(int id) {
+		log.debug("finding User instance by example");
+		try {
+			String queryString = "Select * from transaction T where T.fromAcountNum = :id AND T.transactionStatus = :status";
+			Session s = sessionFactory.getCurrentSession();
+			List<Transaction> results = s.createSQLQuery(queryString).
+					addEntity(Transaction.class).
+					setParameter("id", id).setParameter("status", "User Pending").
+					list();
 			log.debug("find by example successful, result size: "
 					+ results.size());
 			return results;

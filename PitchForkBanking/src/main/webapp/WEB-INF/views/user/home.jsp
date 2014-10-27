@@ -34,6 +34,12 @@ body {
 	rel="stylesheet">
 </head>
 <body>
+	<div class="container-fluid" align="right">
+		<jsp:include page="../common/header.jsp" />
+	</div>
+	<div class="container-fluid" align="left">
+		<jsp:include page="../common/response.jsp" />
+	</div>
 	<h1>Welcome to Pitch Fork Banking</h1>
 	<P>
 		<br> Hello :${fname}<br>
@@ -43,10 +49,10 @@ body {
 	<table class="table table-bordered">
 		<thead>
 			<tr>
-				<td>Bank Account ID</td>
-				<td>Available Balance</td>
-				<td>Account Type</td>
-				<td></td>
+				<th>Bank Account ID</th>
+				<th>Available Balance</th>
+				<th>Account Type</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -61,7 +67,7 @@ body {
 							<c:otherwise> Undefined </c:otherwise>
 						</c:choose></td>
 					<td><a class="btn btn-success"
-						href="${page.url_host}${page.url_apppath}profile?${_account.accountNum}">Select</a></td>
+						href="${pageContext.request.contextPath}/user/profile/${_account.accountNum}">Select</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -69,9 +75,5 @@ body {
 	<br>
 	<br>
 	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
-
-	<form action="${logoutAction}" method="post">
-		<input type="submit" value="Logout" />
-	</form>
 </body>
 </html>

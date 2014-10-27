@@ -91,7 +91,7 @@ public class AccountHome {
 		log.debug("getting Account instance with id: " + id);
 		try {
 			Account instance = (Account) sessionFactory.getCurrentSession()
-					.get("com.onlinebanking.dao.Account", id);
+					.get("com.onlinebanking.models.Account", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {

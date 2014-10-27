@@ -62,7 +62,11 @@ body {
 				<jsp:include page="sidebar.jsp" />
 			</div>
 			<div class="span10">
+			<article id="content" class="span10">
+				<jsp:include page="../common/response.jsp" />
 				<jsp:include page="${contentView}.jsp" />
+			</article>
+				
 			</div>
 		</div>
 	</div>

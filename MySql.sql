@@ -11,6 +11,7 @@ CREATE TABLE `pitchforkbank`.`user` (
   `zipcode` VARCHAR(10) NOT NULL,
   `ssn` VARCHAR(45) NOT NULL,
   `phoneno` VARCHAR(45) NOT NULL,
+  `role` VARCHAR(45) NOT NULL,
   `enabled` INT NOT NULL,
   `ques1` VARCHAR(100) NOT NULL,
   `answer1` VARCHAR(100) NOT NULL,
@@ -37,8 +38,6 @@ CREATE TABLE `pitchforkbank`.`account` (
     REFERENCES `pitchforkbank`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
-
-
 
 CREATE TABLE `pitchforkbank`.`requests` (
   `fromUserId` VARCHAR(36) NOT NULL,
@@ -79,15 +78,6 @@ CREATE TABLE `pitchforkbank`.`transaction` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-ALTER TABLE `pitchforkbank`.`requests` 
-ADD INDEX `transactionId_idx` (`transactionId` ASC);
-ALTER TABLE `pitchforkbank`.`requests` 
-ADD CONSTRAINT `transactionId`
-  FOREIGN KEY (`transactionId`)
-  REFERENCES `pitchforkbank`.`transaction` (`transactionId`)
-  ON DELETE CASCADE
-  ON UPDATE CASCADE;
-
 CREATE TABLE `pitchforkbank`.`userotp` (
   `userId` VARCHAR(36) NOT NULL,
   `oneTimePassword` VARCHAR(45) NOT NULL,
@@ -105,5 +95,8 @@ CREATE TABLE `pitchforkbank`.`user_public_key` (
   PRIMARY KEY (`userId`),
   UNIQUE INDEX `public key_UNIQUE` (`public key` ASC));
 
-ALTER TABLE `pitchforkbank`.`user` 
-ADD COLUMN `role` VARCHAR(45) NOT NULL AFTER `phoneno`;
+ALTER TABLE `pitchforkbank`.`account` 
+CHANGE COLUMN `amount` `amount` DOUBLE NOT NULL ;
+
+ALTER TABLE `pitchforkbank`.`transaction` 
+CHANGE COLUMN `transactionAmount` `transactionAmount` DOUBLE NOT NULL ;
