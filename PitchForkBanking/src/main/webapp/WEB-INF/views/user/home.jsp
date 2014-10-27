@@ -34,6 +34,9 @@ body {
 	rel="stylesheet">
 </head>
 <body>
+	<div class="container-fluid" align="right">
+		<jsp:include page="../common/header.jsp" />
+	</div>
 	<h1>Welcome to Pitch Fork Banking</h1>
 	<P>
 		<br> Hello :${fname}<br>
@@ -69,9 +72,5 @@ body {
 	<br>
 	<br>
 	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
-
-	<form action="${logoutAction}" method="post">
-		<input type="submit" value="Logout" />
-	</form>
 </body>
 </html>

@@ -21,6 +21,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
+import com.onlinebanking.helpers.ValidationHelper;
+import com.onlinebanking.helpers.ValidationStatus;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
@@ -93,22 +95,36 @@ public class UserController {
 		if (URLHelper.isPOSTRequest(request)) {
 			if (urls.get("url_2").toString().equals("transfer")) {
 				// TODO: User name and emailId to validate receiver
-				/*
-				 * String name = request.getParameter("name").toString(); String
-				 * toEmailId = request.getParameter("emailId").toString();
-				 */
 
-				String toAccount = request.getParameter("account_to")
-						.toString();
-
-				int amount = Integer.parseInt(request.getParameter("amount")
-						.toString());
-				String fromAccount = session.getAttribute("account_id")
-						.toString();
-
+				String name = request.getParameter("name").toString();
+				String toEmailId = request.getParameter("emailId").toString();
+				String toAccount = request.getParameter("account_to").toString();
+				String fromAccount = session.getAttribute("account_id").toString();
+				
+				String toUserId = this.accountService.getAccountById(Integer.parseInt(toAccount)).getUser().getUserId();
+				User toUser = this.userService.getUserById(toUserId);
+				
+				// Validating the to account & user details
+				if (!toUser.getEmailId().equalsIgnoreCase(toEmailId)
+						|| !toUser.getFname().concat(" " + toUser.getLname()).equals(name)) {
+					attributes.addFlashAttribute("response", new Response(
+							"error", "Incorrect account details!!"));
+					return "redirect:/user/transfer";
+				}
+				
+				// Validating amount
+				ValidationStatus status = ValidationHelper.validateAmount(request.getParameter("amount"));
+				if (!status.getStatus()) {
+					attributes.addFlashAttribute("response", new Response("error", status.getMessage()));
+					return "redirect:/user/transfer";
+				}
+				
+				double amount = Double.parseDouble(request.getParameter("amount"));
+				
 				if (toAccount.equals(fromAccount)) {
 					attributes.addFlashAttribute("response", new Response(
-							"error", "Cannot transfer to own account!!"));
+							"error",
+							"Cannot transfer to currently selected account!!"));
 					return "redirect:/user/transfer";
 				}
 

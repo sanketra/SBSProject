@@ -26,13 +26,13 @@ public class Account implements java.io.Serializable {
 	private int accountNum;
 	private User user;
 	private String accountType;
-	private int amount;
+	private double amount;
 
 	public Account() {
 		this.accountNum = ValidationHelper.generateRandomNumber(1000, 9999);
 	}
 
-	public Account(int accountNum, User user, String accountType, int amount) {
+	public Account(int accountNum, User user, String accountType, double amount) {
 		this.accountNum = accountNum;
 		this.user = user;
 		this.accountType = accountType;
@@ -69,11 +69,11 @@ public class Account implements java.io.Serializable {
 	}
 
 	@Column(name = "amount", nullable = false)
-	public int getAmount() {
+	public double getAmount() {
 		return this.amount;
 	}
 
-	public void setAmount(int amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 }
