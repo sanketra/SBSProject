@@ -4,9 +4,21 @@
 <%@ page import="net.tanesha.recaptcha.ReCaptcha"%>
 <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory"%>
 
+<!-- Validation script -->
+
+<script>
+function validateForm() {
+    var x = document.forms["myForm"]["fname"].value;
+    if (x==null || x=="") {
+        alert("First name must be filled out");
+        return false;
+    }
+}
+</script>
+
 <c:url var="submitAction" value="/user/profile/update"></c:url>
 <div class="container">
-	<form:form action="${submitAction}" commandName="user"
+	<form:form name = "myForm" action="${submitAction}" onsubmit="return validateForm()" commandName="user"
 		class="form-horizontal" method="POST">
 		<form:hidden path="userId" />
 		<form:hidden path="password" />
