@@ -60,7 +60,7 @@ public class TransactionServiceImpl implements TransactionService {
 	@Override
 	@Transactional
 	public void createTransaction(String fromAccount, String toAccount,
-			int amount, TransactionType type) {
+			double amount, TransactionType type) {
 		Transaction t = new Transaction();
 		Account toAcc = this.accountHome.findById(Integer.parseInt(toAccount));
 		Account fromAcc = this.accountHome.findById(Integer
@@ -84,7 +84,7 @@ public class TransactionServiceImpl implements TransactionService {
 			fromAcc.setAmount(fromAcc.getAmount() - amount);
 			toAcc.setAmount(toAcc.getAmount() + amount);
 		}
-
+		// All try & catch return ValidationStatus
 		transactionHome.persist(t);
 		this.accountHome.merge(fromAcc);
 		this.accountHome.merge(toAcc);

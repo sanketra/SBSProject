@@ -52,15 +52,18 @@ public class User implements java.io.Serializable {
 	public User() {
 		//TODO: Remove once registration form is complete. 
 		Random randomGenerator = new Random();
-		this.userId = UUID.randomUUID().toString();
+//		this.userId = UUID.randomUUID().toString();
+		this.userId = "";
 		this.lname = "";
 		this.dob = new Date();
 		this.address = "";
 		this.city = "";
 		this.state = "";
 		this.zipcode = "";
-		this.ssn = Integer.toString(randomGenerator.nextInt(100));
-		this.phoneno = Integer.toString(randomGenerator.nextInt(100));
+//		this.ssn = Integer.toString(randomGenerator.nextInt(100));
+		this.ssn = "";
+//		this.phoneno = Integer.toString(randomGenerator.nextInt(100));
+		this.phoneno ="";
 		this.enabled = 1;
 		this.ques1 = "";
 		this.answer1 = "";

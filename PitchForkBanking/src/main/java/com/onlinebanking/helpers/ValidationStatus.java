@@ -1,19 +1,18 @@
 package com.onlinebanking.helpers;
 
-public class Response {
-	private String status;
+public class ValidationStatus {
+	private Boolean status;
 	private String message;
 	
-	public Response(String status, String message) {
+	public ValidationStatus(Boolean status, String msg) {
 		this.status = status;
-		this.message = message;
-	}
-	public Response() {
-	}
-	public String getStatus() {
+		this.message = msg;
+	}	
+	
+	public Boolean getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(Boolean status) {
 		this.status = status;
 	}
 	public String getMessage() {

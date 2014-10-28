@@ -2,6 +2,7 @@ package com.onlinebanking.services;
 
 import java.util.List;
 
+import com.onlinebanking.helpers.ValidationStatus;
 import com.onlinebanking.models.User;
 
 public interface UserService {
@@ -12,4 +13,6 @@ public interface UserService {
 	public User getUserById(String id);
 	public void removeUser(String id);
 	public User getUserByEmailId(String emailId);
+	public ValidationStatus isValidUserAccount(int accountNo, String userId);
+	public ValidationStatus isValidAccount(int accountNo);
 }
