@@ -52,6 +52,7 @@ public class User implements java.io.Serializable {
 		this.userId = UUID.randomUUID().toString();
 		//TODO: Remove once registration form is complete.
 		this.dob = new Date();
+		this.enabled = 1;
 	}
 
 	public User(String userId, String emailId, String password, String fname,
