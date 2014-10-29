@@ -15,4 +15,5 @@ public interface UserService {
 	public User getUserByEmailId(String emailId);
 	public Response isValidUserAccount(int accountNo, String userId);
 	public Response isValidAccount(int accountNo);
+	public String getUserRole(String emailId);
 }

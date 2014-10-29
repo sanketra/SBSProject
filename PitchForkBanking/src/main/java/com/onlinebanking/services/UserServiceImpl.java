@@ -102,4 +102,12 @@ public class UserServiceImpl implements UserService {
 		
 		return new Response("true", "Account is valid");
 	}
+
+	@Override
+	@Transactional
+	public String getUserRole(String emailId) {
+		// TODO Auto-generated method stub
+		User p = userHome.getUserByEmailId(emailId);
+		return p.getRole();
+	}
 }
