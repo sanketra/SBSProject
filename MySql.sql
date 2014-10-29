@@ -40,10 +40,13 @@ CREATE TABLE `pitchforkbank`.`account` (
     ON UPDATE CASCADE);
 
 CREATE TABLE `pitchforkbank`.`requests` (
-  `fromUserId` VARCHAR(36) NOT NULL,
-  `toUserId` VARCHAR(36) NOT NULL,
+  `requestId` VARCHAR(64) NOT NULL,
+  `fromUserId` VARCHAR(64) NOT NULL,
+  `toUserId` VARCHAR(64) NOT NULL,
   `type` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`fromUserId`, `toUserId`),
+  `status` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`requestId`),
+  INDEX `fromUserId_idx` (`fromUserId` ASC),
   INDEX `toUserId_idx` (`toUserId` ASC),
   CONSTRAINT `fromUserId`
     FOREIGN KEY (`fromUserId`)
