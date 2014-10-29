@@ -346,6 +346,13 @@ public class UserController {
 		model.addAttribute("listUsers", this.userService.listUsers());
 		return "registration";
 	}
+	
+	@RequestMapping(value = "/passwordRecovery", method = RequestMethod.GET)
+	public String passwordRecovery(Model model) {
+
+		return "passwordRecovery";
+	}
+
 
 	// For add and update person both
 	@RequestMapping(value = "/add", method = RequestMethod.POST)

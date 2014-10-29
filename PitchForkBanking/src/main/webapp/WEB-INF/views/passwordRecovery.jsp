@@ -3,7 +3,7 @@
 <html>
 
 <head>
-<title>Login Page</title>
+<title>Forgot Password</title>
 <link href="<c:url value="/resources/bootstrap/css/bootstrap.css" />"
 	rel="stylesheet">
 <style type="text/css">
@@ -42,21 +42,12 @@ body {
 </head>
 <body>
 	<div class="container">
-		<c:url var="loginUrl" value="/j_spring_security_check"></c:url>
+		<c:url var="loginUrl" value="/passwordRecovery"></c:url>
 		<form class="form-signin" action="${loginUrl}" method="POST">
-			<h2 class="form-signin-heading">Pitch Fork Banking</h2>
-			<input type='text' name='emailId' class="input-block-level"
-				placeholder="Email address" /> <input type='password'
-				name='password' class="input-block-level" placeholder="Password" />
-			<input name="submit" type="submit" value="Login"
+			<h4 class="form-signin-heading">Forgot Password?</h4>
+			<br> <input type='text' name='emailId' class="input-block-level"
+				placeholder="Email address" /> <input type="submit" value="Recover"
 				class="btn btn-large btn-primary" />
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<a href="${pageContext.request.contextPath}/registration"
-				rel="nofollow">Register</a><br> <br>
-			<div style="text-align: left">
-				<a href="${pageContext.request.contextPath}/passwordRecovery"
-					rel="nofollow">Forgot Password?</a>
-			</div>
 		</form>
 	</div>
 </body>
