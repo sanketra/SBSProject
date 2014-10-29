@@ -4,21 +4,29 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.dao.AccountHome;
 import com.onlinebanking.dao.RequestsHome;
 import com.onlinebanking.dao.TransactionHome;
+import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.helpers.Constants.TransactionType;
+import com.onlinebanking.helpers.Response;
+import com.onlinebanking.helpers.ValidationHelper;
 import com.onlinebanking.models.Account;
 import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.Transaction;
+import com.onlinebanking.models.User;
+import com.onlinebanking.models.UserRequest;
 
 public class TransactionServiceImpl implements TransactionService {
 
 	private RequestsHome requestsHome;
 	private TransactionHome transactionHome;
 	private AccountHome accountHome;
+	private UserHome userHome;
 
 	public void setAccountHome(AccountHome accountHome) {
 		this.accountHome = accountHome;
@@ -31,11 +39,43 @@ public class TransactionServiceImpl implements TransactionService {
 	public void setTransactionHome(TransactionHome transactionDAO) {
 		this.transactionHome = transactionDAO;
 	}
+	
+	public void setUserHome(UserHome userDAO) {
+		this.userHome = userDAO;
+	}
 
 	@Override
 	@Transactional
-	public void addRequest(Requests request) {
-		requestsHome.persist(request);
+	public Response addRequest(UserRequest userRequest) {
+		try
+		{
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			String fromUserId = userHome.getUserByEmailId(auth.getName()).getUserId();
+			Response result = ValidationHelper.validateUserRequest(userRequest);
+			if(result.getStatus().equalsIgnoreCase("error"))
+			{
+				return result;
+			}
+			User toUser = userHome.getUserByEmailId(userRequest.getEmailId());
+			if(toUser == null)
+			{
+				return new Response("error", "user details not correct");
+			}
+			Requests request = new Requests();
+			request.setFromUser(fromUserId);
+			request.setToUser(toUser.getUserId());
+			request.setType(userRequest.getRequestType());
+			request.setStatus("pending");
+			
+			requestsHome.persist(request);
+			
+			return new Response("success", "Request added!!");
+		}
+		catch(Exception e)
+		{
+			return new Response("error", "Exception occurred. Could not complete request");
+		}
+		
 	}
 
 	@Override
