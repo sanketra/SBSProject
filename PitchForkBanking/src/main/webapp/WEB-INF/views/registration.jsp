@@ -63,17 +63,12 @@ body {
 <body>
 	<h1 align="center">User Registration</h1>
 	<c:url var="addAction" value="/add"></c:url>
-	<div class="container">
+	<div class="container" align="right">
+		<jsp:include page="common/response.jsp" />
 		<form:form action="${addAction}" commandName="user"
 			class="form-signin">
+			<form:hidden path="userId" />
 			<table>
-				<tr>
-					<td><form:label path="userId">
-							<spring:message text="User ID" />
-						</form:label></td>
-					<td><form:input path="userId" class="input-xlarge"
-							placeholder="User Id" /></td>
-				</tr>
 				<tr>
 					<td><form:label path="emailId">
 							<spring:message text="Email Id" />

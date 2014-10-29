@@ -357,7 +357,7 @@ public class UserController {
 
 	// For add and update person both
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addUser(@ModelAttribute("user") User p) {
+	public String addUser(@ModelAttribute("user") User p, final RedirectAttributes attributes) {
 
 		if (this.userService.getUserById(p.getUserId()) == null) {
 			// new person, add it
@@ -366,7 +366,9 @@ public class UserController {
 			// existing person, call update
 			this.userService.updateUser(p);
 		}
-
+		
+		attributes.addFlashAttribute("response", new Response(
+				"success", "Account registration successful!!"));
 		return "redirect:/registration";
 
 	}

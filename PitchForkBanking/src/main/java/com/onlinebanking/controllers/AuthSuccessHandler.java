@@ -26,7 +26,12 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 		for (GrantedAuthority authority : authorities) {
 			if (authority.getAuthority().equals(Role.ADMIN)) {
 				redirectUrl = "/PitchForkBanking/admin";
-			} else {
+			}
+			else if(authority.getAuthority().equals(Role.EMPLOYEE))
+			{
+				redirectUrl = "/PitchForkBanking/employee/emp_home";
+			}
+			else {
 				redirectUrl = "/PitchForkBanking/user/home";
 			}
 		}
