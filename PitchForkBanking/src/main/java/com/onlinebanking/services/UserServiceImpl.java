@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.onlinebanking.dao.AccountHome;
 import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.helpers.CryptoHelper;
-import com.onlinebanking.helpers.ValidationStatus;
+import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Account;
 import com.onlinebanking.models.User;
 
@@ -71,18 +71,18 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public ValidationStatus isValidUserAccount(int accountNo, String userId) {
-		ValidationStatus s = this.isValidAccount(accountNo);
+	public Response isValidUserAccount(int accountNo, String userId) {
+		Response s = this.isValidAccount(accountNo);
 		
-		if (s.getStatus()) {
+		if (s.getStatus().equals("success")) {
 			List<Account> list = this.accountHome.getUserAccounts(userId);
 			for (Account account : list) {
 				if (accountNo == account.getAccountNum()) {
-					return new ValidationStatus(true, "");
+					return new Response("success", "Account is own by current user");
 				}
 			}
 			
-			return new ValidationStatus(false, "Permission denied. Please select an account to proceed!!");
+			return new Response("error", "Permission denied. Please select an account to proceed!!");
 		} else {
 			return s;
 		}
@@ -90,16 +90,16 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public ValidationStatus isValidAccount(int accountNo) {
+	public Response isValidAccount(int accountNo) {
 		try {
 			Account a = this.accountHome.findById(accountNo);
 			if (a == null) {
-				return new ValidationStatus(false, "Invalid account selection");
+				return new Response("error", "Invalid account selection");
 			}
 		} catch (Exception e) {
-			return new ValidationStatus(false, "Account is Invalid.");
+			return new Response("error", "Account is Invalid.");
 		}
 		
-		return new ValidationStatus(true, "");
+		return new Response("true", "Account is valid");
 	}
 }

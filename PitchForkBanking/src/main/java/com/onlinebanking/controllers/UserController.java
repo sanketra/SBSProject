@@ -22,7 +22,6 @@ import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
-import com.onlinebanking.helpers.ValidationStatus;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
@@ -90,7 +89,7 @@ public class UserController {
 
 		HashMap<String, String> urls = URLHelper.analyseRequest(request);
 		HttpSession session = request.getSession();
-		ValidationStatus status;
+		Response status;
 		
 		int account_id = 0;
 		// Always check if the user has selected account id before going to next page.
@@ -108,7 +107,7 @@ public class UserController {
 		// Now that user has an account id check if its a valid account of user.
 		status = this.userService.isValidUserAccount(account_id, session.getAttribute("userId").toString());
 		
-		if (!status.getStatus()) {
+		if (status.getStatus().equals("error")) {
 			attributes.addFlashAttribute("response", new Response(
 					"error", status.getMessage()));
 			return "redirect:/user/home";
@@ -125,7 +124,7 @@ public class UserController {
 				String fromAccount = session.getAttribute("account_id").toString();
 				
 				status = this.userService.isValidAccount(Integer.parseInt(toAccount));
-				if(!status.getStatus()) {
+				if(status.getStatus().equals("error")) {
 					attributes.addFlashAttribute("response", new Response(
 							"error", status.getMessage()));
 					return "redirect:/user/transfer";
@@ -143,7 +142,7 @@ public class UserController {
 				
 				// Validating amount
 				status = ValidationHelper.validateAmount(request.getParameter("amount"));
-				if (!status.getStatus()) {
+				if (status.getStatus().equals("error")) {
 					attributes.addFlashAttribute("response", new Response("error", status.getMessage()));
 					return "redirect:/user/transfer";
 				}
