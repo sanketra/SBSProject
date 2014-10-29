@@ -6,7 +6,7 @@
 
 <h1>Welcome to Pitch Fork Banking</h1>
 	<P>
-		<br> Hello :${fname}<br>
+		<br> Hello :${name}<br>
 	</P>
 	<br>
 	<br>
