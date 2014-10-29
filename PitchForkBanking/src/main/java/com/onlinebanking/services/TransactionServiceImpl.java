@@ -73,14 +73,14 @@ public class TransactionServiceImpl implements TransactionService {
 
 		switch (type) {
 		case CREDIT:
-			t.setTransactionType("credit");
+			t.setTransactionType("Credit");
 			toAcc.setAmount(toAcc.getAmount() + amount);
 			break;
 		case DEBIT:
-			t.setTransactionType("debit");
+			t.setTransactionType("Debit");
 			toAcc.setAmount(toAcc.getAmount() - amount);
 		default:
-			t.setTransactionType("t-debit");
+			t.setTransactionType("Transfer");
 			fromAcc.setAmount(fromAcc.getAmount() - amount);
 			toAcc.setAmount(toAcc.getAmount() + amount);
 		}
@@ -102,9 +102,19 @@ public class TransactionServiceImpl implements TransactionService {
 		transactionHome.delete(transaction);
 	}
 
+	// Please use this function only for view access.
 	@Override
 	@Transactional
 	public List<Transaction> getAllTransactionsForAccountId(int id) {
-		return this.transactionHome.getAllTransactionsForAccountId(id);
+		List<Transaction> list = this.transactionHome.getAllTransactionsForAccountId(id);
+		
+		for (Transaction t : list) {
+			if (t.getAccountByFromAcountNum().getAccountNum() != t.getAccountByToAccountNum().getAccountNum()) {
+				String type = t.getAccountByFromAcountNum().getAccountNum() == id ? "Debit" : "Credit";
+				t.setTransactionType(type);
+			}
+		}
+		
+		return list;
 	}
 }
