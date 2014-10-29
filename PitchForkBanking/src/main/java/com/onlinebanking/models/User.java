@@ -3,7 +3,6 @@ package com.onlinebanking.models;
 // Generated Oct 19, 2014 4:55:42 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
-import java.util.Random;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -50,27 +49,9 @@ public class User implements java.io.Serializable {
 	private String answer3;
 
 	public User() {
-		//TODO: Remove once registration form is complete. 
-		Random randomGenerator = new Random();
-//		this.userId = UUID.randomUUID().toString();
-		this.userId = "";
-		this.lname = "";
+		this.userId = UUID.randomUUID().toString();
+		//TODO: Remove once registration form is complete.
 		this.dob = new Date();
-		this.address = "";
-		this.city = "";
-		this.state = "";
-		this.zipcode = "";
-//		this.ssn = Integer.toString(randomGenerator.nextInt(100));
-		this.ssn = "";
-//		this.phoneno = Integer.toString(randomGenerator.nextInt(100));
-		this.phoneno ="";
-		this.enabled = 1;
-		this.ques1 = "";
-		this.answer1 = "";
-		this.ques2 = "";
-		this.answer2 = "";
-		this.ques3 = "";
-		this.answer3 = "";
 	}
 
 	public User(String userId, String emailId, String password, String fname,
