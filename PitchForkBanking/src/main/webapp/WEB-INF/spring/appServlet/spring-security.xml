@@ -18,23 +18,25 @@
 		<beans:constructor-arg name="decisionVoters"
 			ref="roleVoter" />
 	</beans:bean>
-  
+
 	<http authentication-manager-ref="jdbc-auth"
-		access-decision-manager-ref="accessDecisionManager" >
+		access-decision-manager-ref="accessDecisionManager">
 		<intercept-url pattern="/admin" access="Admin" />
 		<intercept-url pattern="/admin/*" access="Admin" />
 		<intercept-url pattern="/admin/*/*" access="Admin" />
 		<intercept-url pattern="/admin/*/*/*" access="Admin" />
-		<intercept-url pattern="/user" access="User" />
-		<intercept-url pattern="/user/*" access="User" />
-		<intercept-url pattern="/user/*/*" access="User" />
-		<intercept-url pattern="/user/*/*/*" access="User" />
+		<intercept-url pattern="/user" access="User,Merchant" />
+		<intercept-url pattern="/user/payment" access="User" />
+		<intercept-url pattern="/user/requestPayment" access="Merchant" />
+		<intercept-url pattern="/user/*" access="User,Merchant" />
+		<intercept-url pattern="/user/*/*" access="User,Merchant" />
+		<intercept-url pattern="/user/*/*/*" access="User,Merchant" />		
 		<form-login login-page="/login" authentication-failure-url="/denied"
 			username-parameter="emailId" password-parameter="password"
-		    authentication-success-handler-ref="authSuccessHandler"/>
+			authentication-success-handler-ref="authSuccessHandler" />
 		<logout invalidate-session="true" logout-success-url="/login"
 			logout-url="/j_spring_security_logout" />
-		<access-denied-handler error-page="/denied"/>
+		<access-denied-handler error-page="/denied" />
 		<session-management invalid-session-url="/login">
 			<concurrency-control max-sessions="1"
 				expired-url="/login" />
@@ -42,11 +44,11 @@
 	</http>
 
 	<beans:bean name="bcryptEncoder"
-    	class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-    	
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
 	<authentication-manager id="jdbc-auth">
 		<authentication-provider>
-		<password-encoder ref="bcryptEncoder"/>
+			<password-encoder ref="bcryptEncoder" />
 			<jdbc-user-service data-source-ref="dataSource"
 				users-by-username-query="select emailId,password,enabled from User where emailId = ? and enabled = 1"
 				authorities-by-username-query="select emailId,role from User where emailId = ?" />
@@ -66,7 +68,7 @@
 
 	</beans:bean>
 
-		<!-- Hibernate 4 SessionFactory Bean definition -->
+	<!-- Hibernate 4 SessionFactory Bean definition -->
 	<beans:bean id="hibernate4AnnotatedSessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<beans:property name="dataSource" ref="dataSource" />
@@ -88,54 +90,66 @@
 			</beans:props>
 		</beans:property>
 	</beans:bean>
-	
+
 	<!-- DAO beans -->
 	<beans:bean id="accountHome" class="com.onlinebanking.dao.AccountHome">
-		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+		<beans:property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
 	<beans:bean id="requestsHome" class="com.onlinebanking.dao.RequestsHome">
-		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+		<beans:property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
 	<beans:bean id="transactionHome" class="com.onlinebanking.dao.TransactionHome">
-		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+		<beans:property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
 	<beans:bean id="userHome" class="com.onlinebanking.dao.UserHome">
-		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+		<beans:property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
 	<beans:bean id="userOtp" class="com.onlinebanking.dao.UserotpHome">
-		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+		<beans:property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
 	<beans:bean id="userPublicKey" class="com.onlinebanking.dao.UserPublicKeyHome">
-		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+		<beans:property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
-	
+
 	<!-- Service Layer -->
 	<beans:bean id="userService" class="com.onlinebanking.services.UserServiceImpl">
 		<beans:property name="userHome" ref="userHome"></beans:property>
 		<beans:property name="accountHome" ref="accountHome"></beans:property>
 	</beans:bean>
-	<beans:bean id="accountService" class="com.onlinebanking.services.AccountServiceImpl">
+	<beans:bean id="accountService"
+		class="com.onlinebanking.services.AccountServiceImpl">
 		<beans:property name="accountHome" ref="accountHome"></beans:property>
 	</beans:bean>
-	<beans:bean id="captchaService" class="com.onlinebanking.services.CaptchaServiceImpl">
-		
+	<beans:bean id="captchaService"
+		class="com.onlinebanking.services.CaptchaServiceImpl">
+
 	</beans:bean>
-	
-	<beans:bean id="transactionService" class="com.onlinebanking.services.TransactionServiceImpl">
+
+	<beans:bean id="transactionService"
+		class="com.onlinebanking.services.TransactionServiceImpl">
 		<beans:property name="transactionHome" ref="transactionHome"></beans:property>
 		<beans:property name="accountHome" ref="accountHome"></beans:property>
 		<beans:property name="requestsHome" ref="requestsHome"></beans:property>
 		<beans:property name="userHome" ref="userHome"></beans:property>
 	</beans:bean>
-	
+
 	<!-- Transactions -->
-	<tx:annotation-driven transaction-manager="transactionManager"/>
-	
-	<beans:bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<beans:bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<beans:property name="sessionFactory"
+			ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
-	
-	<beans:bean id="authSuccessHandler" class="com.onlinebanking.controllers.AuthSuccessHandler">
+
+	<beans:bean id="authSuccessHandler"
+		class="com.onlinebanking.controllers.AuthSuccessHandler">
 	</beans:bean>
 
 </beans:beans>

@@ -22,7 +22,6 @@ import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
-import com.onlinebanking.helpers.ValidationStatus;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
@@ -90,30 +89,29 @@ public class UserController {
 
 		HashMap<String, String> urls = URLHelper.analyseRequest(request);
 		HttpSession session = request.getSession();
-		ValidationStatus status;
-		
+		Response status;
 		int account_id = 0;
-		// Always check if the user has selected account id before going to next page.
-		if (urls.get("url_3") != null
-				&& !urls.get("url_3").toString().equals("")) {
-			account_id = Integer.parseInt(urls.get("url_3"));
+		// Always check if the user has selected account id before going to next
+		// page.
+		if (request.getParameter("account_id") != null) {
+			account_id = Integer.parseInt(request.getParameter("account_id"));
 			session.setAttribute("account_id", account_id);
 		} else if (session.getAttribute("account_id") == null) {
-			attributes.addFlashAttribute("response", new Response(
-					"error", "Please select an account to proceed!!"));
+			attributes.addFlashAttribute("response", new Response("error",
+					"Please select an account to proceed!!"));
 			return "redirect:/user/home";
 		}
-		
+
 		account_id = (Integer) session.getAttribute("account_id");
 		// Now that user has an account id check if its a valid account of user.
 		status = this.userService.isValidUserAccount(account_id, session.getAttribute("userId").toString());
 		
-		if (!status.getStatus()) {
+		if (status.getStatus().equals("error")) {
 			attributes.addFlashAttribute("response", new Response(
 					"error", status.getMessage()));
 			return "redirect:/user/home";
 		}
-		
+
 		// Handle all post requests
 		if (URLHelper.isPOSTRequest(request)) {
 			if (urls.get("url_2").toString().equals("transfer")) {
@@ -125,31 +123,35 @@ public class UserController {
 				String fromAccount = session.getAttribute("account_id").toString();
 				
 				status = this.userService.isValidAccount(Integer.parseInt(toAccount));
-				if(!status.getStatus()) {
+				if(status.getStatus().equals("error")) {
 					attributes.addFlashAttribute("response", new Response(
 							"error", status.getMessage()));
 					return "redirect:/user/transfer";
 				}
-				String toUserId = this.accountService.getAccountById(Integer.parseInt(toAccount)).getUser().getUserId();
+				String toUserId = this.accountService
+						.getAccountById(Integer.parseInt(toAccount)).getUser()
+						.getUserId();
 				User toUser = this.userService.getUserById(toUserId);
-				
+
 				// Validating the to account & user details
 				if (!toUser.getEmailId().equalsIgnoreCase(toEmailId)
-						|| !toUser.getFname().concat(" " + toUser.getLname()).equals(name)) {
+						|| !toUser.getFname().concat(" " + toUser.getLname())
+								.equals(name)) {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Incorrect account details!!"));
 					return "redirect:/user/transfer";
 				}
-				
+
 				// Validating amount
 				status = ValidationHelper.validateAmount(request.getParameter("amount"));
-				if (!status.getStatus()) {
+				if (status.getStatus().equals("error")) {
 					attributes.addFlashAttribute("response", new Response("error", status.getMessage()));
 					return "redirect:/user/transfer";
 				}
-				
-				double amount = Double.parseDouble(request.getParameter("amount"));
-				
+
+				double amount = Double.parseDouble(request
+						.getParameter("amount"));
+
 				if (toAccount.equals(fromAccount)) {
 					attributes.addFlashAttribute("response", new Response(
 							"error",
@@ -190,26 +192,30 @@ public class UserController {
 				return "redirect:/user/authorize";
 			}
 		}
-		
+
 		// Handle all get requests
 		if (urls.get("url_2").toString().equals("transfer")) {
+			String userType = userService.getUserRole((String) session
+					.getAttribute("emailId"));
+			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "transfer");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("credit")) {
+			String userType = userService.getUserRole((String) session
+					.getAttribute("emailId"));
+			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "credit");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("debit")) {
+			String userType = userService.getUserRole((String) session
+					.getAttribute("emailId"));
+			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "debit");
 			return "user/template";
-		} else if (urls.get("url_2").toString().equals("payment")) {
-			// TODO: Need to decide how to store and retrieve merchant payment
-			// requests
-			account_id = (Integer) session.getAttribute("account_id");
-			System.out.println("Payment Requests for Account: " + account_id);
-			model.addAttribute("transactions", null);
-			model.addAttribute("contentView", "payment");
-			return "user/template";
 		} else if (urls.get("url_2").toString().equals("transactions")) {
+			String userType = userService.getUserRole((String) session
+					.getAttribute("emailId"));
+			model.addAttribute("role", userType);
 			account_id = (Integer) session.getAttribute("account_id");
 			model.addAttribute("transactions", this.transactionService
 					.getAllTransactionsForAccountId(account_id));
@@ -217,24 +223,66 @@ public class UserController {
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("authorize")) {
 			System.out.println("Authorize Requests");
+			String userType = userService.getUserRole((String) session
+					.getAttribute("emailId"));
+			model.addAttribute("role", userType);
 			model.addAttribute("requests", null);
 			model.addAttribute("contentView", "authorize");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("profile")) {
+			String userType = userService.getUserRole((String) session
+					.getAttribute("emailId"));
+			System.out.println("Role: " + userType);
+			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "profile");
 			model.addAttribute("user", this.userService
 					.getUserByEmailId((String) session.getAttribute("emailId")));
+
 			return "user/template";
+
 		} else {
-			attributes.addFlashAttribute("response", new Response(
-					"error", "Please select an account to proceed!!"));
+			attributes.addFlashAttribute("response", new Response("error",
+					"Please select an account to proceed!!"));
 			return "redirect:/user/home";
 		}
+	}
+
+	@RequestMapping(value = "/user/payment")
+	public String userPayment(HttpServletRequest request, Model model) {
+		HttpSession session = request.getSession();
+		int account_id = 0;
+		account_id = (Integer) session.getAttribute("account_id");
+		System.out.println("Payment Requests for Account: " + account_id);
+		String userType = userService.getUserRole((String) session
+				.getAttribute("emailId"));
+		model.addAttribute("role", userType);
+		model.addAttribute("transactions", null);
+		model.addAttribute("contentView", "payment");
+		return "user/template";
+
+	}
+
+	@RequestMapping(value = "/user/requestPayment")
+	public String merchantRequestPayment(HttpServletRequest request, Model model) {
+		HttpSession session = request.getSession();
+		int account_id = 0;
+		account_id = (Integer) session.getAttribute("account_id");
+		System.out.println("Payment Requests for Account: " + account_id);
+		String userType = userService.getUserRole((String) session
+				.getAttribute("emailId"));
+		model.addAttribute("role", userType);
+		model.addAttribute("transactions", null);
+		model.addAttribute("contentView", "requestPayment");
+		return "user/template";
+
 	}
 
 	@RequestMapping(value = "/user/profile/edit")
 	public String userEdit(HttpServletRequest request, Model model) {
 		HttpSession session = request.getSession();
+		String userType = userService.getUserRole((String) session
+				.getAttribute("emailId"));
+		model.addAttribute("role", userType);
 		model.addAttribute("contentView", "editprofile");
 		model.addAttribute("user", this.userService
 				.getUserByEmailId((String) session.getAttribute("emailId")));
@@ -297,6 +345,13 @@ public class UserController {
 		model.addAttribute("listUsers", this.userService.listUsers());
 		return "registration";
 	}
+	
+	@RequestMapping(value = "/passwordRecovery", method = RequestMethod.GET)
+	public String passwordRecovery(Model model) {
+
+		return "passwordRecovery";
+	}
+
 
 	// For add and update person both
 	@RequestMapping(value = "/add", method = RequestMethod.POST)

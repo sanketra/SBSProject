@@ -12,16 +12,16 @@ public class ValidationHelper {
 		return randomNum;
 	}
 
-	public static ValidationStatus validateAmount(String amt) {
+	public static Response validateAmount(String amt) {
 		try {
 			double amountD = Double.parseDouble(amt);
 			if (amountD < 1) {
-				return new ValidationStatus(false, "Amount should be greater than 0.");
+				return new Response("error", "Amount should be greater than 0.");
 			}
 		} catch (NumberFormatException e) {
-			return new ValidationStatus(false, "Amount is not valid.");
+			return new Response("error", "Amount is not valid.");
 		}
-		return new ValidationStatus(true, "");
+		return new Response("success", "Amount is valid");
 	}
 	
 	public static Response validateUserRequest(UserRequest userRequest)
