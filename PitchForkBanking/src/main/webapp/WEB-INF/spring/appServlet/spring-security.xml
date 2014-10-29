@@ -25,10 +25,12 @@
 		<intercept-url pattern="/admin/*" access="Admin" />
 		<intercept-url pattern="/admin/*/*" access="Admin" />
 		<intercept-url pattern="/admin/*/*/*" access="Admin" />
-		<intercept-url pattern="/user" access="User" />
-		<intercept-url pattern="/user/*" access="User" />
-		<intercept-url pattern="/user/*/*" access="User" />
-		<intercept-url pattern="/user/*/*/*" access="User" />
+		<intercept-url pattern="/user" access="User,Merchant" />
+		<intercept-url pattern="/user/payment" access="User" />
+		<intercept-url pattern="/user/requestPayment" access="Merchant" />
+		<intercept-url pattern="/user/*" access="User,Merchant" />
+		<intercept-url pattern="/user/*/*" access="User,Merchant" />
+		<intercept-url pattern="/user/*/*/*" access="User,Merchant" />
 		<form-login login-page="/login" authentication-failure-url="/denied"
 			username-parameter="emailId" password-parameter="password"
 		    authentication-success-handler-ref="authSuccessHandler"/>

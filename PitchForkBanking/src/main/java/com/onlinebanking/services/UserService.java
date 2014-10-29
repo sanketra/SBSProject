@@ -13,6 +13,7 @@ public interface UserService {
 	public User getUserById(String id);
 	public void removeUser(String id);
 	public User getUserByEmailId(String emailId);
+	public String getUserRole(String emailId);
 	public ValidationStatus isValidUserAccount(int accountNo, String userId);
 	public ValidationStatus isValidAccount(int accountNo);
 }
