@@ -18,19 +18,29 @@ public class EmployeeController {
 	public String handleAdminDashboardRequests(Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("name", auth.getName());
-		return "employee/emp_home";
+		model.addAttribute("contentView","emp_home");
+		return "employee/emp_template";
 	}
 	
-	@RequestMapping(value="/employee/account_details")
+	@RequestMapping(value="/employee/user_details")
 	public String employeeAcc(HttpServletRequest request, Model model){
 		HttpSession session = request.getSession();
-		return "employee/acc_details";
+		model.addAttribute("contentView", "user_details");
+		return "employee/emp_template";
 	}
 	
 	@RequestMapping(value="/employee/req_Access")
 	public String employeeRequest(HttpServletRequest request, Model model){
 		HttpSession session = request.getSession();
-		return "employee/requestAccess";
+		model.addAttribute("contentView","requestAccess");
+		return "employee/emp_template";
+	}
+	
+	@RequestMapping(value="/employee/account_details")
+	public String employeeTransaction(HttpServletRequest request, Model model){
+		HttpSession session = request.getSession();
+		model.addAttribute("contentView", "acc_details");
+		return "employee/emp_template";
 	}
 	
 	

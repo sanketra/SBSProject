@@ -4,22 +4,23 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Account details</title>
+<title>Request Access</title>
 </head>
 <body>
 
 
 
+<div class = "container">
 <table class="table table-bordered">
 		<thead>
 			<tr>
-				<th>User Name</th>
+				<th>Account Number</th>
 				<th>First Name</th>
 				<th>Last Name</th>
-				<th>Edit Profile</th>
+				<th>Edit Transactions</th>
 			</tr>
 		</thead>
-</table>		
-
+</table>	
+</div>	
 </body>
 </html>
