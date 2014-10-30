@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <div class="container">
+	<c:url var="selectAction" value="/user/authorize"></c:url>
 	<table class="table table-bordered">
 		<thead>
 			<tr>
@@ -15,12 +16,20 @@
 		<tbody>
 			<c:forEach items="${requests}" var="_request">
 				<tr>
-					<td>${_request.userByFromUserId.fname}</td>
-					<td>${_request.type}</td>
-					<td><a class="btn btn-success"
-						href="${pageContext.request.contextPath}/user/authorize">Accept</a></td>
-					<td><a class="btn btn-danger"
-						href="${pageContext.request.contextPath}/user/authorize">Decline</a></td>
+					<td>${_request.employeeName}</td>
+					<td>${_request.requestType}</td>
+					<td>
+						<form action="${selectAction}" method="POST">
+							<input type="hidden" name="approve" value="${_request.requestId}" />
+							<input type="submit" value="Approve" class="btn btn-success" />
+						</form>
+					</td>
+					<td>
+						<form action="${selectAction}" method="POST">
+							<input type="hidden" name="decline" value="${_request.requestId}" />
+							<input type="submit" value="Decline" class="btn btn-danger" />
+						</form>
+					</td>
 				</tr>
 			</c:forEach>
 		</tbody>

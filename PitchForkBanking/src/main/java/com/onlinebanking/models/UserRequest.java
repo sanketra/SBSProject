@@ -1,9 +1,11 @@
 package com.onlinebanking.models;
 
 public class UserRequest {
+	private String requestId;
 	private String fname;
 	private String lname;
 	private String emailId;
+	private String employeeName;
 	private int accountId;
 	private String requestType;
 	
@@ -11,14 +13,31 @@ public class UserRequest {
 	{
 		
 	}
-	
-	public UserRequest(String fname, String lname, String emailId, int accountId, String requestType)
+
+	public UserRequest(String fname, String lname, String emailId, int accountId, String requestType, String employeeName)
 	{
 		this.fname = fname;
 		this.lname = lname;
 		this.emailId = emailId;
 		this.accountId = accountId;
 		this.requestType = requestType;
+		this.employeeName = employeeName;
+	}
+	
+	public String getRequestId() {
+		return requestId;
+	}
+
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
+	}
+
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
 	}
 
 	public String getFname() {

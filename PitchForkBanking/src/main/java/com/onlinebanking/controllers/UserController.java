@@ -23,10 +23,9 @@ import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
-import com.onlinebanking.models.AccountAppModel;
-import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserAppModel;
+import com.onlinebanking.models.UserRequest;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
 import com.onlinebanking.services.OtpService;
@@ -86,6 +85,12 @@ public class UserController {
 		User u = this.userService.getUserByEmailId(auth.getName());
 		session.setAttribute("userId", u.getUserId());
 		session.setAttribute("emailId", u.getEmailId());
+		
+		// If the account_id is already selected, remove it so that user can select it again.
+		if (session.getAttribute("account_id") != null) {
+			session.removeAttribute("account_id");
+		}
+		
 		model.addAttribute("accounts", ValidationHelper
 				.getAccountAppModelListFromAccountList(this.accountService
 						.getUserAccounts(u.getUserId())));
@@ -199,7 +204,16 @@ public class UserController {
 				}
 				return "redirect:/user/debit";
 			} else if (urls.get("url_2").toString().equals("authorize")) {
-				// TODO: Authorize flow.
+				if (request.getParameter("approve") != null) {
+					status = this.transactionService.updateAccessRequest(request.getParameter("approve"), "approve");
+					attributes.addFlashAttribute("response", status);
+					return "redirect:/user/authorize";
+				} else if (request.getParameter("decline") != null) {
+					status = this.transactionService.updateAccessRequest(request.getParameter("decline"), "decline");
+					attributes.addFlashAttribute("response", status);
+					return "redirect:/user/authorize";
+				} 
+				
 				return "redirect:/user/authorize";
 			}
 		}
@@ -237,9 +251,7 @@ public class UserController {
 			User u = this.userService.getUserByEmailId((String) session
 					.getAttribute("emailId"));
 			model.addAttribute("role", u.getRole());
-			// TODO: Transaction
-			List<Requests> list = this.transactionService
-					.getAllRequestsToUser(u.getUserId());
+			List<UserRequest> list = this.transactionService.getPendingRequestsToUser(u.getUserId());
 			model.addAttribute("requests", list);
 			model.addAttribute("contentView", "authorize");
 			return "user/template";
@@ -302,8 +314,6 @@ public class UserController {
 						request.getParameter("decline"), "decline");
 				attributes.addFlashAttribute("response", status);
 				return "redirect:/user/payment";
-			} else {
-				// error
 			}
 		}
 
