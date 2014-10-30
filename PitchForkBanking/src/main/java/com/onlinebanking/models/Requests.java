@@ -2,12 +2,15 @@ package com.onlinebanking.models;
 
 // Generated Oct 19, 2014 4:55:42 PM by Hibernate Tools 3.4.0.CR1
 
+import java.util.UUID;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -19,55 +22,51 @@ import javax.persistence.Table;
 @Table(name = "requests", catalog = "pitchforkbank")
 public class Requests implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5186186264356733568L;
-	private RequestsId id;
-	private User userByToUserId;
-	private User userByFromUserId;
+	private String requestId;
+	private String fromUser;
+	private String toUser;
 	private String type;
+	private String status;
 
 	public Requests() {
+		this.requestId = UUID.randomUUID().toString();
 	}
 
-	public Requests(RequestsId id, User userByToUserId, User userByFromUserId, String type) {
-		this.id = id;
-		this.userByToUserId = userByToUserId;
-		this.userByFromUserId = userByFromUserId;
+	public Requests(String requestId,  String fromUser, String toUser, String type, String status) {
+		this.requestId = requestId;
+		this.fromUser = fromUser;
+		this.toUser = toUser;
+		this.status = status;
 		this.type = type;
 	}
 
-	@EmbeddedId
-	@AttributeOverrides({
-			@AttributeOverride(name = "fromUserId", column = @Column(name = "fromUserId", nullable = false, length = 36)),
-			@AttributeOverride(name = "toUserId", column = @Column(name = "toUserId", nullable = false, length = 36)) })
-	public RequestsId getId() {
-		return this.id;
+	@Id
+	@Column(name = "requestId", unique = true, nullable = false, length = 64)
+	public String getRequestId() {
+		return this.requestId;
 	}
 
-	public void setId(RequestsId id) {
-		this.id = id;
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "toUserId", nullable = false, insertable = false, updatable = false)
-	public User getUserByToUserId() {
-		return this.userByToUserId;
+	@Column(name = "fromUserId", nullable = false, length = 64)
+	public String getFromUser() {
+		return this.fromUser;
 	}
 
-	public void setUserByToUserId(User userByToUserId) {
-		this.userByToUserId = userByToUserId;
+	public void setFromUser(String user) {
+		this.fromUser = user;
+	}
+	
+	@Column(name = "toUserId", nullable = false, length = 64)
+	public String getToUser() {
+		return this.toUser;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "fromUserId", nullable = false, insertable = false, updatable = false)
-	public User getUserByFromUserId() {
-		return this.userByFromUserId;
-	}
-
-	public void setUserByFromUserId(User userByFromUserId) {
-		this.userByFromUserId = userByFromUserId;
+	public void setToUser(String user) {
+		this.toUser = user;
 	}
 
 	@Column(name = "type", nullable = false, length = 45)
@@ -77,6 +76,15 @@ public class Requests implements java.io.Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	@Column(name = "status", nullable = false, length = 45)
+	public String getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }
