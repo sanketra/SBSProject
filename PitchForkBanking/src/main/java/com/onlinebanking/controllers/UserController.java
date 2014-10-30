@@ -503,7 +503,7 @@ public class UserController {
 				this.otpService.getUserotpById(userId), newOtp);
 		if (result == true) {
 			attributes.addFlashAttribute("response", new Response("success",
-					"Password verified"));
+					"OTP verified, Password reset"));
 		} else {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Wrong OTP"));

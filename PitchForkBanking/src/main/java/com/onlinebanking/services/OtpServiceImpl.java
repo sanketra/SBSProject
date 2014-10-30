@@ -42,7 +42,7 @@ public class OtpServiceImpl implements OtpService {
 	public void sendOtp(User user, String emailId1) {
 		// Check for duplicate record
 		String userId = user.getUserId();
-		
+		Userotp temp = userotpHome.findById(userId);
 		// Take email id from the form
 		String emailId = emailId1;
 		// Generate OTP
@@ -51,7 +51,12 @@ public class OtpServiceImpl implements OtpService {
 		otp = otp.substring(0, 5);
 		// Set otp for verification
 		Userotp userotpObj = new Userotp(user, otp);
-		userotpHome.persist(userotpObj);
+		if (temp == null) {
+			userotpHome.persist(userotpObj);
+		} else {
+			//userotpHome.delete(userotpObj);
+			userotpHome.persist(userotpObj);
+		}
 		// Send OTP via Email to the requester
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
@@ -79,6 +84,7 @@ public class OtpServiceImpl implements OtpService {
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
+
 	}
 
 	@Override
@@ -87,6 +93,7 @@ public class OtpServiceImpl implements OtpService {
 		String temp2 = otpObj.getOneTimePassword();
 		if (newOtp.equals(temp2)) {
 			System.out.println("True!");
+			userotpHome.delete(otpObj);
 			return true;
 		} else {
 			System.out.println("False!");
