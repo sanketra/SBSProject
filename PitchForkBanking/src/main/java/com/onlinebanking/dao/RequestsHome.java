@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
@@ -153,13 +154,29 @@ public class RequestsHome {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<String> getApprovedTransactionRequestsForUser(String userId) {
+	public List<Requests> getApprovedTransactionRequestsForUser(String userId) {
 		log.debug("finding transaction ids of approved requests from user "+userId);
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			Query query = session.createQuery("SELECT transactionId FROM Requests where fromUserId = :userId and status = 'approved'");
+			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where fromUserId = :userId and status = 'approved'");
 			query.setParameter("userId", userId);
-			return query.list();
+			return query.addEntity(Requests.class).list();
+			
+		} catch (RuntimeException re) {
+			log.error("error occurred while retrieving transaction ids", re);
+			throw re;
+		}
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<Requests> getAllPendingRequests(String userId) {
+		log.debug("finding transaction ids of approved requests from user "+userId);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where fromUserId = :userId and status = 'pending'");
+			query.setParameter("userId", userId);
+			return query.addEntity(Requests.class).list();
 			
 		} catch (RuntimeException re) {
 			log.error("error occurred while retrieving transaction ids", re);

@@ -92,15 +92,61 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	@Transactional
-	public List<Transaction> getListOfApprovedTransactionRequests(String userId) {
-		List<String> transactionId = requestsHome
+	public List<UserRequest> getApprovedTransactionRequestsFromUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName();
+		User u = userHome.getUserByEmailId(username);
+		String userId = u.getUserId();
+		List<Requests> transactionRequests = requestsHome
 				.getApprovedTransactionRequestsForUser(userId);
-		List<Transaction> transactionList = new ArrayList<Transaction>();
-		for (String id : transactionId) {
-			Transaction transaction = transactionHome.findById(id);
-			transactionList.add(transaction);
+		List<UserRequest> userRequests = new ArrayList<UserRequest>();
+		for(Requests request : transactionRequests)
+		{
+			String toUserId = request.getToUser();
+			User toUser = userHome.findById(toUserId);
+			List<Account> userAccounts = accountHome.getUserAccounts(toUserId);
+			
+			for(Account acc : userAccounts)
+			{
+				UserRequest requestedUser = new UserRequest();
+				requestedUser.setFname(toUser.getFname());
+				requestedUser.setLname(toUser.getLname());
+				requestedUser.setEmailId(toUser.getEmailId());
+				requestedUser.setAccountId(acc.getAccountNum());
+				userRequests.add(requestedUser);
+			}
 		}
-		return transactionList;
+		return userRequests;
+	}
+	
+	@Override
+	@Transactional
+	public List<UserRequest> getAllPendingRequests() {
+		try
+		{
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			String username = auth.getName();
+			User u = userHome.getUserByEmailId(username);
+			String userId = u.getUserId();
+			List<Requests> pendingRequest = requestsHome.getAllPendingRequests(userId);
+			List<UserRequest> userRequests = new ArrayList<UserRequest>();
+			for(Requests request : pendingRequest)
+			{
+				String toUserId = request.getToUser();
+				User toUser = userHome.findById(toUserId);
+				UserRequest requestedUser = new UserRequest();
+				requestedUser.setFname(toUser.getFname());
+				requestedUser.setLname(toUser.getLname());
+				requestedUser.setEmailId(toUser.getEmailId());
+				requestedUser.setRequestType(request.getType());
+				userRequests.add(requestedUser);
+			}
+			return userRequests;
+		}
+		catch(Exception e)
+		{
+			return new ArrayList<UserRequest>();
+		}
 	}
 
 	@Override
@@ -271,4 +317,11 @@ public class TransactionServiceImpl implements TransactionService {
 			return new Response("success", "Payment declined!");
 		}
 	}
+
+	@Override
+	@Transactional
+	public Transaction getTransaction(String transactionId) {
+		return transactionHome.findById(transactionId);
+	}
+
 }

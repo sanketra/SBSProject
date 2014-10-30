@@ -15,10 +15,12 @@ public interface TransactionService {
 	public Response addRequest(UserRequest userRequest);
 	public List<Requests> getAllRequestsToUser(String userId);
 	public List<Requests> getAllRequestsFromUser(String userId);
-	public List<Transaction> getListOfApprovedTransactionRequests(String userId);
+	public List<UserRequest> getApprovedTransactionRequestsFromUser();
 	public void updateTransaction(Transaction transaction);
 	public void deleteTransaction(Transaction transaction);
 	public List<Transaction> getAllTransactionsForAccountId(int Id);
+	public List<UserRequest> getAllPendingRequests();
+	public Transaction getTransaction(String transactionId);
 	public List<Transaction> getPaymentRequestForAccountId(int id);
 	public Response updatePaymentRequest(String id, String status);
 }
