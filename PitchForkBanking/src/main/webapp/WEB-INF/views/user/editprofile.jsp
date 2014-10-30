@@ -90,9 +90,6 @@ function validateForm() {
 	<form:form name = "myForm" action="${submitAction}" onsubmit="return validateForm()" commandName="user"
 		class="form-horizontal" method="POST">
 		<form:hidden path="userId" />
-		<form:hidden path="password" />
-		<form:hidden path="role" />
-		<form:hidden path="enabled" />
 		<table class="table">
 			<tr>
 				<td>First Name</td>
@@ -103,11 +100,6 @@ function validateForm() {
 				<td>Last Name</td>
 				<td><form:input path="lname" class="input-xlarge"
 						placeholder="Last Name" /></td>
-			</tr>
-			<tr>
-				<td>SSN</td>
-				<td><form:input path="ssn" class="input-xlarge"
-						placeholder="SSN" /></td>
 			</tr>
 			<tr>
 				<td>Email Id</td>

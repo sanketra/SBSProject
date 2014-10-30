@@ -34,15 +34,8 @@ public class ValidationHelper {
 		u.setAddress(a.getAddress());
 		u.setCity(a.getCity());
 		u.setState(a.getState());
-		u.setSsn(a.getSsn());
 		u.setPhoneno(a.getPhoneno());
 		u.setZipcode(a.getZipcode());
-		u.setAnswer1(a.getAnswer1());
-		u.setAnswer2(a.getAnswer2());
-		u.setAnswer3(a.getAnswer3());
-		u.setQues1(a.getQues1());
-		u.setQues2(a.getQues2());
-		u.setQues3(a.getQues3());
 		return u;
 }
 	public static Response validateUserRequest(UserRequest userRequest)
