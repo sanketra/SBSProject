@@ -10,7 +10,7 @@ import com.onlinebanking.models.UserRequest;
 
 public interface TransactionService {
 
-	public void createTransaction(String fromAccount, String toAccount, double amount, TransactionType type);
+	public Response createTransaction(String fromAccount, String toAccount, String amount, TransactionType type);
 	public Response addRequest(UserRequest userRequest);
 	public List<Requests> getAllRequestsFromUser(String userId);
 	public List<Transaction> getListOfApprovedTransactionRequests(String userId);

@@ -115,8 +115,6 @@ public class UserController {
 		// Handle all post requests
 		if (URLHelper.isPOSTRequest(request)) {
 			if (urls.get("url_2").toString().equals("transfer")) {
-				// TODO: User name and emailId to validate receiver
-
 				String name = request.getParameter("name").toString();
 				String toEmailId = request.getParameter("emailId").toString();
 				String toAccount = request.getParameter("account_to").toString();
@@ -133,7 +131,7 @@ public class UserController {
 						.getUserId();
 				User toUser = this.userService.getUserById(toUserId);
 
-				// Validating the to account & user details
+				// Validating the to_account & user details
 				if (!toUser.getEmailId().equalsIgnoreCase(toEmailId)
 						|| !toUser.getFname().concat(" " + toUser.getLname())
 								.equals(name)) {
@@ -142,16 +140,6 @@ public class UserController {
 					return "redirect:/user/transfer";
 				}
 
-				// Validating amount
-				status = ValidationHelper.validateAmount(request.getParameter("amount"));
-				if (status.getStatus().equals("error")) {
-					attributes.addFlashAttribute("response", new Response("error", status.getMessage()));
-					return "redirect:/user/transfer";
-				}
-
-				double amount = Double.parseDouble(request
-						.getParameter("amount"));
-
 				if (toAccount.equals(fromAccount)) {
 					attributes.addFlashAttribute("response", new Response(
 							"error",
@@ -159,30 +147,39 @@ public class UserController {
 					return "redirect:/user/transfer";
 				}
 
-				this.transactionService.createTransaction(fromAccount,
+				String amount = request.getParameter("amount");
+				status = this.transactionService.createTransaction(fromAccount,
 						toAccount, amount, TransactionType.TRANSFER);
-				attributes.addFlashAttribute("response", new Response(
-						"success", "Transfer successfully!!"));
+				
+				if (status.getStatus().equals("success")) {
+					attributes.addFlashAttribute("response", status);
+				} else {
+					attributes.addFlashAttribute("response", status);
+				}
 				return "redirect:/user/transfer";
 			} else if (urls.get("url_2").toString().equals("credit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
-				int amount = Integer.parseInt(request.getParameter("amount")
-						.toString());
-				this.transactionService.createTransaction(fromAccount,
+				String amount = request.getParameter("amount").toString();
+				status = this.transactionService.createTransaction(fromAccount,
 						fromAccount, amount, TransactionType.CREDIT);
-				attributes.addFlashAttribute("response", new Response(
-						"success", "Account credited successfully!!"));
+				if (status.getStatus().equals("success")) {
+					attributes.addFlashAttribute("response", status);
+				} else {
+					attributes.addFlashAttribute("response", status);
+				}
 				return "redirect:/user/credit";
 			} else if (urls.get("url_2").toString().equals("debit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
-				int amount = Integer.parseInt(request.getParameter("amount")
-						.toString());
-				this.transactionService.createTransaction(fromAccount,
+				String amount = request.getParameter("amount").toString();
+				status = this.transactionService.createTransaction(fromAccount,
 						fromAccount, amount, TransactionType.DEBIT);
-				attributes.addFlashAttribute("response", new Response(
-						"success", "Debit credited successfully!!"));
+				if (status.getStatus().equals("success")) {
+					attributes.addFlashAttribute("response", status);
+				} else {
+					attributes.addFlashAttribute("response",status);
+				}
 				return "redirect:/user/debit";
 			} else if (urls.get("url_2").toString().equals("payment")) {
 				// TODO: Accept or Decline flow.
