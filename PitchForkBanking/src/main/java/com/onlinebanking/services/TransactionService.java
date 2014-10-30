@@ -13,8 +13,10 @@ public interface TransactionService {
 	public void createTransaction(String fromAccount, String toAccount, double amount, TransactionType type);
 	public Response addRequest(UserRequest userRequest);
 	public List<Requests> getAllRequestsFromUser(String userId);
-	public List<Transaction> getListOfApprovedTransactionRequests(String userId);
+	public List<UserRequest> getApprovedTransactionRequestsFromUser();
 	public void updateTransaction(Transaction transaction);
 	public void deleteTransaction(Transaction transaction);
 	public List<Transaction> getAllTransactionsForAccountId(int Id);
+	public List<UserRequest> getAllPendingRequests();
+	public Transaction getTransaction(String transactionId);
 }

@@ -4,6 +4,7 @@ public class UserRequest {
 	private String fname;
 	private String lname;
 	private String emailId;
+	private int accountId;
 	private String requestType;
 	
 	public UserRequest()
@@ -11,11 +12,12 @@ public class UserRequest {
 		
 	}
 	
-	public UserRequest(String fname, String lname, String emailId, String requestType)
+	public UserRequest(String fname, String lname, String emailId, int accountId, String requestType)
 	{
 		this.fname = fname;
 		this.lname = lname;
 		this.emailId = emailId;
+		this.accountId = accountId;
 		this.requestType = requestType;
 	}
 
@@ -41,6 +43,14 @@ public class UserRequest {
 
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
+	}
+	
+	public int getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
 	}
 
 	public String getRequestType() {
