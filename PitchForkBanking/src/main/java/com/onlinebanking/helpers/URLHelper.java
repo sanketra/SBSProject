@@ -8,7 +8,7 @@ import javax.servlet.http.HttpSession;
 
 public class URLHelper {
 	
-	public synchronized static boolean isGETRequest(HttpServletRequest request) {
+	public static boolean isGETRequest(HttpServletRequest request) {
 		Boolean returnVal = false;
 		
 		if (request.getMethod().toString().equals("GET")) {
@@ -18,7 +18,7 @@ public class URLHelper {
 		return returnVal;
 	}
 
-	public synchronized static boolean isPOSTRequest(HttpServletRequest request) {
+	public static boolean isPOSTRequest(HttpServletRequest request) {
 		Boolean returnVal = false;
 		
 		if (request.getMethod().toString().equals("POST")) {
@@ -28,7 +28,7 @@ public class URLHelper {
 		return returnVal;
 	}
 	
-	public synchronized static HashMap<String, String> analyseRequest(
+	public static HashMap<String, String> analyseRequest(
 			HttpServletRequest request) {
 
 		HashMap<String, String> uris = new HashMap<String, String>();

@@ -50,6 +50,18 @@ public class UserServiceImpl implements UserService {
 	public List<User> listUsers() {
 		return this.userHome.findAll();
 	}
+	
+	@Override
+	@Transactional
+	public List<User> listCustomers() {
+		return this.userHome.findAllCustomers();
+	}
+	
+	@Override
+	@Transactional
+	public List<User> listEmployees() {
+		return this.userHome.findAllEmployees();
+	}
 
 	@Override
 	@Transactional
@@ -100,7 +112,7 @@ public class UserServiceImpl implements UserService {
 			return new Response("error", "Account is Invalid.");
 		}
 		
-		return new Response("true", "Account is valid");
+		return new Response("success", "Account is valid");
 	}
 
 	@Override

@@ -21,10 +21,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
-import com.onlinebanking.helpers.ValidationHelper;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
+import com.onlinebanking.services.OtpService;
 import com.onlinebanking.services.TransactionService;
 import com.onlinebanking.services.UserService;
 
@@ -34,6 +34,13 @@ public class UserController {
 	private CaptchaService captchaService;
 	private AccountService accountService;
 	private TransactionService transactionService;
+	private OtpService otpService;
+
+	@Autowired(required = true)
+	@Qualifier(value = "otpService")
+	public void setOtpService(OtpService otpService) {
+		this.otpService = otpService;
+	}
 
 	@Autowired(required = true)
 	@Qualifier(value = "captchaService")
@@ -104,26 +111,28 @@ public class UserController {
 
 		account_id = (Integer) session.getAttribute("account_id");
 		// Now that user has an account id check if its a valid account of user.
-		status = this.userService.isValidUserAccount(account_id, session.getAttribute("userId").toString());
-		
+		status = this.userService.isValidUserAccount(account_id, session
+				.getAttribute("userId").toString());
+
 		if (status.getStatus().equals("error")) {
-			attributes.addFlashAttribute("response", new Response(
-					"error", status.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error",
+					status.getMessage()));
 			return "redirect:/user/home";
 		}
 
 		// Handle all post requests
 		if (URLHelper.isPOSTRequest(request)) {
 			if (urls.get("url_2").toString().equals("transfer")) {
-				// TODO: User name and emailId to validate receiver
-
 				String name = request.getParameter("name").toString();
 				String toEmailId = request.getParameter("emailId").toString();
-				String toAccount = request.getParameter("account_to").toString();
-				String fromAccount = session.getAttribute("account_id").toString();
-				
-				status = this.userService.isValidAccount(Integer.parseInt(toAccount));
-				if(status.getStatus().equals("error")) {
+				String toAccount = request.getParameter("account_to")
+						.toString();
+				String fromAccount = session.getAttribute("account_id")
+						.toString();
+
+				status = this.userService.isValidAccount(Integer
+						.parseInt(toAccount));
+				if (status.getStatus().equals("error")) {
 					attributes.addFlashAttribute("response", new Response(
 							"error", status.getMessage()));
 					return "redirect:/user/transfer";
@@ -133,7 +142,7 @@ public class UserController {
 						.getUserId();
 				User toUser = this.userService.getUserById(toUserId);
 
-				// Validating the to account & user details
+				// Validating the to_account & user details
 				if (!toUser.getEmailId().equalsIgnoreCase(toEmailId)
 						|| !toUser.getFname().concat(" " + toUser.getLname())
 								.equals(name)) {
@@ -142,16 +151,6 @@ public class UserController {
 					return "redirect:/user/transfer";
 				}
 
-				// Validating amount
-				status = ValidationHelper.validateAmount(request.getParameter("amount"));
-				if (status.getStatus().equals("error")) {
-					attributes.addFlashAttribute("response", new Response("error", status.getMessage()));
-					return "redirect:/user/transfer";
-				}
-
-				double amount = Double.parseDouble(request
-						.getParameter("amount"));
-
 				if (toAccount.equals(fromAccount)) {
 					attributes.addFlashAttribute("response", new Response(
 							"error",
@@ -159,34 +158,40 @@ public class UserController {
 					return "redirect:/user/transfer";
 				}
 
-				this.transactionService.createTransaction(fromAccount,
+				String amount = request.getParameter("amount");
+				status = this.transactionService.createTransaction(fromAccount,
 						toAccount, amount, TransactionType.TRANSFER);
-				attributes.addFlashAttribute("response", new Response(
-						"success", "Transfer successfully!!"));
+
+				if (status.getStatus().equals("success")) {
+					attributes.addFlashAttribute("response", status);
+				} else {
+					attributes.addFlashAttribute("response", status);
+				}
 				return "redirect:/user/transfer";
 			} else if (urls.get("url_2").toString().equals("credit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
-				int amount = Integer.parseInt(request.getParameter("amount")
-						.toString());
-				this.transactionService.createTransaction(fromAccount,
+				String amount = request.getParameter("amount").toString();
+				status = this.transactionService.createTransaction(fromAccount,
 						fromAccount, amount, TransactionType.CREDIT);
-				attributes.addFlashAttribute("response", new Response(
-						"success", "Account credited successfully!!"));
+				if (status.getStatus().equals("success")) {
+					attributes.addFlashAttribute("response", status);
+				} else {
+					attributes.addFlashAttribute("response", status);
+				}
 				return "redirect:/user/credit";
 			} else if (urls.get("url_2").toString().equals("debit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
-				int amount = Integer.parseInt(request.getParameter("amount")
-						.toString());
-				this.transactionService.createTransaction(fromAccount,
+				String amount = request.getParameter("amount").toString();
+				status = this.transactionService.createTransaction(fromAccount,
 						fromAccount, amount, TransactionType.DEBIT);
-				attributes.addFlashAttribute("response", new Response(
-						"success", "Debit credited successfully!!"));
+				if (status.getStatus().equals("success")) {
+					attributes.addFlashAttribute("response", status);
+				} else {
+					attributes.addFlashAttribute("response", status);
+				}
 				return "redirect:/user/debit";
-			} else if (urls.get("url_2").toString().equals("payment")) {
-				// TODO: Accept or Decline flow.
-				return "redirect:/user/payment";
 			} else if (urls.get("url_2").toString().equals("authorize")) {
 				// TODO: Authorize flow.
 				return "redirect:/user/authorize";
@@ -247,31 +252,144 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "/user/payment")
-	public String userPayment(HttpServletRequest request, Model model) {
+	@RequestMapping(value = "/user/payment", method = { RequestMethod.GET,
+			RequestMethod.POST })
+	public String userPayment(HttpServletRequest request, Model model,
+			final RedirectAttributes attributes) {
+		URLHelper.logRequest(request);
 		HttpSession session = request.getSession();
+		Response status;
 		int account_id = 0;
+		// Always check if the user has selected account id before going to next
+		// page.
+		if (request.getParameter("account_id") != null) {
+			account_id = Integer.parseInt(request.getParameter("account_id"));
+			session.setAttribute("account_id", account_id);
+		} else if (session.getAttribute("account_id") == null) {
+			attributes.addFlashAttribute("response", new Response("error",
+					"Please select an account to proceed!!"));
+			return "redirect:/user/home";
+		}
+
 		account_id = (Integer) session.getAttribute("account_id");
-		System.out.println("Payment Requests for Account: " + account_id);
+		// Now that user has an account id check if its a valid account of user.
+		status = this.userService.isValidUserAccount(account_id, session
+				.getAttribute("userId").toString());
+
+		if (status.getStatus().equals("error")) {
+			attributes.addFlashAttribute("response", new Response("error",
+					status.getMessage()));
+			return "redirect:/user/home";
+		}
+
+		// Handle POST Request
+		if (URLHelper.isPOSTRequest(request)) {
+			if (request.getParameter("accept") != null) {
+				status = this.transactionService.updatePaymentRequest(
+						request.getParameter("accept"), "accept");
+				attributes.addFlashAttribute("response", status);
+				return "redirect:/user/payment";
+			} else if (request.getParameter("decline") != null) {
+				status = this.transactionService.updatePaymentRequest(
+						request.getParameter("decline"), "decline");
+				attributes.addFlashAttribute("response", status);
+				return "redirect:/user/payment";
+			} else {
+				// error
+			}
+		}
+
+		// Handle GET request
 		String userType = userService.getUserRole((String) session
 				.getAttribute("emailId"));
 		model.addAttribute("role", userType);
-		model.addAttribute("transactions", null);
+		model.addAttribute("transactions", this.transactionService
+				.getPaymentRequestForAccountId(account_id));
 		model.addAttribute("contentView", "payment");
 		return "user/template";
 
 	}
 
-	@RequestMapping(value = "/user/requestPayment")
-	public String merchantRequestPayment(HttpServletRequest request, Model model) {
+	@RequestMapping(value = "/user/requestPayment", method = {
+			RequestMethod.GET, RequestMethod.POST })
+	public String merchantRequestPayment(HttpServletRequest request,
+			Model model, final RedirectAttributes attributes) {
+		URLHelper.logRequest(request);
 		HttpSession session = request.getSession();
+		Response status;
 		int account_id = 0;
+		// Always check if the user has selected account id before going to next
+		// page.
+		if (request.getParameter("account_id") != null) {
+			account_id = Integer.parseInt(request.getParameter("account_id"));
+			session.setAttribute("account_id", account_id);
+		} else if (session.getAttribute("account_id") == null) {
+			attributes.addFlashAttribute("response", new Response("error",
+					"Please select an account to proceed!!"));
+			return "redirect:/user/home";
+		}
+
 		account_id = (Integer) session.getAttribute("account_id");
-		System.out.println("Payment Requests for Account: " + account_id);
+		// Now that user has an account id check if its a valid account of user.
+		status = this.userService.isValidUserAccount(account_id, session
+				.getAttribute("userId").toString());
+
+		if (status.getStatus().equals("error")) {
+			attributes.addFlashAttribute("response", new Response("error",
+					status.getMessage()));
+			return "redirect:/user/home";
+		}
+
+		// Handle all post requests
+		if (URLHelper.isPOSTRequest(request)) {
+			String name = request.getParameter("name").toString();
+			String toEmailId = request.getParameter("emailId").toString();
+			String toAccount = request.getParameter("account_to").toString();
+			String fromAccount = session.getAttribute("account_id").toString();
+
+			status = this.userService.isValidAccount(Integer
+					.parseInt(toAccount));
+			if (status.getStatus().equals("error")) {
+				attributes.addFlashAttribute("response", new Response("error",
+						status.getMessage()));
+				return "redirect:/user/requestPayment";
+			}
+			String toUserId = this.accountService
+					.getAccountById(Integer.parseInt(toAccount)).getUser()
+					.getUserId();
+			User toUser = this.userService.getUserById(toUserId);
+
+			// Validating the to_account & user details
+			if (!toUser.getEmailId().equalsIgnoreCase(toEmailId)
+					|| !toUser.getFname().concat(" " + toUser.getLname())
+							.equals(name)) {
+				attributes.addFlashAttribute("response", new Response("error",
+						"Incorrect account details!!"));
+				return "redirect:/user/requestPayment";
+			}
+
+			if (toAccount.equals(fromAccount)) {
+				attributes.addFlashAttribute("response", new Response("error",
+						"Cannot request payment to your own account!!"));
+				return "redirect:/user/requestPayment";
+			}
+
+			String amount = request.getParameter("amount");
+			status = this.transactionService.requestPayment(toAccount,
+					fromAccount, amount);
+
+			if (status.getStatus().equals("success")) {
+				attributes.addFlashAttribute("response", status);
+			} else {
+				attributes.addFlashAttribute("response", status);
+			}
+
+			return "redirect:/user/requestPayment";
+		}
+
 		String userType = userService.getUserRole((String) session
 				.getAttribute("emailId"));
 		model.addAttribute("role", userType);
-		model.addAttribute("transactions", null);
 		model.addAttribute("contentView", "requestPayment");
 		return "user/template";
 
@@ -345,17 +463,68 @@ public class UserController {
 		model.addAttribute("listUsers", this.userService.listUsers());
 		return "registration";
 	}
-	
+
 	@RequestMapping(value = "/passwordRecovery", method = RequestMethod.GET)
 	public String passwordRecovery(Model model) {
 
 		return "passwordRecovery";
 	}
 
+	@RequestMapping(value = "/passwordRecovery", method = RequestMethod.POST)
+	public String recoverPassword(HttpServletRequest request,
+			final RedirectAttributes attributes) {
+		// get email-id from user
+		String emailId = request.getParameter("emailId").toString();
+		// get user object
+		User userObj = this.userService.getUserByEmailId(emailId);
+		// Check if account exists
+		if (userObj == null) {
+			attributes.addFlashAttribute("response", new Response("error",
+					"Account doesn't exist !, Try again"));
+			return "redirect:/passwordRecovery";
+		} else {
+			// set user Id in the session
+			HttpSession session = request.getSession();
+			session.setAttribute("OTP-User-Id", userObj.getUserId());
+			System.out.println(emailId);
+			System.out.println(userObj.getUserId());
+			// send otp
+			otpService.sendOtp(this.userService.getUserByEmailId(emailId),
+					emailId);
+			return "setNewPassword";
+		}
+	}
+
+	@RequestMapping(value = "/setNewPassword", method = RequestMethod.GET)
+	public String setNewPassword(Model model) {
+
+		return "setNewPassword";
+	}
+
+	@RequestMapping(value = "/setNewPassword", method = RequestMethod.POST)
+	public String setNewPasswordPost(HttpServletRequest request,
+			final RedirectAttributes attributes) {
+		// get otp from user
+		String newOtp = request.getParameter("One Time Password").toString();
+		// send otp
+		HttpSession session = request.getSession();
+		String userId = session.getAttribute("OTP-User-Id").toString();
+		Boolean result = otpService.verifyOtp(
+				this.otpService.getUserotpById(userId), newOtp);
+		if (result == true) {
+			attributes.addFlashAttribute("response", new Response("success",
+					"OTP verified, Password reset"));
+		} else {
+			attributes.addFlashAttribute("response", new Response("error",
+					"Wrong OTP"));
+		}
+		return "redirect:/setNewPassword";
+	}
 
 	// For add and update person both
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addUser(@ModelAttribute("user") User p, final RedirectAttributes attributes) {
+	public String addUser(@ModelAttribute("user") User p,
+			final RedirectAttributes attributes) {
 
 		if (this.userService.getUserById(p.getUserId()) == null) {
 			// new person, add it
@@ -364,9 +533,9 @@ public class UserController {
 			// existing person, call update
 			this.userService.updateUser(p);
 		}
-		
-		attributes.addFlashAttribute("response", new Response(
-				"success", "Account registration successful!!"));
+
+		attributes.addFlashAttribute("response", new Response("success",
+				"Account registration successful!!"));
 		return "redirect:/registration";
 
 	}

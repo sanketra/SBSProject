@@ -1,6 +1,6 @@
 package com.onlinebanking.helpers;
 
-public class Constants {
+public final class Constants {
 	public static enum TransactionType {
 	    TRANSFER, CREDIT, DEBIT 
 	}
@@ -8,4 +8,6 @@ public class Constants {
 	public static enum RequestType {
 	    ACCOUNT, TRANSACTION 
 	}
+	
+	public static final double CRITICALTRANSACTION = 1000.0;
 }

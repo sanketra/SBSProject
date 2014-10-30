@@ -10,6 +10,8 @@ public interface UserService {
 	public void addUser(User p);
 	public void updateUser(User p);
 	public List<User> listUsers();
+	public List<User> listCustomers();
+	public List<User> listEmployees();
 	public User getUserById(String id);
 	public void removeUser(String id);
 	public User getUserByEmailId(String emailId);

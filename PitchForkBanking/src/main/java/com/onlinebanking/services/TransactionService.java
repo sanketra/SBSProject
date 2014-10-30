@@ -10,7 +10,8 @@ import com.onlinebanking.models.UserRequest;
 
 public interface TransactionService {
 
-	public void createTransaction(String fromAccount, String toAccount, double amount, TransactionType type);
+	public Response requestPayment(String fromAccount, String toAccount, String amount);
+	public Response createTransaction(String fromAccount, String toAccount, String amount, TransactionType type);
 	public Response addRequest(UserRequest userRequest);
 	public List<Requests> getAllRequestsFromUser(String userId);
 	public List<UserRequest> getApprovedTransactionRequestsFromUser();
@@ -19,4 +20,6 @@ public interface TransactionService {
 	public List<Transaction> getAllTransactionsForAccountId(int Id);
 	public List<UserRequest> getAllPendingRequests();
 	public Transaction getTransaction(String transactionId);
+	public List<Transaction> getPaymentRequestForAccountId(int id);
+	public Response updatePaymentRequest(String id, String status);
 }

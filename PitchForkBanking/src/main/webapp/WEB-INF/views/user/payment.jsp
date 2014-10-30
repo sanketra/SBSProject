@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <div class="container">
+	<c:url var="selectAction" value="/user/payment"></c:url>
 	<table class="table table-bordered">
 		<thead>
 			<tr>
@@ -21,10 +22,18 @@
 					<td>${_transaction.accountByToAccountNum.accountNum}</td>
 					<td>${_transaction.transactionAmount}</td>
 					<td>${_transaction.transactionType}</td>
-					<td><a class="btn btn-success"
-						href="${pageContext.request.contextPath}/user/payment/${_transaction.transactionId}">Accept</a></td>
-					<td><a class="btn btn-danger"
-						href="${pageContext.request.contextPath}/user/payment/${_transaction.transactionId}">Decline</a></td>
+					<td>
+					<form action="${selectAction}" method="POST">
+					<input type="hidden" name="accept" value="${_transaction.transactionId}"/>
+						<input type="submit" value="Accept" class="btn btn-success" />
+					</form>
+					</td>
+					<td>
+					<form action="${selectAction}" method="POST">
+					<input type="hidden" name="decline" value="${_transaction.transactionId}"/>
+						<input type="submit" value="Decline" class="btn btn-danger" />
+					</form>
+					</td>
 				</tr>
 			</c:forEach>
 		</tbody>
