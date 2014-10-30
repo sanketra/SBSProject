@@ -23,7 +23,6 @@ import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
 import com.onlinebanking.models.User;
-import com.onlinebanking.models.Userotp;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
 import com.onlinebanking.services.OtpService;
@@ -102,10 +101,9 @@ public class UserController {
 		int account_id = 0;
 		// Always check if the user has selected account id before going to next
 		// page.
-		if (urls.get("url_3") != null
-				&& !urls.get("url_3").toString().equals("")) {
-			account_id = Integer.parseInt(urls.get("url_3"));
-
+		if (request.getParameter("account_id") != null) {
+			account_id = Integer.parseInt(request.getParameter("account_id"));
+			session.setAttribute("account_id", account_id);
 		} else if (session.getAttribute("account_id") == null) {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Please select an account to proceed!!"));

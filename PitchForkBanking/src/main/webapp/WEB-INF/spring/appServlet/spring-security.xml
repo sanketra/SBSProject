@@ -136,6 +136,8 @@
 		class="com.onlinebanking.services.TransactionServiceImpl">
 		<beans:property name="transactionHome" ref="transactionHome"></beans:property>
 		<beans:property name="accountHome" ref="accountHome"></beans:property>
+		<beans:property name="requestsHome" ref="requestsHome"></beans:property>
+		<beans:property name="userHome" ref="userHome"></beans:property>
 	</beans:bean>
 
 	<!-- Transactions -->

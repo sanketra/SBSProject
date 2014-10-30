@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%
 	response.setHeader("pragma", "no-cache");
 	response.setHeader("Cache-control",
@@ -46,32 +47,36 @@ body {
 	</P>
 	<br>
 	<br>
-	<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th>Bank Account ID</th>
-				<th>Available Balance</th>
-				<th>Account Type</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach items="${accounts}" var="_account">
+	<c:url var="selectAction" value="/user/profile"></c:url>
+	<form action="${selectAction}" class="form-signin" method="POST">
+		<table class="table table-bordered">
+			<thead>
 				<tr>
-					<td>${_account.accountNum}</td>
-					<td><fmt:formatNumber value="${_account.amount}"
-							type="currency" /></td>
-					<td><c:choose>
-							<c:when test="${_account.accountType == \"Checking\" }">Checking Account </c:when>
-							<c:when test="${_account.accountType == \"Savings\" }">Saving Account </c:when>
-							<c:otherwise> Undefined </c:otherwise>
-						</c:choose></td>
-					<td><a class="btn btn-success"
-						href="${pageContext.request.contextPath}/user/profile/${_account.accountNum}">Select</a></td>
+					<th>Bank Account ID</th>
+					<th>Available Balance</th>
+					<th>Account Type</th>
+					<th>Select</th>
 				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				<c:forEach items="${accounts}" var="_account">
+					<tr>
+						<td>${_account.accountNum}</td>
+						<td><fmt:formatNumber value="${_account.amount}"
+								type="currency" /></td>
+						<td><c:choose>
+								<c:when test="${_account.accountType == \"Checking\" }">Checking Account </c:when>
+								<c:when test="${_account.accountType == \"Savings\" }">Saving Account </c:when>
+								<c:otherwise> Undefined </c:otherwise>
+							</c:choose></td>
+						<td><input type="radio" name="account_id"
+							value="${_account.accountNum}" /></td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+		<input type="submit" value="Select" class="btn btn-lg btn-primary" />
+	</form>
 	<br>
 	<br>
 	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>

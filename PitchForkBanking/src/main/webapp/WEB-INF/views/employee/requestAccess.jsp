@@ -4,8 +4,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-
-<form:form method="POST" action = "employee/submitRequest" commandName="requestUser">
+<c:url var="submitAction" value="/employee/submitRequest"></c:url>
+<form:form name="requestForm" action = "${submitAction}" commandName="userRequest" method="POST">
 <table class = "table">
 <tr>
 	<td>First Name:</td>
@@ -25,9 +25,8 @@
 </tr>
 <tr>
 	<td>Request Type</td>
-	<td>
-		
-		<form:select name="mydropdown" path="type">
+	<td>	
+		<form:select name="mydropdown" path="requestType">
 			<option value="Profile">Profile</option>
 			<option value="Transaction">Transaction</option>
 		</form:select>
