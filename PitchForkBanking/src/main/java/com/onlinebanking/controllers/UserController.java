@@ -23,6 +23,7 @@ import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
+import com.onlinebanking.models.AccountAppModel;
 import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserAppModel;
@@ -85,9 +86,9 @@ public class UserController {
 		User u = this.userService.getUserByEmailId(auth.getName());
 		session.setAttribute("userId", u.getUserId());
 		session.setAttribute("emailId", u.getEmailId());
-		// TODO: Account
-		model.addAttribute("accounts",
-				this.accountService.getUserAccounts(u.getUserId()));
+		model.addAttribute("accounts", ValidationHelper
+				.getAccountAppModelListFromAccountList(this.accountService
+						.getUserAccounts(u.getUserId())));
 		model.addAttribute("fname", u.getFname());
 		return "user/home";
 	}
@@ -233,10 +234,12 @@ public class UserController {
 			model.addAttribute("contentView", "transactions");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("authorize")) {
-			User u = this.userService.getUserByEmailId((String)session.getAttribute("emailId"));
+			User u = this.userService.getUserByEmailId((String) session
+					.getAttribute("emailId"));
 			model.addAttribute("role", u.getRole());
 			// TODO: Transaction
-			List<Requests> list  = this.transactionService.getAllRequestsToUser(u.getUserId());
+			List<Requests> list = this.transactionService
+					.getAllRequestsToUser(u.getUserId());
 			model.addAttribute("requests", list);
 			model.addAttribute("contentView", "authorize");
 			return "user/template";
@@ -245,7 +248,9 @@ public class UserController {
 					.getAttribute("emailId"));
 			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "profile");
-			UserAppModel u = new UserAppModel(this.userService.getUserByEmailId((String) session.getAttribute("emailId")));
+			UserAppModel u = new UserAppModel(
+					this.userService.getUserByEmailId((String) session
+							.getAttribute("emailId")));
 			model.addAttribute("user", u);
 			return "user/template";
 		} else {
@@ -406,7 +411,9 @@ public class UserController {
 				.getAttribute("emailId"));
 		model.addAttribute("role", userType);
 		model.addAttribute("contentView", "editprofile");
-		UserAppModel u = new UserAppModel(this.userService.getUserByEmailId((String) session.getAttribute("emailId")));
+		UserAppModel u = new UserAppModel(
+				this.userService.getUserByEmailId((String) session
+						.getAttribute("emailId")));
 		model.addAttribute("user", u);
 
 		return "user/template";
@@ -428,7 +435,7 @@ public class UserController {
 		// Redirect logic
 		if (verifyStatus == true) {
 			User user = this.userService.getUserById(u.getUserId());
-			
+
 			if (user == null) {
 				attributes.addFlashAttribute("response", new Response("error",
 						"Invalid user profile!"));
