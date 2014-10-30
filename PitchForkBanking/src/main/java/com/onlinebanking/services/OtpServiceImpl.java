@@ -40,9 +40,11 @@ public class OtpServiceImpl implements OtpService {
 	@Override
 	@Transactional
 	public void sendOtp(User user, String emailId1) {
+		// Check for duplicate record
+		String userId = user.getUserId();
+		
 		// Take email id from the form
 		String emailId = emailId1;
-
 		// Generate OTP
 		SecureRandom random = new SecureRandom();
 		String otp = new BigInteger(130, random).toString(32);
