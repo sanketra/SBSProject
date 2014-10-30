@@ -93,7 +93,7 @@ public class OtpServiceImpl implements OtpService {
 		String temp2 = otpObj.getOneTimePassword();
 		if (newOtp.equals(temp2)) {
 			System.out.println("True!");
-			// userotpHome.delete(otpObj);
+			userotpHome.delete(otpObj);
 			return true;
 		} else {
 			System.out.println("False!");
