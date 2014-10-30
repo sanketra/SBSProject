@@ -54,7 +54,7 @@ public class OtpServiceImpl implements OtpService {
 		if (temp == null) {
 			userotpHome.persist(userotpObj);
 		} else {
-			//userotpHome.delete(userotpObj);
+			userotpHome.delete(temp);
 			userotpHome.persist(userotpObj);
 		}
 		// Send OTP via Email to the requester
@@ -93,7 +93,7 @@ public class OtpServiceImpl implements OtpService {
 		String temp2 = otpObj.getOneTimePassword();
 		if (newOtp.equals(temp2)) {
 			System.out.println("True!");
-			userotpHome.delete(otpObj);
+			// userotpHome.delete(otpObj);
 			return true;
 		} else {
 			System.out.println("False!");
