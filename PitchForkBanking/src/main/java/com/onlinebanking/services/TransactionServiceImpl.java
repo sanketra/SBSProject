@@ -13,6 +13,7 @@ import com.onlinebanking.dao.RequestsHome;
 import com.onlinebanking.dao.TransactionHome;
 import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.helpers.Constants.TransactionType;
+import com.onlinebanking.helpers.Constants;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.ValidationHelper;
 import com.onlinebanking.models.Account;
@@ -39,7 +40,7 @@ public class TransactionServiceImpl implements TransactionService {
 	public void setTransactionHome(TransactionHome transactionDAO) {
 		this.transactionHome = transactionDAO;
 	}
-	
+
 	public void setUserHome(UserHome userDAO) {
 		this.userHome = userDAO;
 	}
@@ -47,18 +48,17 @@ public class TransactionServiceImpl implements TransactionService {
 	@Override
 	@Transactional
 	public Response addRequest(UserRequest userRequest) {
-		try
-		{
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			String fromUserId = userHome.getUserByEmailId(auth.getName()).getUserId();
+		try {
+			Authentication auth = SecurityContextHolder.getContext()
+					.getAuthentication();
+			String fromUserId = userHome.getUserByEmailId(auth.getName())
+					.getUserId();
 			Response result = ValidationHelper.validateUserRequest(userRequest);
-			if(result.getStatus().equalsIgnoreCase("error"))
-			{
+			if (result.getStatus().equalsIgnoreCase("error")) {
 				return result;
 			}
 			User toUser = userHome.getUserByEmailId(userRequest.getEmailId());
-			if(toUser == null)
-			{
+			if (toUser == null) {
 				return new Response("error", "user details not correct");
 			}
 			Requests request = new Requests();
@@ -66,16 +66,15 @@ public class TransactionServiceImpl implements TransactionService {
 			request.setToUser(toUser.getUserId());
 			request.setType(userRequest.getRequestType());
 			request.setStatus("pending");
-			
+
 			requestsHome.persist(request);
-			
+
 			return new Response("success", "Request added!!");
+		} catch (Exception e) {
+			return new Response("error",
+					"Exception occurred. Could not complete request");
 		}
-		catch(Exception e)
-		{
-			return new Response("error", "Exception occurred. Could not complete request");
-		}
-		
+
 	}
 
 	@Override
@@ -99,8 +98,16 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	@Transactional
-	public void createTransaction(String fromAccount, String toAccount,
-			double amount, TransactionType type) {
+	public Response createTransaction(String fromAccount, String toAccount,
+			String amt, TransactionType type) {
+		// Validating amount
+		Response status = ValidationHelper.validateAmount(amt);
+		if (status.getStatus().equals("error")) {
+			return status;
+		}
+
+		Double amount = Double.parseDouble(amt);
+		String msg = "";
 		Transaction t = new Transaction();
 		Account toAcc = this.accountHome.findById(Integer.parseInt(toAccount));
 		Account fromAcc = this.accountHome.findById(Integer
@@ -108,26 +115,54 @@ public class TransactionServiceImpl implements TransactionService {
 		t.setAccountByFromAcountNum(fromAcc);
 		t.setAccountByToAccountNum(toAcc);
 		t.setTransactionAmount(amount);
-		t.setTransactionStatus("success");
 		t.setTransactionTime(new Date());
 
 		switch (type) {
 		case CREDIT:
-			t.setTransactionType("credit");
-			toAcc.setAmount(toAcc.getAmount() + amount);
+			t.setTransactionType("Credit");
+			if (amount < Constants.CRITICALTRANSACTION) {
+				msg = "Account credited successfully.";
+				t.setTransactionStatus("success");
+				toAcc.setAmount(toAcc.getAmount() + amount);
+			} else {
+				msg = "Transfer waiting admin approval.";
+				t.setTransactionStatus("pending");
+			}
 			break;
 		case DEBIT:
-			t.setTransactionType("debit");
-			toAcc.setAmount(toAcc.getAmount() - amount);
+			t.setTransactionType("Debit");
+			if (amount < Constants.CRITICALTRANSACTION) {
+				msg = "Account debited successfully.";
+				t.setTransactionStatus("success");
+				toAcc.setAmount(toAcc.getAmount() - amount);
+			} else {
+				msg = "Transfer waiting admin approval.";
+				t.setTransactionStatus("pending");
+			}
+			break;
 		default:
-			t.setTransactionType("t-debit");
-			fromAcc.setAmount(fromAcc.getAmount() - amount);
-			toAcc.setAmount(toAcc.getAmount() + amount);
+			t.setTransactionType("Transfer");
+			if (amount < Constants.CRITICALTRANSACTION) {
+				msg = "Transfer successfully.";
+				t.setTransactionStatus("success");
+				fromAcc.setAmount(fromAcc.getAmount() - amount);
+				toAcc.setAmount(toAcc.getAmount() + amount);
+			} else {
+				msg = "Transfer waiting admin approval.";
+				t.setTransactionStatus("pending");
+			}
 		}
-		// All try & catch return ValidationStatus
-		transactionHome.persist(t);
-		this.accountHome.merge(fromAcc);
-		this.accountHome.merge(toAcc);
+
+		try {
+			transactionHome.persist(t);
+			this.accountHome.merge(fromAcc);
+			this.accountHome.merge(toAcc);
+		} catch (Exception e) {
+			return new Response("error",
+					"Transaction failed. Please try again!");
+		}
+
+		return new Response("success", msg);
 	}
 
 	@Override
@@ -142,9 +177,22 @@ public class TransactionServiceImpl implements TransactionService {
 		transactionHome.delete(transaction);
 	}
 
+	// Please use this function only for view access.
 	@Override
 	@Transactional
 	public List<Transaction> getAllTransactionsForAccountId(int id) {
-		return this.transactionHome.getAllTransactionsForAccountId(id);
+		List<Transaction> list = this.transactionHome
+				.getAllTransactionsForAccountId(id);
+
+		for (Transaction t : list) {
+			if (t.getAccountByFromAcountNum().getAccountNum() != t
+					.getAccountByToAccountNum().getAccountNum()) {
+				String type = t.getAccountByFromAcountNum().getAccountNum() == id ? "Debit"
+						: "Credit";
+				t.setTransactionType(type);
+			}
+		}
+
+		return list;
 	}
 }

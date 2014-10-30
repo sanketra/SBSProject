@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
 			return new Response("error", "Account is Invalid.");
 		}
 		
-		return new Response("true", "Account is valid");
+		return new Response("success", "Account is valid");
 	}
 
 	@Override
