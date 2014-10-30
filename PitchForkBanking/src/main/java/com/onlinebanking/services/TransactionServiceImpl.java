@@ -19,6 +19,7 @@ import com.onlinebanking.helpers.ValidationHelper;
 import com.onlinebanking.models.Account;
 import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.Transaction;
+import com.onlinebanking.models.TransactionStatus;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserRequest;
 
@@ -98,9 +99,8 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	@Transactional
-	public Response createTransaction(String fromAccount, String toAccount,
-			String amt, TransactionType type) {
-		// Validating amount
+	public Response requestPayment(String fromAccount, String toAccount,
+			String amt) {
 		Response status = ValidationHelper.validateAmount(amt);
 		if (status.getStatus().equals("error")) {
 			return status;
@@ -116,6 +116,53 @@ public class TransactionServiceImpl implements TransactionService {
 		t.setAccountByToAccountNum(toAcc);
 		t.setTransactionAmount(amount);
 		t.setTransactionTime(new Date());
+		t.setTransactionType("Payment");
+		msg = "Transfer waiting user approval.";
+		t.setTransactionStatus(TransactionStatus.USERPENDING);
+
+		try {
+			transactionHome.persist(t);
+			this.accountHome.merge(fromAcc);
+			this.accountHome.merge(toAcc);
+		} catch (Exception e) {
+			return new Response("error",
+					"Transaction failed. Please try again!");
+		}
+
+		return new Response("success", msg);
+	}
+	
+	@Override
+	@Transactional
+	public List<Transaction> getPaymentRequestForAccountId(int id) {
+		return this.transactionHome.getPaymentRequestForAccountId(id);
+	}
+	
+	@Override
+	@Transactional
+	public Response createTransaction(String fromAccount, String toAccount,
+			String amt, TransactionType type) {
+		// Validating amount
+		Response status = ValidationHelper.validateAmount(amt);
+		if (status.getStatus().equals("error")) {
+			return status;
+		}
+
+		Double amount = Double.parseDouble(amt);
+		String msg = "";
+		Transaction t = new Transaction();
+		Account toAcc = this.accountHome.findById(Integer.parseInt(toAccount));
+		Account fromAcc = this.accountHome.findById(Integer
+				.parseInt(fromAccount));
+
+		if (type == TransactionType.TRANSFER && fromAcc.getAmount() < amount) {
+			return new Response("error", "Insufficient funds!!");
+		}
+		
+		t.setAccountByFromAcountNum(fromAcc);
+		t.setAccountByToAccountNum(toAcc);
+		t.setTransactionAmount(amount);
+		t.setTransactionTime(new Date());
 
 		switch (type) {
 		case CREDIT:
@@ -126,7 +173,7 @@ public class TransactionServiceImpl implements TransactionService {
 				toAcc.setAmount(toAcc.getAmount() + amount);
 			} else {
 				msg = "Transfer waiting admin approval.";
-				t.setTransactionStatus("pending");
+				t.setTransactionStatus(TransactionStatus.ADMINPENDING);
 			}
 			break;
 		case DEBIT:
@@ -194,5 +241,28 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 
 		return list;
+	}
+	
+	@Override
+	@Transactional
+	public Response updatePaymentRequest(String id, String status) {
+		Transaction t = this.transactionHome.findById(id);
+		
+		if (status.equals("accept")) {
+			if (t.getAccountByFromAcountNum().getAmount() < t.getTransactionAmount()) {
+				return new Response("error", "Insufficient funds!!");
+			}
+			
+			t.getAccountByFromAcountNum().setAmount(t.getAccountByFromAcountNum().getAmount() - t.getTransactionAmount());
+			t.getAccountByToAccountNum().setAmount(t.getAccountByToAccountNum().getAmount() + t.getTransactionAmount());
+			this.accountHome.persist(t.getAccountByFromAcountNum());
+			t.setTransactionStatus(TransactionStatus.SUCCESS);
+			this.transactionHome.updatePaymentRequests(t);
+			return new Response("success", "Payment approved!");
+		} else {
+			t.setTransactionStatus(TransactionStatus.DECLINED);
+			this.transactionHome.updatePaymentRequests(t);
+			return new Response("success", "Payment declined!");
+		}
 	}
 }
