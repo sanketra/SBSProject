@@ -21,10 +21,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
-import com.onlinebanking.helpers.ValidationHelper;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
+import com.onlinebanking.services.OtpService;
 import com.onlinebanking.services.TransactionService;
 import com.onlinebanking.services.UserService;
 
@@ -34,6 +34,13 @@ public class UserController {
 	private CaptchaService captchaService;
 	private AccountService accountService;
 	private TransactionService transactionService;
+	private OtpService otpService;
+
+	@Autowired(required = true)
+	@Qualifier(value = "otpService")
+	public void setOtpService(OtpService otpService) {
+		this.otpService = otpService;
+	}
 
 	@Autowired(required = true)
 	@Qualifier(value = "captchaService")
@@ -104,11 +111,12 @@ public class UserController {
 
 		account_id = (Integer) session.getAttribute("account_id");
 		// Now that user has an account id check if its a valid account of user.
-		status = this.userService.isValidUserAccount(account_id, session.getAttribute("userId").toString());
-		
+		status = this.userService.isValidUserAccount(account_id, session
+				.getAttribute("userId").toString());
+
 		if (status.getStatus().equals("error")) {
-			attributes.addFlashAttribute("response", new Response(
-					"error", status.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error",
+					status.getMessage()));
 			return "redirect:/user/home";
 		}
 
@@ -117,11 +125,14 @@ public class UserController {
 			if (urls.get("url_2").toString().equals("transfer")) {
 				String name = request.getParameter("name").toString();
 				String toEmailId = request.getParameter("emailId").toString();
-				String toAccount = request.getParameter("account_to").toString();
-				String fromAccount = session.getAttribute("account_id").toString();
-				
-				status = this.userService.isValidAccount(Integer.parseInt(toAccount));
-				if(status.getStatus().equals("error")) {
+				String toAccount = request.getParameter("account_to")
+						.toString();
+				String fromAccount = session.getAttribute("account_id")
+						.toString();
+
+				status = this.userService.isValidAccount(Integer
+						.parseInt(toAccount));
+				if (status.getStatus().equals("error")) {
 					attributes.addFlashAttribute("response", new Response(
 							"error", status.getMessage()));
 					return "redirect:/user/transfer";
@@ -342,17 +353,60 @@ public class UserController {
 		model.addAttribute("listUsers", this.userService.listUsers());
 		return "registration";
 	}
-	
+
 	@RequestMapping(value = "/passwordRecovery", method = RequestMethod.GET)
 	public String passwordRecovery(Model model) {
 
 		return "passwordRecovery";
 	}
 
+	@RequestMapping(value = "/passwordRecovery", method = RequestMethod.POST)
+	public String recoverPassword(HttpServletRequest request,
+			final RedirectAttributes attributes) {
+		// get email-id from user
+		String emailId = request.getParameter("emailId").toString();
+		// get user object
+		User userObj = this.userService.getUserByEmailId(emailId);
+		// set user Id in the session
+		HttpSession session = request.getSession();
+		session.setAttribute("OTP-User-Id", userObj.getUserId());
+		System.out.println(emailId);
+		System.out.println(userObj.getUserId());
+		// send otp
+		otpService.sendOtp(this.userService.getUserByEmailId(emailId), emailId);
+		return "setNewPassword";
+	}
+
+	@RequestMapping(value = "/setNewPassword", method = RequestMethod.GET)
+	public String setNewPassword(Model model) {
+
+		return "setNewPassword";
+	}
+
+	@RequestMapping(value = "/setNewPassword", method = RequestMethod.POST)
+	public String setNewPasswordPost(HttpServletRequest request,
+			final RedirectAttributes attributes) {
+		// get otp from user
+		String newOtp = request.getParameter("One Time Password").toString();
+		// send otp
+		HttpSession session = request.getSession();
+		String userId = session.getAttribute("OTP-User-Id").toString();
+		Boolean result = otpService.verifyOtp(
+				this.otpService.getUserotpById(userId), newOtp);
+		if (result == true) {
+			attributes.addFlashAttribute("response", new Response("success",
+					"Password verified"));
+		} else {
+			attributes.addFlashAttribute("response", new Response("error",
+					"Wrong OTP"));
+		}
+		return "redirect:/setNewPassword";
+	}
 
 	// For add and update person both
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addUser(@ModelAttribute("user") User p, final RedirectAttributes attributes) {
+	public String addUser(@ModelAttribute("user") User p,
+			final RedirectAttributes attributes) {
 
 		if (this.userService.getUserById(p.getUserId()) == null) {
 			// new person, add it
@@ -361,9 +415,9 @@ public class UserController {
 			// existing person, call update
 			this.userService.updateUser(p);
 		}
-		
-		attributes.addFlashAttribute("response", new Response(
-				"success", "Account registration successful!!"));
+
+		attributes.addFlashAttribute("response", new Response("success",
+				"Account registration successful!!"));
 		return "redirect:/registration";
 
 	}

@@ -66,7 +66,12 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.6</version>
 		</dependency>
-
+		<!-- Java Mail -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
 		<!-- Apache Commons DBCP -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
