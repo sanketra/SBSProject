@@ -77,6 +77,12 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 
 	}
+	
+	@Override
+	@Transactional
+	public List<Requests> getAllRequestsToUser(String userId) {
+		return requestsHome.getAllRequestsToUser(userId);
+	}
 
 	@Override
 	@Transactional

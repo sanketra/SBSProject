@@ -1,6 +1,7 @@
 package com.onlinebanking.controllers;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
+import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.User;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
@@ -228,10 +230,10 @@ public class UserController {
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("authorize")) {
 			System.out.println("Authorize Requests");
-			String userType = userService.getUserRole((String) session
-					.getAttribute("emailId"));
-			model.addAttribute("role", userType);
-			model.addAttribute("requests", null);
+			User u = this.userService.getUserByEmailId((String)session.getAttribute("emailId"));
+			model.addAttribute("role", u.getRole());
+			List<Requests> list  = this.transactionService.getAllRequestsToUser(u.getUserId());
+			model.addAttribute("requests", list);
 			model.addAttribute("contentView", "authorize");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("profile")) {
@@ -240,11 +242,8 @@ public class UserController {
 			System.out.println("Role: " + userType);
 			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "profile");
-			model.addAttribute("user", this.userService
-					.getUserByEmailId((String) session.getAttribute("emailId")));
-
+			model.addAttribute("user", this.userService.getUserByEmailId((String) session.getAttribute("emailId")));
 			return "user/template";
-
 		} else {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Please select an account to proceed!!"));

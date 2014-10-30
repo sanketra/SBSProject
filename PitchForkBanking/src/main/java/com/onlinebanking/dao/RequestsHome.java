@@ -119,6 +119,22 @@ public class RequestsHome {
 			throw re;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Requests> getAllRequestsToUser(String userId) {
+		log.debug("finding all requests from user "+userId);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Query query = session.createQuery("FROM Requests where toUserId = :userId");
+			query.setParameter("userId", userId);
+			return query.list();
+			
+		} catch (RuntimeException re) {
+			log.error("error occurred while retrieving requests", re);
+			throw re;
+		}
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Requests> getAllRequestsFromUser(String userId) {

@@ -13,6 +13,7 @@ public interface TransactionService {
 	public Response requestPayment(String fromAccount, String toAccount, String amount);
 	public Response createTransaction(String fromAccount, String toAccount, String amount, TransactionType type);
 	public Response addRequest(UserRequest userRequest);
+	public List<Requests> getAllRequestsToUser(String userId);
 	public List<Requests> getAllRequestsFromUser(String userId);
 	public List<Transaction> getListOfApprovedTransactionRequests(String userId);
 	public void updateTransaction(Transaction transaction);
