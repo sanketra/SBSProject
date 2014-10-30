@@ -12,9 +12,11 @@ import org.hibernate.criterion.Example;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.models.User;
+import com.onlinebanking.models.Role;
 
 /**
  * Home object for domain model class User.
+ * 
  * @see com.onlinebanking.dao.User
  * @author Hibernate Tools
  */
@@ -23,7 +25,7 @@ public class UserHome {
 	private static final Log log = LogFactory.getLog(UserHome.class);
 
 	private SessionFactory sessionFactory;
-	
+
 	public void setSessionFactory(SessionFactory sf) {
 		this.sessionFactory = sf;
 	}
@@ -76,7 +78,8 @@ public class UserHome {
 	public User merge(User detachedInstance) {
 		log.debug("merging User instance");
 		try {
-			User result = (User) sessionFactory.getCurrentSession().merge(detachedInstance);
+			User result = (User) sessionFactory.getCurrentSession().merge(
+					detachedInstance);
 			log.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
@@ -88,8 +91,9 @@ public class UserHome {
 	public User findById(String id) {
 		log.debug("getting User instance with id: " + id);
 		try {
-			User instance = (User) sessionFactory.getCurrentSession().get("com.onlinebanking.models.User", id);
-			
+			User instance = (User) sessionFactory.getCurrentSession().get(
+					"com.onlinebanking.models.User", id);
+
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {
@@ -106,7 +110,8 @@ public class UserHome {
 	public List<User> findByExample(User instance) {
 		log.debug("finding User instance by example");
 		try {
-			List<User> results = sessionFactory.getCurrentSession().createCriteria("com.onlinebanking.models.User")
+			List<User> results = sessionFactory.getCurrentSession()
+					.createCriteria("com.onlinebanking.models.User")
 					.add(Example.create(instance)).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());
@@ -116,13 +121,51 @@ public class UserHome {
 			throw re;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<User> findAll() {
 		log.debug("finding User instance by example");
 		try {
 			String queryString = "Select * from user";
-			List<User> results = sessionFactory.getCurrentSession().createSQLQuery(queryString).addEntity(User.class).list();
+			List<User> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(User.class).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<User> findAllCustomers() {
+		log.debug("finding User instance by example");
+		try {
+			String role = Role.USER;
+			String queryString = "Select * from user U where U.role= :role";
+			List<User> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(User.class)
+					.setParameter("role", role).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public List<User> findAllEmployees() {
+		log.debug("finding User instance by example");
+		try {
+			String role = Role.EMPLOYEE;
+			String queryString = "Select * from user U where U.role= :role";
+			List<User> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(User.class)
+					.setParameter("role", role).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
@@ -139,16 +182,14 @@ public class UserHome {
 		try {
 			User instance = null;
 			String queryString = "Select * from user U where U.emailId = :emailId";
-			List<User> results = sessionFactory.getCurrentSession().
-					createSQLQuery(queryString).
-					addEntity(User.class).
-					setParameter("emailId", emailId).
-					list();
-			
+			List<User> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(User.class)
+					.setParameter("emailId", emailId).list();
+
 			if (results.size() > 0) {
 				instance = results.get(0);
 			}
-			
+
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {

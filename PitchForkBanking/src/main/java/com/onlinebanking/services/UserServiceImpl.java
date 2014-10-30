@@ -50,6 +50,18 @@ public class UserServiceImpl implements UserService {
 	public List<User> listUsers() {
 		return this.userHome.findAll();
 	}
+	
+	@Override
+	@Transactional
+	public List<User> listCustomers() {
+		return this.userHome.findAllCustomers();
+	}
+	
+	@Override
+	@Transactional
+	public List<User> listEmployees() {
+		return this.userHome.findAllEmployees();
+	}
 
 	@Override
 	@Transactional

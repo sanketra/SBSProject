@@ -17,10 +17,6 @@
   });
   </script>
 
-
-
-
-
 <title>User Registration</title>
 <link href="<c:url value="/resources/bootstrap/css/bootstrap.css" />"
 	rel="stylesheet">
