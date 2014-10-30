@@ -2,9 +2,12 @@ package com.onlinebanking.services;
 
 import javax.transaction.Transactional;
 
+import org.springframework.stereotype.Service;
+
 import net.tanesha.recaptcha.ReCaptchaImpl;
 import net.tanesha.recaptcha.ReCaptchaResponse;
 
+@Service
 public class CaptchaServiceImpl implements CaptchaService {
 
 	private static CaptchaService captchaServiceImpl = null;

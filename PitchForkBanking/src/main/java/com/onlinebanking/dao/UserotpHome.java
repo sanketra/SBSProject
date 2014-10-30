@@ -14,6 +14,7 @@ import com.onlinebanking.models.Userotp;
 
 /**
  * Home object for domain model class Userotp.
+ * 
  * @see com.onlinebanking.dao.Userotp
  * @author Hibernate Tools
  */
@@ -22,7 +23,7 @@ public class UserotpHome {
 	private static final Log log = LogFactory.getLog(UserotpHome.class);
 
 	private SessionFactory sessionFactory;
-	
+
 	public void setSessionFactory(SessionFactory sf) {
 		this.sessionFactory = sf;
 	}
@@ -89,7 +90,7 @@ public class UserotpHome {
 		log.debug("getting Userotp instance with id: " + id);
 		try {
 			Userotp instance = (Userotp) sessionFactory.getCurrentSession()
-					.get("com.onlinebanking.dao.Userotp", id);
+					.get("com.onlinebanking.models.Userotp", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {
@@ -107,7 +108,7 @@ public class UserotpHome {
 		log.debug("finding Userotp instance by example");
 		try {
 			List<Userotp> results = sessionFactory.getCurrentSession()
-					.createCriteria("com.onlinebanking.dao.Userotp")
+					.createCriteria("com.onlinebanking.models.Userotp")
 					.add(Example.create(instance)).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());

@@ -43,11 +43,11 @@ body {
 <body>
 	<div class="container">
 	<jsp:include page="common/response.jsp" />
-		<c:url var="recoverUrl" value="/passwordRecovery"></c:url>
-		<form class="form-signin" action="${recoverUrl}" method="POST">
-			<h4 class="form-signin-heading">Forgot Password?</h4>
-			<br> <input type='text' name='emailId' class="input-block-level"
-				placeholder="Email address" /> <input type="submit" value="Recover"
+		<c:url var="newPasswordUrl" value="/setNewPassword"></c:url>
+		<form class="form-signin" action="${newPasswordUrl}" method="POST">
+			<h4 class="form-signin-heading">Verify OTP</h4>
+			<br> <input type='text' name='One Time Password' class="input-block-level"
+				placeholder="Enter One Time Password" /> <input type="submit" value="Verify"
 				class="btn btn-large btn-primary" />
 		</form>
 	</div>

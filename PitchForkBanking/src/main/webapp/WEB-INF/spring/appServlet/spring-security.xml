@@ -30,7 +30,7 @@
 		<intercept-url pattern="/user/requestPayment" access="Merchant" />
 		<intercept-url pattern="/user/*" access="User,Merchant" />
 		<intercept-url pattern="/user/*/*" access="User,Merchant" />
-		<intercept-url pattern="/user/*/*/*" access="User,Merchant" />		
+		<intercept-url pattern="/user/*/*/*" access="User,Merchant" />
 		<form-login login-page="/login" authentication-failure-url="/denied"
 			username-parameter="emailId" password-parameter="password"
 			authentication-success-handler-ref="authSuccessHandler" />
@@ -63,7 +63,7 @@
 		<beans:property name="url"
 			value="jdbc:mysql://localhost:3306/pitchforkbank" />
 		<beans:property name="username" value="root" />
-		<beans:property name="password" value="pooja" />
+		<beans:property name="password" value="root" />
 
 
 	</beans:bean>
@@ -108,7 +108,7 @@
 		<beans:property name="sessionFactory"
 			ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
-	<beans:bean id="userOtp" class="com.onlinebanking.dao.UserotpHome">
+	<beans:bean id="userotpHome" class="com.onlinebanking.dao.UserotpHome">
 		<beans:property name="sessionFactory"
 			ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>
@@ -128,9 +128,10 @@
 	</beans:bean>
 	<beans:bean id="captchaService"
 		class="com.onlinebanking.services.CaptchaServiceImpl">
-
 	</beans:bean>
-
+	<beans:bean id="otpService" class="com.onlinebanking.services.OtpServiceImpl">
+		<beans:property name="userotpHome" ref="userotpHome"></beans:property>
+	</beans:bean>
 	<beans:bean id="transactionService"
 		class="com.onlinebanking.services.TransactionServiceImpl">
 		<beans:property name="transactionHome" ref="transactionHome"></beans:property>
