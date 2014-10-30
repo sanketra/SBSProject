@@ -142,11 +142,12 @@ public class UserHome {
 	public List<User> findAllCustomers() {
 		log.debug("finding User instance by example");
 		try {
-			String role = Role.USER;
-			String queryString = "Select * from user U where U.role= :role";
+			String role1 = Role.USER;
+			String role2 = Role.MERCHANT;
+			String queryString = "Select * from user U where U.role= :role1 OR U.role = :role2";
 			List<User> results = sessionFactory.getCurrentSession()
 					.createSQLQuery(queryString).addEntity(User.class)
-					.setParameter("role", role).list();
+					.setParameter("role1", role1).setParameter("role2", role2).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());
 			return results;

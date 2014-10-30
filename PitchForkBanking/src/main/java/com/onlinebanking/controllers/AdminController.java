@@ -70,6 +70,14 @@ public class AdminController {
 		return "admin/admin_template";
 	}
 	
+	
+	@RequestMapping(value="/admin/employeeRegistration")
+	public String employeeRegitration(Model model){
+		
+		model.addAttribute("contentView", "admin_employeeList");
+		return "admin/admin_template";
+	}
+	
 	//Incomplete
 	@RequestMapping(value="/admin/processRequests")
 	public String processRequests(Model model){
