@@ -22,4 +22,5 @@ public interface TransactionService {
 	public Transaction getTransaction(String transactionId);
 	public List<Transaction> getPaymentRequestForAccountId(int id);
 	public Response updatePaymentRequest(String id, String status);
+	List<UserRequest> getApprovedProfileRequestsFromUser();
 }

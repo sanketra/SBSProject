@@ -142,11 +142,26 @@ public class RequestsHome {
 		log.debug("finding transaction ids of approved requests from user "+userId);
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where fromUserId = :userId and status = 'approved'");
+			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where fromUserId = :userId and status = 'approved' and type = 'transaction'");
 			query.setParameter("userId", userId);
 			return query.addEntity(Requests.class).list();
 			
 		} catch (RuntimeException re) {
+			log.error("error occurred while retrieving transaction ids", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Requests> getApprovedProfileRequestsForUser(String userId) {
+		log.debug("finding transaction ids of approved requests from user "+userId);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where fromUserId = :userId and status = 'approved' and type = 'profile'");
+			query.setParameter("userId", userId);
+			return query.addEntity(Requests.class).list();
+			
+			} catch (RuntimeException re) {
 			log.error("error occurred while retrieving transaction ids", re);
 			throw re;
 		}

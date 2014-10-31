@@ -115,6 +115,30 @@ public class TransactionServiceImpl implements TransactionService {
 	
 	@Override
 	@Transactional
+	public List<UserRequest> getApprovedProfileRequestsFromUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName();
+		User u = userHome.getUserByEmailId(username);
+		String userId = u.getUserId();
+		List<Requests> profileRequests = requestsHome
+				.getApprovedProfileRequestsForUser(userId);
+		List<UserRequest> userRequests = new ArrayList<UserRequest>();
+		for(Requests request : profileRequests)
+		{
+			String toUserId = request.getToUser();
+			User toUser = userHome.findById(toUserId);
+			UserRequest requestedUser = new UserRequest();
+			
+			requestedUser.setFname(toUser.getFname());
+			requestedUser.setLname(toUser.getLname());
+			requestedUser.setEmailId(toUser.getEmailId());
+			userRequests.add(requestedUser);
+		}
+		return userRequests;
+	}
+	
+	@Override
+	@Transactional
 	public List<UserRequest> getAllPendingRequests() {
 		try
 		{
