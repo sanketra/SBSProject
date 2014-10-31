@@ -16,10 +16,6 @@
 				<td>${user.lname}</td>
 			</tr>
 			<tr>
-				<td>SSN</td>
-				<td>${user.ssn}</td>
-			</tr>
-			<tr>
 				<td>Email Id</td>
 				<td>${user.emailId}</td>
 			</tr>

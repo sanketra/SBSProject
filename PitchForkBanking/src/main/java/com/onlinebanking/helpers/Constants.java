@@ -10,4 +10,6 @@ public final class Constants {
 	}
 	
 	public static final double CRITICALTRANSACTION = 1000.0;
+	public static final int MIN_ACCOUNTNUMBER = 100000;
+	public static final int MAX_ACCOUNTNUMBER = 999999;
 }

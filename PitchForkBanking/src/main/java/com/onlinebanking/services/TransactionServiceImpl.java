@@ -17,6 +17,7 @@ import com.onlinebanking.helpers.Constants;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.ValidationHelper;
 import com.onlinebanking.models.Account;
+import com.onlinebanking.models.RequestStatus;
 import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.Transaction;
 import com.onlinebanking.models.TransactionStatus;
@@ -80,28 +81,75 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	@Transactional
-	public List<Requests> getAllRequestsFromUser(String userId) {
-		return requestsHome.getAllRequestsFromUser(userId);
+	public List<UserRequest> getPendingRequestsToUser(String userId) {
+		List<Requests> transactionRequests = requestsHome
+				.getAllRequestsToUser(userId);
+		List<UserRequest> userRequests = new ArrayList<UserRequest>();
+		User toUser = userHome.findById(userId);
+		for (Requests request : transactionRequests) {
+			if (!request.getStatus().equalsIgnoreCase(RequestStatus.PENDING)) {
+				continue;
+			}
+			
+			String fromUserId = request.getFromUser();
+			User fromUser = userHome.findById(fromUserId);
+			UserRequest requestedUser = new UserRequest();
+			requestedUser.setRequestId(request.getRequestId());
+			requestedUser.setFname(toUser.getFname());
+			requestedUser.setLname(toUser.getLname());
+			requestedUser.setEmployeeName(fromUser.getFname() + " "
+					+ fromUser.getLname());
+			requestedUser.setEmailId(toUser.getEmailId());
+			requestedUser.setRequestType(request.getType());
+			userRequests.add(requestedUser);
+		}
+		return userRequests;
+	}
+
+	@Override
+	@Transactional
+	public List<UserRequest> getPendingRequestsFromUser(String userId) {
+		List<Requests> transactionRequests = requestsHome
+				.getAllRequestsFromUser(userId);
+		List<UserRequest> userRequests = new ArrayList<UserRequest>();
+		User fromUser = userHome.findById(userId);
+		for (Requests request : transactionRequests) {
+			if (!request.getStatus().equalsIgnoreCase(RequestStatus.PENDING)) {
+				continue;
+			}
+			
+			String toUserId = request.getToUser();
+			User toUser = userHome.findById(toUserId);
+			UserRequest requestedUser = new UserRequest();
+			requestedUser.setRequestId(request.getRequestId());
+			requestedUser.setFname(toUser.getFname());
+			requestedUser.setLname(toUser.getLname());
+			requestedUser.setEmployeeName(fromUser.getFname() + " "
+					+ fromUser.getLname());
+			requestedUser.setEmailId(toUser.getEmailId());
+			requestedUser.setRequestType(request.getType());
+			userRequests.add(requestedUser);
+		}
+		return userRequests;
 	}
 
 	@Override
 	@Transactional
 	public List<UserRequest> getApprovedTransactionRequestsFromUser() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
 		String username = auth.getName();
 		User u = userHome.getUserByEmailId(username);
 		String userId = u.getUserId();
 		List<Requests> transactionRequests = requestsHome
 				.getApprovedTransactionRequestsForUser(userId);
 		List<UserRequest> userRequests = new ArrayList<UserRequest>();
-		for(Requests request : transactionRequests)
-		{
+		for (Requests request : transactionRequests) {
 			String toUserId = request.getToUser();
 			User toUser = userHome.findById(toUserId);
 			List<Account> userAccounts = accountHome.getUserAccounts(toUserId);
-			
-			for(Account acc : userAccounts)
-			{
+
+			for (Account acc : userAccounts) {
 				UserRequest requestedUser = new UserRequest();
 				requestedUser.setFname(toUser.getFname());
 				requestedUser.setLname(toUser.getLname());
@@ -112,7 +160,7 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 		return userRequests;
 	}
-	
+
 	@Override
 	@Transactional
 	public List<UserRequest> getApprovedProfileRequestsFromUser() {
@@ -140,16 +188,16 @@ public class TransactionServiceImpl implements TransactionService {
 	@Override
 	@Transactional
 	public List<UserRequest> getAllPendingRequests() {
-		try
-		{
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		try {
+			Authentication auth = SecurityContextHolder.getContext()
+					.getAuthentication();
 			String username = auth.getName();
 			User u = userHome.getUserByEmailId(username);
 			String userId = u.getUserId();
-			List<Requests> pendingRequest = requestsHome.getAllPendingRequests(userId);
+			List<Requests> pendingRequest = requestsHome
+					.getAllPendingRequests(userId);
 			List<UserRequest> userRequests = new ArrayList<UserRequest>();
-			for(Requests request : pendingRequest)
-			{
+			for (Requests request : pendingRequest) {
 				String toUserId = request.getToUser();
 				User toUser = userHome.findById(toUserId);
 				UserRequest requestedUser = new UserRequest();
@@ -160,9 +208,7 @@ public class TransactionServiceImpl implements TransactionService {
 				userRequests.add(requestedUser);
 			}
 			return userRequests;
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			return new ArrayList<UserRequest>();
 		}
 	}
@@ -201,13 +247,13 @@ public class TransactionServiceImpl implements TransactionService {
 
 		return new Response("success", msg);
 	}
-	
+
 	@Override
 	@Transactional
 	public List<Transaction> getPaymentRequestForAccountId(int id) {
 		return this.transactionHome.getPaymentRequestForAccountId(id);
 	}
-	
+
 	@Override
 	@Transactional
 	public Response createTransaction(String fromAccount, String toAccount,
@@ -228,7 +274,7 @@ public class TransactionServiceImpl implements TransactionService {
 		if (type == TransactionType.TRANSFER && fromAcc.getAmount() < amount) {
 			return new Response("error", "Insufficient funds!!");
 		}
-		
+
 		t.setAccountByFromAcountNum(fromAcc);
 		t.setAccountByToAccountNum(toAcc);
 		t.setTransactionAmount(amount);
@@ -315,20 +361,48 @@ public class TransactionServiceImpl implements TransactionService {
 	
 	@Override
 	@Transactional
+	public Response updateAccessRequest(String id, String status) {
+		Requests t = this.requestsHome.findById(id);
+
+		if (status.equals("approve")) {
+			t.setStatus(RequestStatus.APPROVED);
+			this.requestsHome.merge(t);
+			return new Response("success", "Request approved!");
+		} else {
+			t.setStatus(RequestStatus.DECLINED);
+			this.requestsHome.merge(t);
+			return new Response("success", "Request declined!");
+		}
+	}
+
+	@Override
+	@Transactional
 	public Response updatePaymentRequest(String id, String status) {
 		Transaction t = this.transactionHome.findById(id);
-		
+
 		if (status.equals("accept")) {
-			if (t.getAccountByFromAcountNum().getAmount() < t.getTransactionAmount()) {
+			if (t.getAccountByFromAcountNum().getAmount() < t
+					.getTransactionAmount()) {
 				return new Response("error", "Insufficient funds!!");
 			}
 			
-			t.getAccountByFromAcountNum().setAmount(t.getAccountByFromAcountNum().getAmount() - t.getTransactionAmount());
-			t.getAccountByToAccountNum().setAmount(t.getAccountByToAccountNum().getAmount() + t.getTransactionAmount());
-			this.accountHome.persist(t.getAccountByFromAcountNum());
-			t.setTransactionStatus(TransactionStatus.SUCCESS);
-			this.transactionHome.updatePaymentRequests(t);
-			return new Response("success", "Payment approved!");
+			if (t.getTransactionAmount() < Constants.CRITICALTRANSACTION) {
+				t.getAccountByFromAcountNum().setAmount(
+						t.getAccountByFromAcountNum().getAmount()
+								- t.getTransactionAmount());
+				t.getAccountByToAccountNum().setAmount(
+						t.getAccountByToAccountNum().getAmount()
+								+ t.getTransactionAmount());
+				this.accountHome.persist(t.getAccountByFromAcountNum());
+				this.accountHome.persist(t.getAccountByToAccountNum());
+				t.setTransactionStatus(TransactionStatus.SUCCESS);
+				this.transactionHome.updatePaymentRequests(t);
+				return new Response("success", "Payment approved!");
+			} else {
+				t.setTransactionStatus(TransactionStatus.ADMINPENDING);
+				this.transactionHome.updatePaymentRequests(t);
+				return new Response("success", "Payment waiting Admin approval!");
+			}
 		} else {
 			t.setTransactionStatus(TransactionStatus.DECLINED);
 			this.transactionHome.updatePaymentRequests(t);

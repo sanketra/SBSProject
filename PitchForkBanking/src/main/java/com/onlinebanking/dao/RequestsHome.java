@@ -92,7 +92,7 @@ public class RequestsHome {
 		log.debug("getting Requests instance with id: " + id);
 		try {
 			Requests instance = (Requests) sessionFactory.getCurrentSession()
-					.get("com.onlinebanking.dao.Requests", id);
+					.get("com.onlinebanking.models.Requests", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {
@@ -110,7 +110,7 @@ public class RequestsHome {
 		log.debug("finding Requests instance by example");
 		try {
 			List<Requests> results = sessionFactory.getCurrentSession()
-					.createCriteria("com.onlinebanking.dao.Requests")
+					.createCriteria("com.onlinebanking.models.Requests")
 					.add(Example.create(instance)).list();
 			log.debug("find by example successful, result size: "
 					+ results.size());
@@ -119,6 +119,22 @@ public class RequestsHome {
 			log.error("find by example failed", re);
 			throw re;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Requests> getAllRequestsToUser(String userId) {
+		log.debug("finding all requests from user "+userId);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Query query = session.createQuery("FROM Requests where toUserId = :userId");
+			query.setParameter("userId", userId);
+			return query.list();
+			
+		} catch (RuntimeException re) {
+			log.error("error occurred while retrieving requests", re);
+			throw re;
+		}
+		
 	}
 
 	@SuppressWarnings("unchecked")

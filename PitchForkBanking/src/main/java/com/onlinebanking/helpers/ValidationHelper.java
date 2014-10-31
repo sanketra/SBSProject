@@ -1,7 +1,11 @@
 package com.onlinebanking.helpers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+import com.onlinebanking.models.Account;
+import com.onlinebanking.models.AccountAppModel;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserAppModel;
 import com.onlinebanking.models.UserRequest;
@@ -26,25 +30,37 @@ public class ValidationHelper {
 		return new Response("success", "Amount is valid");
 	}
 	
+	// Properties not set here are assumed to be never editable. 
+	// Please refrain from adding them here.
 	public static User getUserFromUserAppModel(UserAppModel a, User u) {
-		u.setUserId(a.getUserId());
 		u.setEmailId(a.getEmailId());
 		u.setFname(a.getFname());
 		u.setLname(a.getLname());
 		u.setAddress(a.getAddress());
 		u.setCity(a.getCity());
 		u.setState(a.getState());
-		u.setSsn(a.getSsn());
 		u.setPhoneno(a.getPhoneno());
 		u.setZipcode(a.getZipcode());
-		u.setAnswer1(a.getAnswer1());
-		u.setAnswer2(a.getAnswer2());
-		u.setAnswer3(a.getAnswer3());
-		u.setQues1(a.getQues1());
-		u.setQues2(a.getQues2());
-		u.setQues3(a.getQues3());
 		return u;
-}
+	}
+	
+	// Properties not set here are assumed to be never editable. 
+	// Please refrain from adding them here.
+	public static Account getAccountFromAccountAppModel(AccountAppModel acc, Account a) {
+		a.setAmount(acc.getAmount());
+		return a;
+	}
+	
+	public static List<AccountAppModel> getAccountAppModelListFromAccountList(List<Account> acclist) {
+		List<AccountAppModel> list = new ArrayList<AccountAppModel>();
+		
+		for (Account acc : acclist) {
+			list.add(new AccountAppModel(acc));
+		}
+		
+		return list;
+	}
+	
 	public static Response validateUserRequest(UserRequest userRequest)
 	{
 		try
