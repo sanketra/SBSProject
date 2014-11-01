@@ -8,13 +8,14 @@ public class UserRequest {
 	private String employeeName;
 	private int accountId;
 	private String requestType;
+	private String status;
 	
 	public UserRequest()
 	{
 		
 	}
 
-	public UserRequest(String fname, String lname, String emailId, int accountId, String requestType, String employeeName)
+	public UserRequest(String fname, String lname, String emailId, int accountId, String requestType, String employeeName, String status)
 	{
 		this.fname = fname;
 		this.lname = lname;
@@ -22,6 +23,7 @@ public class UserRequest {
 		this.accountId = accountId;
 		this.requestType = requestType;
 		this.employeeName = employeeName;
+		this.status = status;
 	}
 	
 	public String getRequestId() {
@@ -78,6 +80,14 @@ public class UserRequest {
 
 	public void setRequestType(String requestType) {
 		this.requestType = requestType;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 		
 }

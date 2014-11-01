@@ -183,7 +183,6 @@ public class RequestsHome {
 		}
 	}
 	
-
 	@SuppressWarnings("unchecked")
 	public List<Requests> getAllPendingRequests(String userId) {
 		log.debug("finding transaction ids of approved requests from user "+userId);
@@ -195,6 +194,48 @@ public class RequestsHome {
 			
 		} catch (RuntimeException re) {
 			log.error("error occurred while retrieving transaction ids", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Requests> getAllPendingRequests() {
+		log.debug("Getting all Pending requests");
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where status = 'pending'");
+			return query.addEntity(Requests.class).list();
+			
+		} catch (RuntimeException re) {
+			log.error("error occurred while retrieving pending requests", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Requests> getAllApprovedRequests() {
+		log.debug("Getting all Approved requests");
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where status = 'approved'");
+			return query.addEntity(Requests.class).list();
+			
+		} catch (RuntimeException re) {
+			log.error("error occurred while retrieving approved requests", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Requests> getAllDeclinedRequests() {
+		log.debug("Getting all Declined requests");
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where status = 'declined'");
+			return query.addEntity(Requests.class).list();
+			
+		} catch (RuntimeException re) {
+			log.error("error occurred while retrieving declined requests", re);
 			throw re;
 		}
 	}

@@ -566,6 +566,24 @@ public class UserController {
 		return "redirect:/registration";
 
 	}
+	
+	@RequestMapping(value = "/addEmployee", method = RequestMethod.POST)
+	public String addUser_employee(@ModelAttribute("user") User p,
+			final RedirectAttributes attributes) {
+
+		if (this.userService.getUserById(p.getUserId()) == null) {
+			// new person, add it
+			this.userService.addUser(p);
+		} else {
+			// existing person, call update
+			this.userService.updateUser(p);
+		}
+
+		attributes.addFlashAttribute("response", new Response("success",
+				"Account registration successful!!"));
+		return "redirect:/admin_home";
+
+	}
 
 	@RequestMapping("/remove/{id}")
 	public String removeUser(@PathVariable("id") String id) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
+import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.Transaction;
 import com.onlinebanking.models.UserRequest;
 
@@ -19,9 +20,12 @@ public interface TransactionService {
 	public void deleteTransaction(Transaction transaction);
 	public List<Transaction> getAllTransactionsForAccountId(int Id);
 	public List<UserRequest> getAllPendingRequests();
+	public List<UserRequest> getPendingRequests();
+	public List<UserRequest> getApprovedRequests();
 	public Transaction getTransaction(String transactionId);
 	public List<Transaction> getPaymentRequestForAccountId(int id);
 	public Response updatePaymentRequest(String id, String status);
-	List<UserRequest> getApprovedProfileRequestsFromUser();
+	public List<UserRequest> getApprovedProfileRequestsFromUser();
 	public Response updateAccessRequest(String id, String status);
+	public List<UserRequest> getDeclinedRequests();
 }

@@ -109,7 +109,8 @@ public class EmployeeController {
 		if (verifyStatus == true) {
 			u.setFname(userAppModel.getFname());
 			u.setLname(userAppModel.getLname());
-			u.setEmailId(userAppModel.getAddress());
+			u.setEmailId(userAppModel.getEmailId());
+			u.setAddress(userAppModel.getAddress());
 			u.setCity(userAppModel.getCity());
 			u.setState(userAppModel.getState());
 			u.setZipcode(userAppModel.getZipcode());

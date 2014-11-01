@@ -44,7 +44,7 @@
 <body>
 	<h1>Admin Dashboard</h1>
 	<p>
-	<br> Hello Admin!! :${name}<br>
+	<br> Hello Admin - ${name}<br>
 	</p>
 <%-- 	<div id="container">
 		
@@ -52,11 +52,11 @@
 				<jsp:include page="admin_sidebar.jsp" />
 			</div>
 	</div> --%>
-	
+<%-- 	
 	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
 	
 	<form action="${logoutAction}" method="post">
 		<input type="submit" value="Logout" />
-	</form>
+	</form> --%>
 </body>
 </html>
