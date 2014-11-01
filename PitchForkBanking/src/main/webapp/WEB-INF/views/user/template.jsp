@@ -43,6 +43,9 @@ body {
 	margin-bottom: 15px;
 	padding: 7px 9px;
 }
+.borderless tbody tr td, .borderless thead tr th {
+    border: none;
+}
 </style>
 <link
 	href="<c:url value="/resources/bootstrap/css/bootstrap-responsive.css" />"
@@ -52,7 +55,7 @@ body {
 	rel="stylesheet">
 
 </head>
-<body id="body-site">
+<body>
 	<div class="container-fluid" align="right">
 		<jsp:include page="../common/header.jsp" />
 	</div>
@@ -62,13 +65,12 @@ body {
 				<jsp:include page="sidebar.jsp" />
 			</div>
 			<div class="span10">
-				<article id="content" class="span10">
+				<article class="span10">
 					<c:if test="${!empty response}">
 						<jsp:include page="../common/response.jsp" />
 					</c:if>
 					<jsp:include page="${contentView}.jsp" />
 				</article>
-
 			</div>
 		</div>
 	</div>

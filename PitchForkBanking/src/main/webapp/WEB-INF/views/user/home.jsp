@@ -48,8 +48,8 @@ body {
 	<br>
 	<br>
 	<c:url var="selectAction" value="/user/profile"></c:url>
-	<form action="${selectAction}" class="form-signin" method="POST">
-		<table class="table table-bordered">
+	<form action="${selectAction}" class="form-horizontal" method="POST">
+		<table class="table table-striped">
 			<thead>
 				<tr>
 					<th>Bank Account ID</th>

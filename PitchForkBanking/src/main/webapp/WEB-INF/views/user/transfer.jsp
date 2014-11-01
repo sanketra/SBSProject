@@ -5,7 +5,7 @@
 <c:url var="submitAction" value="/user/transfer"></c:url>
 <div class="container">
 	<form:form action="${submitAction}" class="form-horizontal" method="POST">
-		<table class="table">
+		<table class="table table borderless">
 			<tr>
 				<td>Name</td>
 				<td><input name="name" autocomplete="off" type="text" class="input-block-level" 

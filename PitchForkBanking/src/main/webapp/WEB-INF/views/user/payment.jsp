@@ -1,10 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="container">
 	<c:url var="selectAction" value="/user/payment"></c:url>
-	<table class="table table-bordered">
+	<table class="table table-striped">
 		<thead>
 			<tr>
 				<th>From</th>
@@ -20,7 +21,8 @@
 				<tr>
 					<td>${_transaction.accountByFromAcountNum.accountNum}</td>
 					<td>${_transaction.accountByToAccountNum.accountNum}</td>
-					<td>${_transaction.transactionAmount}</td>
+					<td><fmt:formatNumber value="${_transaction.transactionAmount}"
+								type="currency" /></td>
 					<td>${_transaction.transactionType}</td>
 					<td>
 					<form action="${selectAction}" method="POST">
