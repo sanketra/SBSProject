@@ -43,8 +43,6 @@ body {
 	margin-bottom: 15px;
 	padding: 7px 9px;
 }
-
-
 </style>
 <link
 	href="<c:url value="/resources/bootstrap/css/bootstrap-responsive.css" />"
@@ -64,11 +62,13 @@ body {
 				<jsp:include page="sidebar.jsp" />
 			</div>
 			<div class="span10">
-			<article id="content" class="span10">
-				<jsp:include page="../common/response.jsp" />
-				<jsp:include page="${contentView}.jsp" />
-			</article>
-				
+				<article id="content" class="span10">
+					<c:if test="${!empty response}">
+						<jsp:include page="../common/response.jsp" />
+					</c:if>
+					<jsp:include page="${contentView}.jsp" />
+				</article>
+
 			</div>
 		</div>
 	</div>

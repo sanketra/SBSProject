@@ -228,18 +228,21 @@ public class UserController {
 					.getAttribute("emailId"));
 			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "transfer");
+			model.addAttribute("transfer", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("credit")) {
 			String userType = userService.getUserRole((String) session
 					.getAttribute("emailId"));
 			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "credit");
+			model.addAttribute("credit", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("debit")) {
 			String userType = userService.getUserRole((String) session
 					.getAttribute("emailId"));
 			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "debit");
+			model.addAttribute("debit", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("transactions")) {
 			String userType = userService.getUserRole((String) session
@@ -250,6 +253,7 @@ public class UserController {
 			model.addAttribute("transactions", this.transactionService
 					.getAllTransactionsForAccountId(account_id));
 			model.addAttribute("contentView", "transactions");
+			model.addAttribute("transaction", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("authorize")) {
 			User u = this.userService.getUserByEmailId((String) session
@@ -259,6 +263,7 @@ public class UserController {
 					.getPendingRequestsToUser(u.getUserId());
 			model.addAttribute("requests", list);
 			model.addAttribute("contentView", "authorize");
+			model.addAttribute("authorize", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("profile")) {
 			String userType = userService.getUserRole((String) session
@@ -269,6 +274,7 @@ public class UserController {
 					this.userService.getUserByEmailId((String) session
 							.getAttribute("emailId")));
 			model.addAttribute("user", u);
+			model.addAttribute("profile", "active");
 			return "user/template";
 		} else {
 			attributes.addFlashAttribute("response", new Response("error",
@@ -330,6 +336,7 @@ public class UserController {
 		model.addAttribute("transactions", this.transactionService
 				.getPaymentRequestForAccountId(account_id));
 		model.addAttribute("contentView", "payment");
+		model.addAttribute("payment", "active");
 		return "user/template";
 
 	}
@@ -415,6 +422,7 @@ public class UserController {
 				.getAttribute("emailId"));
 		model.addAttribute("role", userType);
 		model.addAttribute("contentView", "requestPayment");
+		model.addAttribute("requestpayment", "active");
 		return "user/template";
 
 	}
@@ -430,7 +438,7 @@ public class UserController {
 				this.userService.getUserByEmailId((String) session
 						.getAttribute("emailId")));
 		model.addAttribute("user", u);
-
+		model.addAttribute("profile", "active");
 		return "user/template";
 	}
 

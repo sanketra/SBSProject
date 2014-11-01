@@ -1,9 +1,16 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
 
-<div class="container" align="left">
-	<a href="${pageContext.request.contextPath}/user/home" class="btn btn btn-success"> Home </a>
+<div class="row-fluid">
+<div class="span2" align="left">
+	<a href="${pageContext.request.contextPath}/user/home" class="btn"><i class="icon-home"></i> Home </a>
 </div>
+<div class="span10">
 <form action="${logoutAction}" method="post">
-	<input class="btn btn-danger" type="submit" value="Logout" />
+ <div class="left-inner-addon">
+ 	<i class="icon-off"></i>
+	<input class="btn btn-inverse" type="submit" value="Logout">
+	</div>
 </form>
+</div>
+</div>
