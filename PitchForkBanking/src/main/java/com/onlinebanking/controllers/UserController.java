@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Constants.TransactionType;
+import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
@@ -534,30 +535,31 @@ public class UserController {
 
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.POST)
 	public String setNewPasswordPost(HttpServletRequest request,
-			final RedirectAttributes attributes) {
-		// get otp from user
+			final RedirectAttributes attributes, Model model) {
+		// get otp and passwords from user
 		String newOtp = request.getParameter("One Time Password").toString();
 		String newPassword = request.getParameter("New Password").toString();
 		String renternewPassword = request
 				.getParameter("Re-Enter New Password").toString();
-		// send otp
+		// verify otp and password match
 		HttpSession session = request.getSession();
 		String userId = session.getAttribute("OTP-User-Id").toString();
 		Boolean result = otpService.verifyOtp(
 				this.otpService.getUserotpById(userId), newOtp);
 		Boolean passwordMatch = (newPassword.equals(renternewPassword));
+		// get user object
 		if (result == true && passwordMatch == true) {
+			User obj = this.userService.getUserById(userId);
+			obj.setPassword(CryptoHelper.getEncryptedString(newPassword));
+			this.userService.updateUser(obj);
 			return "login";
 		} else if (result == false && passwordMatch == true) {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Wrong OTP"));
 			return "redirect:/setNewPassword";
 		} else if (result == false && passwordMatch == false) {
-			attributes
-					.addFlashAttribute(
-							"response",
-							new Response("error",
-									"Passwords do not match. Please try again!"));
+			attributes.addFlashAttribute("response", new Response("error",
+					"Passwords do not match. Please try again!"));
 			return "redirect:/setNewPassword";
 		} else {
 			attributes
