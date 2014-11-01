@@ -85,12 +85,13 @@ public class UserController {
 		User u = this.userService.getUserByEmailId(auth.getName());
 		session.setAttribute("userId", u.getUserId());
 		session.setAttribute("emailId", u.getEmailId());
-		
-		// If the account_id is already selected, remove it so that user can select it again.
+
+		// If the account_id is already selected, remove it so that user can
+		// select it again.
 		if (session.getAttribute("account_id") != null) {
 			session.removeAttribute("account_id");
 		}
-		
+
 		model.addAttribute("accounts", ValidationHelper
 				.getAccountAppModelListFromAccountList(this.accountService
 						.getUserAccounts(u.getUserId())));
@@ -205,15 +206,17 @@ public class UserController {
 				return "redirect:/user/debit";
 			} else if (urls.get("url_2").toString().equals("authorize")) {
 				if (request.getParameter("approve") != null) {
-					status = this.transactionService.updateAccessRequest(request.getParameter("approve"), "approve");
+					status = this.transactionService.updateAccessRequest(
+							request.getParameter("approve"), "approve");
 					attributes.addFlashAttribute("response", status);
 					return "redirect:/user/authorize";
 				} else if (request.getParameter("decline") != null) {
-					status = this.transactionService.updateAccessRequest(request.getParameter("decline"), "decline");
+					status = this.transactionService.updateAccessRequest(
+							request.getParameter("decline"), "decline");
 					attributes.addFlashAttribute("response", status);
 					return "redirect:/user/authorize";
-				} 
-				
+				}
+
 				return "redirect:/user/authorize";
 			}
 		}
@@ -251,7 +254,8 @@ public class UserController {
 			User u = this.userService.getUserByEmailId((String) session
 					.getAttribute("emailId"));
 			model.addAttribute("role", u.getRole());
-			List<UserRequest> list = this.transactionService.getPendingRequestsToUser(u.getUserId());
+			List<UserRequest> list = this.transactionService
+					.getPendingRequestsToUser(u.getUserId());
 			model.addAttribute("requests", list);
 			model.addAttribute("contentView", "authorize");
 			return "user/template";
@@ -533,19 +537,37 @@ public class UserController {
 			final RedirectAttributes attributes) {
 		// get otp from user
 		String newOtp = request.getParameter("One Time Password").toString();
+		String newPassword = request.getParameter("New Password").toString();
+		String renternewPassword = request
+				.getParameter("Re-Enter New Password").toString();
 		// send otp
 		HttpSession session = request.getSession();
 		String userId = session.getAttribute("OTP-User-Id").toString();
 		Boolean result = otpService.verifyOtp(
 				this.otpService.getUserotpById(userId), newOtp);
-		if (result == true) {
-			attributes.addFlashAttribute("response", new Response("success",
-					"OTP verified, Password reset"));
-		} else {
+		Boolean passwordMatch = (newPassword.equals(renternewPassword));
+		if (result == true && passwordMatch == true) {
+			return "login";
+		} else if (result == false && passwordMatch == true) {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Wrong OTP"));
+			return "redirect:/setNewPassword";
+		} else if (result == false && passwordMatch == false) {
+			attributes
+					.addFlashAttribute(
+							"response",
+							new Response("error",
+									"Passwords do not match. Please try again!"));
+			return "redirect:/setNewPassword";
+		} else {
+			attributes
+					.addFlashAttribute(
+							"response",
+							new Response("error",
+									"Passwords do not match. Please go back to generate new One-Time Password"));
+			return "redirect:/setNewPassword";
 		}
-		return "redirect:/setNewPassword";
+
 	}
 
 	// For add and update person both
