@@ -4,7 +4,7 @@
 
 <div class="container">
 	<c:url var="selectAction" value="/user/authorize"></c:url>
-	<table class="table table-bordered">
+	<table class="table table-striped">
 		<thead>
 			<tr>
 				<th>From</th>

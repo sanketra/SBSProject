@@ -3,10 +3,10 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <c:url var="editAction" value="/user/profile/edit"></c:url>
-<div>
+<div class="container">
 	<form:form action="${editAction}" commandName="user"
-		class="form-signin">
-		<table class="table table-bordered">
+		class="form-horizontal">
+		<table class="table table-striped">
 			<tr>
 				<td>First Name</td>
 				<td>${user.fname}</td>

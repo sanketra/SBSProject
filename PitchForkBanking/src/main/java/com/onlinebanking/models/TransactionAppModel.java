@@ -1,6 +1,5 @@
 package com.onlinebanking.models;
 
-import java.util.Date;
 
 public class TransactionAppModel {
 	private String transactionId;

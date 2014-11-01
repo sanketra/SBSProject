@@ -19,15 +19,8 @@ body {
 	background-color: #f5f5f5;
 }
 
-.form-signin .form-signin-heading, .form-signin .checkbox {
-	margin-bottom: 10px;
-}
-
-.form-signin input[type="text"], .form-signin input[type="password"] {
-	font-size: 16px;
-	height: auto;
-	margin-bottom: 15px;
-	padding: 7px 9px;
+.borderless tbody tr td, .borderless thead tr th {
+	border: none;
 }
 </style>
 <link
@@ -39,16 +32,15 @@ body {
 		<jsp:include page="../common/header.jsp" />
 	</div>
 	<div class="container-fluid" align="left">
-		<jsp:include page="../common/response.jsp" />
+		<c:if test="${!empty response}">
+			<jsp:include page="../common/response.jsp" />
+		</c:if>
 	</div>
-	<h1>Welcome to Pitch Fork Banking</h1>
-	<P>
-		<br> Hello :${fname}<br>
-	</P>
 	<br>
 	<br>
+	<div class="container">
 	<c:url var="selectAction" value="/user/profile"></c:url>
-	<form action="${selectAction}" class="form-signin" method="POST">
+	<form action="${selectAction}" class="form-horizontal" method="POST">
 		<table class="table table-bordered">
 			<thead>
 				<tr>
@@ -77,8 +69,12 @@ body {
 		</table>
 		<input type="submit" value="Select" class="btn btn-lg btn-primary" />
 	</form>
+	</div>
 	<br>
 	<br>
+	<div class="container-fluid" align="left">
+		<jsp:include page="../common/footer.jsp" />
+	</div>
 	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
 </body>
 </html>

@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Response;
-import com.onlinebanking.models.Requests;
-import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserRequest;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.TransactionService;
@@ -27,6 +25,7 @@ import com.onlinebanking.services.UserService;
 public class AdminController {
 	
 	private UserService userService;
+	@SuppressWarnings("unused")
 	private AccountService accountService;
 	private TransactionService transactionService;
 	

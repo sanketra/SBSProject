@@ -5,7 +5,7 @@
 <c:url var="submitAction" value="/user/credit"></c:url>
 <div class="container">
 	<form:form action="${submitAction}" class="form-horizontal" method="POST">
-		<table class="table">
+		<table class="table borderless">
 			<tr>
 				<td>Amount</td>
 				<td><input name="amount" autocomplete="off" type="text" class="input-block-level" 
