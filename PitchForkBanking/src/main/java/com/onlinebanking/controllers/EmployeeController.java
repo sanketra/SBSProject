@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,20 +11,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Response;
-import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.Transaction;
 import com.onlinebanking.models.TransactionAppModel;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserAppModel;
 import com.onlinebanking.models.UserRequest;
-import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
 import com.onlinebanking.services.TransactionService;
 import com.onlinebanking.services.UserService;
@@ -132,7 +128,6 @@ public class EmployeeController {
 	
 	@RequestMapping(value="/employee/req_Access", method = RequestMethod.GET)
 	public String employeeRequest(Model model){
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		List<UserRequest> userRequests = transactionService.getAllPendingRequests();
 		model.addAttribute("userRequest", new UserRequest());
 		model.addAttribute("pendingUserRequests", userRequests);

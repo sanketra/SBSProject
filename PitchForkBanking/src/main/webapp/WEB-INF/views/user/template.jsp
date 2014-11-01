@@ -43,6 +43,8 @@ body {
 	margin-bottom: 15px;
 	padding: 7px 9px;
 }
+
+
 </style>
 <link
 	href="<c:url value="/resources/bootstrap/css/bootstrap-responsive.css" />"
