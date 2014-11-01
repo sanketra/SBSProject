@@ -5,7 +5,10 @@
 <div class="span2" align="left">
 	<a href="${pageContext.request.contextPath}/user/home" class="btn"><i class="icon-home"></i> Home </a>
 </div>
-<div class="span10">
+<div class="span8" align="center">
+<h3>Pitch Fork Bank</h3>
+</div>
+<div class="span2">
 <form action="${logoutAction}" method="post">
  <div class="left-inner-addon">
  	<i class="icon-off"></i>

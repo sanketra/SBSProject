@@ -39,12 +39,10 @@ body {
 		<jsp:include page="../common/header.jsp" />
 	</div>
 	<div class="container-fluid" align="left">
-		<jsp:include page="../common/response.jsp" />
+		<c:if test="${!empty response}">
+			<jsp:include page="../common/response.jsp" />
+		</c:if>
 	</div>
-	<h1>Welcome to Pitch Fork Banking</h1>
-	<P>
-		<br> Hello :${fname}<br>
-	</P>
 	<br>
 	<br>
 	<c:url var="selectAction" value="/user/profile"></c:url>
@@ -79,6 +77,9 @@ body {
 	</form>
 	<br>
 	<br>
+	<div class="container-fluid" align="left">
+		<jsp:include page="../common/footer.jsp" />
+	</div>
 	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
 </body>
 </html>

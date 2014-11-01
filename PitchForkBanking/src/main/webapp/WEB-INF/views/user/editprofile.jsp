@@ -90,7 +90,7 @@ function validateForm() {
 	<form:form name = "myForm" action="${submitAction}" onsubmit="return validateForm()" commandName="user"
 		class="form-horizontal" method="POST">
 		<form:hidden path="userId" />
-		<table class="table">
+		<table class="table borderless">
 			<tr>
 				<td>First Name</td>
 				<td><form:input path="fname" class="input-xlarge"

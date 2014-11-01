@@ -43,8 +43,9 @@ body {
 	margin-bottom: 15px;
 	padding: 7px 9px;
 }
+
 .borderless tbody tr td, .borderless thead tr th {
-    border: none;
+	border: none;
 }
 </style>
 <link
@@ -59,6 +60,8 @@ body {
 	<div class="container-fluid" align="right">
 		<jsp:include page="../common/header.jsp" />
 	</div>
+	<br>
+	<br>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span2">
