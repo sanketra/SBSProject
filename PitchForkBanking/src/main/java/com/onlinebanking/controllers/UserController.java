@@ -477,6 +477,7 @@ public class UserController {
 				// Existing User, call update
 				user = ValidationHelper.getUserFromUserAppModel(u, user);
 				this.userService.updateUser(user);
+				session.setAttribute("emailId", u.getEmailId());
 			}
 		}
 		// Wrong Captcha
@@ -536,9 +537,7 @@ public class UserController {
 			// set user Id in the session
 			HttpSession session = request.getSession();
 			session.setAttribute("OTP-User-Id", userObj.getUserId());
-			System.out.println(emailId);
-			System.out.println(userObj.getUserId());
-			// send otp
+			// send OTP
 			otpService.sendOtp(this.userService.getUserByEmailId(emailId),
 					emailId);
 			return "setNewPassword";
