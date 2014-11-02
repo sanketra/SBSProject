@@ -15,6 +15,18 @@
 		<hibernate.version>4.3.5.Final</hibernate.version>
 	</properties>
 	<dependencies>
+		<!-- Form validation -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.1.0.Final</version>
+		</dependency>
+
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -43,6 +55,7 @@
 			<artifactId>spring-security-web</artifactId>
 			<version>3.2.3.RELEASE</version>
 		</dependency>
+
 		<!-- Captcha -->
 		<dependency>
 			<groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>

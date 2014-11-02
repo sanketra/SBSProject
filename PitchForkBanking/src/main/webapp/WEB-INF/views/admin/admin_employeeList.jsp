@@ -33,7 +33,7 @@
 				</tr>
 			</c:forEach>
 		</table>
-		<a href="${pageContext.request.contextPath}/employee_registration"
+		<a href="${pageContext.request.contextPath}/admin/employee_registration"
 			rel="nofollow">Register</a><br> <br>
 	</div>
 

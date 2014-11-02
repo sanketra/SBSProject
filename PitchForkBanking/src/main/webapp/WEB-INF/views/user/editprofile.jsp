@@ -20,17 +20,7 @@
 			alert("Last name must be filled out");
 			return false;
 		}
-		// SSN
-		var ssn = document.forms["myForm"]["ssn"].value;
-		if (ssn == null || ssn == "") {
-			alert("SSN must be filled out");
-			return false;
-		}
-		var ssnPattern = /^[0-9]{3}\-?[0-9]{2}\-?[0-9]{4}$/;
-		if (ssnPattern.test(ssn) != true) {
-			alert("Enter a valid SSN");
-			return false;
-		}
+
 		// Email_Id
 		var emailId = document.forms["myForm"]["emailId"].value;
 		if (emailId == null || emailId == "") {
@@ -91,45 +81,45 @@
 		onsubmit="return validateForm()" commandName="user"
 		class="form-horizontal" method="POST">
 		<form:hidden path="userId" />
-		<table class="table">
+		<table class="table borderless">
 			<tr>
 				<td>First Name</td>
-				<td><form:input path="fname" class="input-xlarge"
+				<td><form:input path="fname" class="input-xxlarge"
 						placeholder="First Name" /></td>
 			</tr>
 			<tr>
 				<td>Last Name</td>
-				<td><form:input path="lname" class="input-xlarge"
+				<td><form:input path="lname" class="input-xxlarge"
 						placeholder="Last Name" /></td>
 			</tr>
 			<tr>
 				<td>Email Id</td>
-				<td><form:input path="emailId" class="input-xlarge"
+				<td><form:input path="emailId" class="input-xxlarge"
 						placeholder="Email Id" /></td>
 			</tr>
 			<tr>
 				<td>Address</td>
-				<td><form:input path="address" class="input-xlarge"
+				<td><form:input path="address" class="input-xxlarge"
 						placeholder="Address" /></td>
 			</tr>
 			<tr>
 				<td>City</td>
-				<td><form:input path="city" class="input-xlarge"
+				<td><form:input path="city" class="input-xxlarge"
 						placeholder="City" /></td>
 			</tr>
 			<tr>
 				<td>State</td>
-				<td><form:input path="state" class="input-xlarge"
+				<td><form:input path="state" class="input-xxlarge"
 						placeholder="State" /></td>
 			</tr>
 			<tr>
 				<td>Zipcode</td>
-				<td><form:input path="zipcode" class="input-xlarge"
+				<td><form:input path="zipcode" class="input-xxlarge"
 						placeholder="Zip code" /></td>
 			</tr>
 			<tr>
 				<td>Phone Number</td>
-				<td><form:input path="phoneno" class="input-xlarge"
+				<td><form:input path="phoneno" class="input-xxlarge"
 						placeholder="Phone Number" /></td>
 			</tr>
 			<tr>

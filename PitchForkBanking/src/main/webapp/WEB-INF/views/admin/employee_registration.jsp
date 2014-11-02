@@ -184,10 +184,10 @@ body {
 	rel="stylesheet">
 </head>
 <body>
-	<h1 align="center">User Registration</h1>
-	<c:url var="addAction" value="/add"></c:url>
+	<h1 align="center">Employee Registration</h1>
+	<c:url var="addAction" value="/addEmployee"></c:url>
 	<div class="container" align="right">
-		<jsp:include page="common/response.jsp" />
+		<jsp:include page="/WEB-INF/views/common/response.jsp" />
 		<form:form name="myForm" action="${addAction}" commandName="user" onsubmit="return validateForm()"
 			class="form-signin">
 			<form:hidden path="userId" />

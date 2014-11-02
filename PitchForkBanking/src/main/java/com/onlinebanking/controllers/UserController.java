@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -228,18 +230,21 @@ public class UserController {
 					.getAttribute("emailId"));
 			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "transfer");
+			model.addAttribute("transfer", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("credit")) {
 			String userType = userService.getUserRole((String) session
 					.getAttribute("emailId"));
 			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "credit");
+			model.addAttribute("credit", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("debit")) {
 			String userType = userService.getUserRole((String) session
 					.getAttribute("emailId"));
 			model.addAttribute("role", userType);
 			model.addAttribute("contentView", "debit");
+			model.addAttribute("debit", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("transactions")) {
 			String userType = userService.getUserRole((String) session
@@ -250,6 +255,7 @@ public class UserController {
 			model.addAttribute("transactions", this.transactionService
 					.getAllTransactionsForAccountId(account_id));
 			model.addAttribute("contentView", "transactions");
+			model.addAttribute("transaction", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("authorize")) {
 			User u = this.userService.getUserByEmailId((String) session
@@ -259,6 +265,7 @@ public class UserController {
 					.getPendingRequestsToUser(u.getUserId());
 			model.addAttribute("requests", list);
 			model.addAttribute("contentView", "authorize");
+			model.addAttribute("authorize", "active");
 			return "user/template";
 		} else if (urls.get("url_2").toString().equals("profile")) {
 			String userType = userService.getUserRole((String) session
@@ -269,6 +276,7 @@ public class UserController {
 					this.userService.getUserByEmailId((String) session
 							.getAttribute("emailId")));
 			model.addAttribute("user", u);
+			model.addAttribute("profile", "active");
 			return "user/template";
 		} else {
 			attributes.addFlashAttribute("response", new Response("error",
@@ -330,6 +338,7 @@ public class UserController {
 		model.addAttribute("transactions", this.transactionService
 				.getPaymentRequestForAccountId(account_id));
 		model.addAttribute("contentView", "payment");
+		model.addAttribute("payment", "active");
 		return "user/template";
 
 	}
@@ -415,6 +424,7 @@ public class UserController {
 				.getAttribute("emailId"));
 		model.addAttribute("role", userType);
 		model.addAttribute("contentView", "requestPayment");
+		model.addAttribute("requestpayment", "active");
 		return "user/template";
 
 	}
@@ -430,16 +440,22 @@ public class UserController {
 				this.userService.getUserByEmailId((String) session
 						.getAttribute("emailId")));
 		model.addAttribute("user", u);
-
+		model.addAttribute("profile", "active");
 		return "user/template";
 	}
 
 	// For add and update person both
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
-	public String addUserProfile(@ModelAttribute("user") UserAppModel u,
+	public String addUserProfile(@ModelAttribute("user") @Valid UserAppModel u, BindingResult bindingResult,
 			HttpServletRequest request, final RedirectAttributes attributes) {
-
+		
+		if (bindingResult.hasErrors()) {
+			attributes.addFlashAttribute("response", new Response("error",
+					bindingResult.getAllErrors().get(0).getDefaultMessage()));
+			return "redirect:/user/profile/edit";
+        }
+		
 		// get the responses from the user
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
@@ -449,7 +465,9 @@ public class UserController {
 				uresponse, remoteAddress);
 		// Redirect logic
 		if (verifyStatus == true) {
-			User user = this.userService.getUserById(u.getUserId());
+			HttpSession session = request.getSession();
+			String userId = (String) session.getAttribute("userId");
+			User user = this.userService.getUserById(userId);
 
 			if (user == null) {
 				attributes.addFlashAttribute("response", new Response("error",
@@ -459,6 +477,7 @@ public class UserController {
 				// Existing User, call update
 				user = ValidationHelper.getUserFromUserAppModel(u, user);
 				this.userService.updateUser(user);
+				session.setAttribute("emailId", u.getEmailId());
 			}
 		}
 		// Wrong Captcha
@@ -518,9 +537,7 @@ public class UserController {
 			// set user Id in the session
 			HttpSession session = request.getSession();
 			session.setAttribute("OTP-User-Id", userObj.getUserId());
-			System.out.println(emailId);
-			System.out.println(userObj.getUserId());
-			// send otp
+			// send OTP
 			otpService.sendOtp(this.userService.getUserByEmailId(emailId),
 					emailId);
 			return "setNewPassword";
@@ -594,6 +611,24 @@ public class UserController {
 		attributes.addFlashAttribute("response", new Response("success",
 				"Account registration successful!!"));
 		return "redirect:/registration";
+
+	}
+	
+	@RequestMapping(value = "/addEmployee", method = RequestMethod.POST)
+	public String addUser_employee(@ModelAttribute("user") User p,
+			final RedirectAttributes attributes) {
+
+		if (this.userService.getUserById(p.getUserId()) == null) {
+			// new person, add it
+			this.userService.addUser(p);
+		} else {
+			// existing person, call update
+			this.userService.updateUser(p);
+		}
+
+		attributes.addFlashAttribute("response", new Response("success",
+				"Account registration successful!!"));
+		return "redirect:/admin_home";
 
 	}
 

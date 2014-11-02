@@ -19,9 +19,12 @@ public interface TransactionService {
 	public void deleteTransaction(Transaction transaction);
 	public List<Transaction> getAllTransactionsForAccountId(int Id);
 	public List<UserRequest> getAllPendingRequests();
+	public List<UserRequest> getPendingRequests();
+	public List<UserRequest> getApprovedRequests();
 	public Transaction getTransaction(String transactionId);
 	public List<Transaction> getPaymentRequestForAccountId(int id);
 	public Response updatePaymentRequest(String id, String status);
-	List<UserRequest> getApprovedProfileRequestsFromUser();
+	public List<UserRequest> getApprovedProfileRequestsFromUser();
 	public Response updateAccessRequest(String id, String status);
+	public List<UserRequest> getDeclinedRequests();
 }
