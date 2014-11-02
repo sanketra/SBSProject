@@ -18,4 +18,6 @@ public interface UserService {
 	public Response isValidUserAccount(int accountNo, String userId);
 	public Response isValidAccount(int accountNo);
 	public String getUserRole(String emailId);
+	public List<User> listNewUsers();
+	public Response updateUserRegistrationFlag(String id, String status);
 }

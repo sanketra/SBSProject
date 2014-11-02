@@ -137,6 +137,22 @@ public class UserHome {
 			throw re;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> findAllNewRegistrations() {
+		log.debug("finding User instance by example");
+		try {
+			String queryString = "Select * from user U where U.enabled = 0";
+			List<User> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(User.class).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<User> findAllCustomers() {
@@ -144,7 +160,7 @@ public class UserHome {
 		try {
 			String role1 = Role.USER;
 			String role2 = Role.MERCHANT;
-			String queryString = "Select * from user U where U.role= :role1 OR U.role = :role2";
+			String queryString = "Select * from user U where U.role= :role1 OR U.role = :role2 AND U.enabled = 1";
 			List<User> results = sessionFactory.getCurrentSession()
 					.createSQLQuery(queryString).addEntity(User.class)
 					.setParameter("role1", role1).setParameter("role2", role2).list();

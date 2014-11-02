@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.dao.AccountHome;
+import com.onlinebanking.dao.RequestsHome;
 import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Account;
+import com.onlinebanking.models.RequestStatus;
+import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.User;
 
 @Service
@@ -17,6 +20,7 @@ public class UserServiceImpl implements UserService {
 	
 	private UserHome userHome;
 	private AccountHome accountHome;
+	private RequestsHome requestsHome;
 	
 	public void setAccountHome(AccountHome accountHome) {
 		this.accountHome = accountHome;
@@ -49,6 +53,12 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public List<User> listUsers() {
 		return this.userHome.findAll();
+	}
+	
+	@Override
+	@Transactional
+	public List<User> listNewUsers() {
+		return this.userHome.findAllNewRegistrations();
 	}
 	
 	@Override
@@ -121,5 +131,21 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		User p = userHome.getUserByEmailId(emailId);
 		return p.getRole();
+	}
+	
+	@Override
+	@Transactional
+	public Response updateUserRegistrationFlag(String id, String status) {
+		User u = this.userHome.findById(id);
+
+		if (status.equals("approve")) {
+			u.setEnabled(1);
+			this.userHome.merge(u);
+			return new Response("success", "User Registered!");
+		} else {
+			u.setEnabled(0);
+			this.userHome.merge(u);
+			return new Response("success", "User Declined!");
+		}
 	}
 }

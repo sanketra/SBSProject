@@ -11,13 +11,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Response;
+import com.onlinebanking.models.User;
+import com.onlinebanking.models.UserAppModel;
 import com.onlinebanking.models.UserRequest;
 import com.onlinebanking.services.AccountService;
+import com.onlinebanking.services.CaptchaService;
 import com.onlinebanking.services.TransactionService;
 import com.onlinebanking.services.UserService;
 
@@ -28,11 +32,18 @@ public class AdminController {
 	@SuppressWarnings("unused")
 	private AccountService accountService;
 	private TransactionService transactionService;
+	private CaptchaService captchaService;
 	
 	@Autowired(required = true)
 	@Qualifier(value = "transactionService")
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
+	}
+	
+	@Autowired(required = true)
+	@Qualifier(value = "captchaService")
+	public void setCaptchaService(CaptchaService captchaService) {
+		this.captchaService = captchaService;
 	}
 
 	@Autowired(required = true)
@@ -65,40 +76,31 @@ public class AdminController {
 	}
 	*/
 	
-	@RequestMapping(value="/admin/customerList", method = RequestMethod.GET)
-	public String customerList(Model model){
-		model.addAttribute("listUsers", this.userService.listCustomers());
-		model.addAttribute("contentView", "admin_customerList");
+	@RequestMapping(value="/admin/newUsers", method = RequestMethod.GET)
+	public String newUsers(Model model){
+		List<User> newUsers = userService.listNewUsers();
+		model.addAttribute("newUsers", newUsers);
+		model.addAttribute("contentView", "admin_newUsers");
+	
 		return "admin/admin_template";
 	}
 	
-	//Incomplete======================Incorrect --- approve/decline -- it should be accept/delete blah blah
-	@RequestMapping(value="/admin/admin_customerList", method = RequestMethod.POST)
-	public String customerAccept(Model model, HttpServletRequest request, HttpServletResponse response,
+	@RequestMapping(value="/admin/admin_newUsers", method = RequestMethod.POST)
+	public String customerApprove(Model model, HttpServletRequest request, HttpServletResponse response,
 			final RedirectAttributes attributes){
 		Response status;
 		if (request.getParameter("approve") != null) {
-			status = this.transactionService.updateAccessRequest(request.getParameter("approve"), "approve");
+			status = this.userService.updateUserRegistrationFlag(request.getParameter("approve"), "approve");
 			attributes.addFlashAttribute("response", status);
-			return "redirect:/admin/customerList";
+			return "redirect:/admin/newUsers";
 		} else if (request.getParameter("decline") != null) {
-			status = this.transactionService.updateAccessRequest(request.getParameter("decline"), "decline");
+			status = this.userService.updateUserRegistrationFlag(request.getParameter("decline"), "decline");
 			attributes.addFlashAttribute("response", status);
-			return "redirect:/admin/customerList";
+			return "redirect:/admin/newUsers";
 		} 
 		
-		return "redirect:/admin/customerList";
+		return "redirect:/admin/newUsers";
 	}
-
-	
-	
-	@RequestMapping(value="/admin/employeeList")
-	public String employeeList(Model model){
-		model.addAttribute("listEmployees", this.userService.listEmployees());
-		model.addAttribute("contentView", "admin_employeeList");
-		return "admin/admin_template";
-	}
-	
 	
 	@RequestMapping(value="/admin/employee_registration")
 	public String employeeRegitration(Model model){
@@ -106,7 +108,6 @@ public class AdminController {
 		return "admin/admin_template";
 	}
 	
-	//Incomplete
 	@RequestMapping(value="/admin/processRequests", method = RequestMethod.GET)
 	public String accessRequests(Model model){
 		
@@ -139,5 +140,106 @@ public class AdminController {
 			
 			return "redirect:/admin/processRequests";
 		}
-	
+		
+		@RequestMapping(value="/admin/customerList", method = RequestMethod.GET)
+		public String customerList(Model model){
+			List<User> listUsers = this.userService.listCustomers();
+			model.addAttribute("listUsers", listUsers);
+			model.addAttribute("contentView", "admin_customerList");
+			return "admin/admin_template";
+		}
+		
+		@RequestMapping(value="/admin/admin_customerList", method = RequestMethod.POST)
+		public String editCustomer(HttpServletRequest request, Model model, final RedirectAttributes attributes){
+			if(request.getParameter("submit").equalsIgnoreCase("delete"))
+			{
+				String emailId = request.getParameter("email_Id");
+				User u = userService.getUserByEmailId(emailId);
+				userService.removeUser(u.getUserId());
+				attributes.addFlashAttribute("response", new Response("success", "deleted user"));
+				return "redirect:/admin/admin_customerList";
+			}
+			else if(request.getParameter("submit").equalsIgnoreCase("update"))
+			{
+				String emailId = request.getParameter("email_Id");
+				User u = userService.getUserByEmailId(emailId);
+				UserAppModel userAppModel = new UserAppModel(u);
+				model.addAttribute("userProfile", userAppModel);
+				model.addAttribute("contentView", "admin_updateUserProfile");
+				return "admin/admin_template";
+			}
+			else
+			{
+				return "redirect:/admin/admin_customerList";
+			}
+		}
+		
+		@RequestMapping(value="/admin/admin_updateUserProfile", method = RequestMethod.POST)
+		public String updateUserTransaction(@ModelAttribute("userProfile") UserAppModel userAppModel, HttpServletRequest request, Model model, final RedirectAttributes attributes)
+		{
+			User u = userService.getUserById(userAppModel.getUserId());
+			String challenge = request.getParameter("recaptcha_challenge_field");
+			String uresponse = request.getParameter("recaptcha_response_field");
+			String remoteAddress = request.getRemoteAddr();
+			// verify Captcha
+			Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
+					uresponse, remoteAddress);
+			// redirect logic
+			if (verifyStatus == true) {
+				u.setFname(userAppModel.getFname());
+				u.setLname(userAppModel.getLname());
+				u.setEmailId(userAppModel.getEmailId());
+				u.setAddress(userAppModel.getAddress());
+				u.setCity(userAppModel.getCity());
+				u.setState(userAppModel.getState());
+				u.setZipcode(userAppModel.getZipcode());
+				u.setPhoneno(userAppModel.getPhoneno());
+				userService.updateUser(u);
+			}
+			// Wrong Captcha
+			else {
+				model.addAttribute("response", new Response("error",
+						"Wrong captcha, please try again!"));
+				model.addAttribute("userProfile", userAppModel);
+				model.addAttribute("contentView", "admin_updateUserProfile");
+				return "admin/admin_template";
+			}
+			attributes.addFlashAttribute("response", new Response("success",
+					"Profile updated successflly!"));
+			return "redirect:/admin/admin_customerList";
+		}
+
+		@RequestMapping(value="/admin/employeeList", method = RequestMethod.GET)
+		public String employeeList(Model model){
+			List<User> listEmployees = this.userService.listEmployees();
+			model.addAttribute("listEmployees", listEmployees);
+			model.addAttribute("contentView", "admin_employeeList");
+			return "admin/admin_template";
+		}
+		
+		@RequestMapping(value="/admin/admin_employeeList", method = RequestMethod.POST)
+		public String editEmployee(HttpServletRequest request, Model model, final RedirectAttributes attributes){
+			if(request.getParameter("submit").equalsIgnoreCase("delete"))
+			{
+				String emailId = request.getParameter("email_Id");
+				User u = userService.getUserByEmailId(emailId);
+				userService.removeUser(u.getUserId());
+				attributes.addFlashAttribute("response", new Response("success", "deleted employee"));
+				return "redirect:/admin/admin_employeeList";
+			}
+			else if(request.getParameter("submit").equalsIgnoreCase("update"))
+			{
+				String emailId = request.getParameter("email_Id");
+				User u = userService.getUserByEmailId(emailId);
+				UserAppModel userAppModel = new UserAppModel(u);
+				model.addAttribute("userProfile", userAppModel);
+				model.addAttribute("contentView", "admin_updateUserProfile");
+				return "admin/admin_template";
+			}
+			else
+			{
+				return "redirect:/admin/admin_employeeList";
+			}
+		}
+		
 }
