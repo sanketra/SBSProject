@@ -528,14 +528,21 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.GET)
-	public String setNewPassword(Model model) {
-
+	public String setNewPassword(Model model, HttpServletRequest request) {
+		// get question from database
+		HttpSession session = request.getSession();
+		String userId = session.getAttribute("OTP-User-Id").toString();
+		System.out.println(userId);
+		model.addAttribute("question", this.userService.getUserById(userId)
+				.getQues1());
+		System.out.println(this.userService.getUserById(userId).getQues1());
 		return "setNewPassword";
 	}
 
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.POST)
 	public String setNewPasswordPost(HttpServletRequest request,
 			final RedirectAttributes attributes, Model model) {
+
 		// get otp and passwords from user
 		String newOtp = request.getParameter("One Time Password").toString();
 		String newPassword = request.getParameter("New Password").toString();
@@ -547,7 +554,6 @@ public class UserController {
 		Boolean result = otpService.verifyOtp(
 				this.otpService.getUserotpById(userId), newOtp);
 		Boolean passwordMatch = (newPassword.equals(renternewPassword));
-		// get user object
 		if (result == true && passwordMatch == true) {
 			User obj = this.userService.getUserById(userId);
 			obj.setPassword(CryptoHelper.getEncryptedString(newPassword));
