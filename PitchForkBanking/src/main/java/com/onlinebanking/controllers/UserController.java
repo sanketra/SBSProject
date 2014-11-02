@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -445,9 +447,15 @@ public class UserController {
 	// For add and update person both
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
-	public String addUserProfile(@ModelAttribute("user") UserAppModel u,
+	public String addUserProfile(@ModelAttribute("user") @Valid UserAppModel u, BindingResult bindingResult,
 			HttpServletRequest request, final RedirectAttributes attributes) {
-
+		
+		if (bindingResult.hasErrors()) {
+			attributes.addFlashAttribute("response", new Response("error",
+					bindingResult.getAllErrors().get(0).getDefaultMessage()));
+			return "redirect:/user/profile/edit";
+        }
+		
 		// get the responses from the user
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
@@ -457,7 +465,9 @@ public class UserController {
 				uresponse, remoteAddress);
 		// Redirect logic
 		if (verifyStatus == true) {
-			User user = this.userService.getUserById(u.getUserId());
+			HttpSession session = request.getSession();
+			String userId = (String) session.getAttribute("userId");
+			User user = this.userService.getUserById(userId);
 
 			if (user == null) {
 				attributes.addFlashAttribute("response", new Response("error",
@@ -467,6 +477,7 @@ public class UserController {
 				// Existing User, call update
 				user = ValidationHelper.getUserFromUserAppModel(u, user);
 				this.userService.updateUser(user);
+				session.setAttribute("emailId", u.getEmailId());
 			}
 		}
 		// Wrong Captcha
@@ -526,9 +537,7 @@ public class UserController {
 			// set user Id in the session
 			HttpSession session = request.getSession();
 			session.setAttribute("OTP-User-Id", userObj.getUserId());
-			System.out.println(emailId);
-			System.out.println(userObj.getUserId());
-			// send otp
+			// send OTP
 			otpService.sendOtp(this.userService.getUserByEmailId(emailId),
 					emailId);
 			return "setNewPassword";
@@ -536,14 +545,21 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.GET)
-	public String setNewPassword(Model model) {
-
+	public String setNewPassword(Model model, HttpServletRequest request) {
+		// get question from database
+		HttpSession session = request.getSession();
+		String userId = session.getAttribute("OTP-User-Id").toString();
+		System.out.println(userId);
+		model.addAttribute("question", this.userService.getUserById(userId)
+				.getQues1());
+		System.out.println(this.userService.getUserById(userId).getQues1());
 		return "setNewPassword";
 	}
 
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.POST)
 	public String setNewPasswordPost(HttpServletRequest request,
 			final RedirectAttributes attributes, Model model) {
+
 		// get otp and passwords from user
 		String newOtp = request.getParameter("One Time Password").toString();
 		String newPassword = request.getParameter("New Password").toString();
@@ -555,7 +571,6 @@ public class UserController {
 		Boolean result = otpService.verifyOtp(
 				this.otpService.getUserotpById(userId), newOtp);
 		Boolean passwordMatch = (newPassword.equals(renternewPassword));
-		// get user object
 		if (result == true && passwordMatch == true) {
 			User obj = this.userService.getUserById(userId);
 			obj.setPassword(CryptoHelper.getEncryptedString(newPassword));
