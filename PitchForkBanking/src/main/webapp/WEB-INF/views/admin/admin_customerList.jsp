@@ -13,14 +13,15 @@
 	<h3 align="center">Registered Users</h3>
 
 	<div class="container">
+	<c:url var="selectAction" value="/admin/admin_customerList"></c:url>
 		<table class="table table-bordered">
 			<thead>
 				<tr>
-					<th>Select</th>
 					<th>First Name</th>
 					<th>Last Name</th>
 					<th>Email Id</th>
 					<th>Role</th>
+					<th>Register</th>
 					<th>Delete</th>
 				</tr>
 			</thead>

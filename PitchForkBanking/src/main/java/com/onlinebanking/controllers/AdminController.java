@@ -65,12 +65,32 @@ public class AdminController {
 	}
 	*/
 	
-	@RequestMapping(value="/admin/customerList")
+	@RequestMapping(value="/admin/customerList", method = RequestMethod.GET)
 	public String customerList(Model model){
 		model.addAttribute("listUsers", this.userService.listCustomers());
 		model.addAttribute("contentView", "admin_customerList");
 		return "admin/admin_template";
 	}
+	
+	//Incomplete======================Incorrect --- approve/decline -- it should be accept/delete blah blah
+	@RequestMapping(value="/admin/admin_customerList", method = RequestMethod.POST)
+	public String customerAccept(Model model, HttpServletRequest request, HttpServletResponse response,
+			final RedirectAttributes attributes){
+		Response status;
+		if (request.getParameter("approve") != null) {
+			status = this.transactionService.updateAccessRequest(request.getParameter("approve"), "approve");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/customerList";
+		} else if (request.getParameter("decline") != null) {
+			status = this.transactionService.updateAccessRequest(request.getParameter("decline"), "decline");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/customerList";
+		} 
+		
+		return "redirect:/admin/customerList";
+	}
+
+	
 	
 	@RequestMapping(value="/admin/employeeList")
 	public String employeeList(Model model){
@@ -103,7 +123,6 @@ public class AdminController {
 
 	}
 	
-	//Incomplete
 		@RequestMapping(value="/admin/admin_processRequests", method = RequestMethod.POST)
 		public String processRequests(Model model, HttpServletRequest request, HttpServletResponse response,
 				final RedirectAttributes attributes){
