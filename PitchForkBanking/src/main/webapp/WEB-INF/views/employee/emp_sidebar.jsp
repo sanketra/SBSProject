@@ -2,7 +2,12 @@
     pageEncoding="ISO-8859-1"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-
+<%
+	response.setHeader("pragma", "no-cache");
+	response.setHeader("Cache-control",
+			"no-cache, no-store, must-revalidate");
+	response.setHeader("Expires", "0");
+%>
 
 <aside id="side_bar">
 	<ul id="emp_menu" class="nav nav-tabs nav-stacked">

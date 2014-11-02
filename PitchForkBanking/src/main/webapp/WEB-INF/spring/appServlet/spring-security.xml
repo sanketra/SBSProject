@@ -25,6 +25,10 @@
 		<intercept-url pattern="/admin/*" access="Admin" />
 		<intercept-url pattern="/admin/*/*" access="Admin" />
 		<intercept-url pattern="/admin/*/*/*" access="Admin" />
+		<intercept-url pattern="/employee" access="Employee" />
+		<intercept-url pattern="/employee/*" access="Employee" />
+		<intercept-url pattern="/employee/*/*" access="Employee" />
+		<intercept-url pattern="/employee/*/*/*" access="Employee" />
 		<intercept-url pattern="/user" access="User,Merchant" />
 		<intercept-url pattern="/user/payment" access="User" />
 		<intercept-url pattern="/user/requestPayment" access="Merchant" />

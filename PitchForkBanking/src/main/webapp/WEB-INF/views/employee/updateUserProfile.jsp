@@ -3,7 +3,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ page import="net.tanesha.recaptcha.ReCaptcha"%>
 <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory"%>
-
+<%
+	response.setHeader("pragma", "no-cache");
+	response.setHeader("Cache-control",
+			"no-cache, no-store, must-revalidate");
+	response.setHeader("Expires", "0");
+%>
 <title>Edit User Profile</title>
 <script>
 function validateForm() {
