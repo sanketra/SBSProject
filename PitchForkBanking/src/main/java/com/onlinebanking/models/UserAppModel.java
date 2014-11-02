@@ -1,15 +1,26 @@
 package com.onlinebanking.models;
 
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class UserAppModel {
 
 	private String userId;
+	@NotEmpty @Email
 	private String emailId;
+	@NotEmpty
 	private String fname;
+	@NotEmpty
 	private String lname;
+	@NotEmpty
 	private String address;
+	@NotEmpty
 	private String city;
+	@NotEmpty
 	private String state;
+	@Size(min=5, max=5)
 	private String zipcode;
 	private String phoneno;
 

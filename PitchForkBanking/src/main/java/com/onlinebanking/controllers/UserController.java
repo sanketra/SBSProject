@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -445,9 +447,15 @@ public class UserController {
 	// For add and update person both
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
-	public String addUserProfile(@ModelAttribute("user") UserAppModel u,
+	public String addUserProfile(@ModelAttribute("user") @Valid UserAppModel u, BindingResult bindingResult,
 			HttpServletRequest request, final RedirectAttributes attributes) {
-
+		
+		if (bindingResult.hasErrors()) {
+			attributes.addFlashAttribute("response", new Response("error",
+					bindingResult.getAllErrors().get(0).getDefaultMessage()));
+			return "redirect:/user/profile/edit";
+        }
+		
 		// get the responses from the user
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
@@ -457,7 +465,9 @@ public class UserController {
 				uresponse, remoteAddress);
 		// Redirect logic
 		if (verifyStatus == true) {
-			User user = this.userService.getUserById(u.getUserId());
+			HttpSession session = request.getSession();
+			String userId = (String) session.getAttribute("userId");
+			User user = this.userService.getUserById(userId);
 
 			if (user == null) {
 				attributes.addFlashAttribute("response", new Response("error",

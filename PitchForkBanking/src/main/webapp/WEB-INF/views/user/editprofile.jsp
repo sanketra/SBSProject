@@ -20,17 +20,7 @@ function validateForm() {
         alert("Last name must be filled out");
         return false;
     }
-    // SSN
-    var ssn = document.forms["myForm"]["ssn"].value;
-    if (ssn==null || ssn=="") {
-        alert("SSN must be filled out");
-        return false;
-    }
-    var ssnPattern = /^[0-9]{3}\-?[0-9]{2}\-?[0-9]{4}$/;
-    if(ssnPattern.test(ssn)!=true){
-    	alert("Enter a valid SSN");
-    	return false;
-    }
+    
     // Email_Id
     var emailId = document.forms["myForm"]["emailId"].value;
     if (emailId==null || emailId=="") {
