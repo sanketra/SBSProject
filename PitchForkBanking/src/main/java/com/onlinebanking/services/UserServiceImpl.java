@@ -143,8 +143,7 @@ public class UserServiceImpl implements UserService {
 			this.userHome.merge(u);
 			return new Response("success", "User Registered!");
 		} else {
-			u.setEnabled(0);
-			this.userHome.merge(u);
+			removeUser(id);
 			return new Response("success", "User Declined!");
 		}
 	}
