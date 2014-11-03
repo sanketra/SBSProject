@@ -7,13 +7,31 @@
 			"no-cache, no-store, must-revalidate");
 	response.setHeader("Expires", "0");
 %>
+<%@ page import="net.tanesha.recaptcha.ReCaptcha"%>
+<%@ page import="net.tanesha.recaptcha.ReCaptchaFactory"%>
 <title>Update Transaction</title>
+<script>
+function validateForm()
+{
+var transactionAmount = document.forms["myForm"]["transactionAmount"].value;
+if (transactionAmount==null || transactionAmount=="") {
+    alert("Enter Transaction amount");
+    return false;
+}
+//var amountPattern = ^[0-9]+(\.[0-9]{1,2})?$;
+//if(amountPattern.test(transactionAmount)!=true){
+//	alert("Enter a valid Amount");
+//	return false;
+}
+
+
+</script>
 
 
 
 <c:url var="submitAction" value="/employee/updateUserTransaction"></c:url>
 <div class="container">
-	<form:form action="updateUserTransaction" commandName="userTransaction" class="form-horizontal" method="POST">
+	<form:form name="myForm" action="updateUserTransaction" onsubmit="return validateForm()" commandName="userTransaction" class="form-horizontal" method="POST">
 		<form:hidden path="transactionId" />
 		<table class="table">
 			<tr>
@@ -49,6 +67,19 @@
                             <option value="declined" ${userTransaction.transactionStatus=='declined'? 'selected' : ''}>declined</option>
                      </form:select>
                </td>
+			</tr>
+			<tr>
+				<td>Captcha</td>
+				<td>
+					<%
+						ReCaptcha c = ReCaptchaFactory
+									.newReCaptcha(
+											"6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS",
+											"6LdU5vsSAAAAAPAyZqM1Bx3Kh12wdMvimkjC5Xqpyour_private_key",
+											false);
+							out.print(c.createRecaptchaHtml(null, null));
+					%>
+				</td>
 			</tr>
 			<tr>
 				<td>

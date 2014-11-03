@@ -68,6 +68,8 @@ public class EmployeeController {
 	
 	@RequestMapping(value="/employee/editUserProfile", method = RequestMethod.POST)
 	public String editUserProfile(HttpServletRequest request, Model model, final RedirectAttributes attributes){
+		if(request.getParameter("email_Id")!=null)
+		{
 		if(request.getParameter("submit").equalsIgnoreCase("delete"))
 		{
 			String emailId = request.getParameter("email_Id");
@@ -89,7 +91,15 @@ public class EmployeeController {
 		{
 			return "redirect:/employee/user_details";
 		}
-	}
+		}
+		else
+		{
+			attributes.addFlashAttribute("response", new Response("error", "Select row to proceed"));
+			return "redirect:/employee/user_details";
+		}
+		
+		}
+	
 	
 	@RequestMapping(value="/employee/updateUserProfile", method = RequestMethod.POST)
 	public String updateUserTransaction(@ModelAttribute("userProfile") UserAppModel userAppModel, HttpServletRequest request, Model model, final RedirectAttributes attributes)
@@ -128,6 +138,7 @@ public class EmployeeController {
 	
 	@RequestMapping(value="/employee/req_Access", method = RequestMethod.GET)
 	public String employeeRequest(Model model){
+		
 		List<UserRequest> userRequests = transactionService.getAllPendingRequests();
 		model.addAttribute("userRequest", new UserRequest());
 		model.addAttribute("pendingUserRequests", userRequests);
@@ -136,11 +147,21 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value="/employee/submitRequest", method = RequestMethod.POST)
-	public String submitEmployeeRequest(@ModelAttribute("userRequest") UserRequest userRequest, final RedirectAttributes attributes) {
-		
+	public String submitEmployeeRequest(@ModelAttribute("userRequest") UserRequest userRequest, HttpServletRequest request, final RedirectAttributes attributes) {
+		String challenge = request.getParameter("recaptcha_challenge_field");
+		String uresponse = request.getParameter("recaptcha_response_field");
+		String remoteAddress = request.getRemoteAddr();
+		Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
+				uresponse, remoteAddress);
+		if (verifyStatus == true) {
 		Response result = transactionService.addRequest(userRequest);
 		
 		attributes.addFlashAttribute("response", result);
+		}
+		
+		else
+			attributes.addFlashAttribute("response", new Response("error",
+					"Wrong captcha, please try again!"));
 		
 		return "redirect:/employee/req_Access";
 	}
@@ -171,6 +192,8 @@ public class EmployeeController {
 		}
 		model.addAttribute("transactionList", transactions);
 		model.addAttribute("contentView", "viewUserTransactions");
+		
+		
 		return "employee/emp_template";
 	}
 	
@@ -201,13 +224,28 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value="/employee/updateUserTransaction", method = RequestMethod.POST)
-	public String updateUserTransaction(@ModelAttribute("userTransaction") TransactionAppModel transactionAppModel, final RedirectAttributes attributes)
+	public String updateUserTransaction(@ModelAttribute("userTransaction") TransactionAppModel transactionAppModel, HttpServletRequest request,Model model, final RedirectAttributes attributes)
 	{
+		String challenge = request.getParameter("recaptcha_challenge_field");
+		String uresponse = request.getParameter("recaptcha_response_field");
+		String remoteAddress = request.getRemoteAddr();
+		Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
+				uresponse, remoteAddress);
+		if (verifyStatus == true)
+		{
 		Transaction transaction = transactionService.getTransaction(transactionAppModel.getTransactionId());
 		transaction.setTransactionAmount(transactionAppModel.getTransactionAmount());
 		transaction.setTransactionStatus(transactionAppModel.getTransactionStatus());
 		transactionService.updateTransaction(transaction);
 		attributes.addFlashAttribute("response", new Response("success", "updated transaction"));
+		}
+		else
+		{
+			attributes.addFlashAttribute("response", new Response("error",
+					"Wrong captcha, please try again!"));
+			model.addAttribute("contentView", "updateUserTransactions");
+			return "employee/emp_template";
+		}
 		return "redirect:/employee/account_details";
 	}
 }

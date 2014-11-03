@@ -1,11 +1,21 @@
 package com.onlinebanking.models;
+import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+
 
 
 public class TransactionAppModel {
 	private String transactionId;
+	@NotEmpty @Pattern(regexp="[0-9]*", message="the field can only contain numbers")
 	private String fromAcountNum;
+	@NotEmpty @Pattern(regexp="[0-9]*", message="the field can only contain numbers")
 	private String toAccountNum;
 	private String transactionType;
+	@NotEmpty @Pattern(regexp="[0-9]*.[0-9]*", message="the field can only contain numbers") 
 	private double transactionAmount;
 	private String transactionTime;
 	private String transactionStatus;

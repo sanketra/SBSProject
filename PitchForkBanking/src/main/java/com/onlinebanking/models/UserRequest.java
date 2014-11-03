@@ -1,9 +1,19 @@
 package com.onlinebanking.models;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
+
 
 public class UserRequest {
 	private String requestId;
+	@NotEmpty @Pattern(regexp="[a-zA-Z]*", message="the name can only contain letters")
 	private String fname;
+	@NotEmpty @Pattern(regexp="[a-zA-Z]*", message="the name can only contain letters")
 	private String lname;
+	@NotEmpty @Email
 	private String emailId;
 	private String employeeName;
 	private int accountId;
