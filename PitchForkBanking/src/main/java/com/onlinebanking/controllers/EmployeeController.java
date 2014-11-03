@@ -234,14 +234,24 @@ public class EmployeeController {
 		if (verifyStatus == true)
 		{
 		Transaction transaction = transactionService.getTransaction(transactionAppModel.getTransactionId());
-		transaction.setTransactionAmount(transactionAppModel.getTransactionAmount());
+		try
+		{
+			transaction.setTransactionAmount(Double.parseDouble(transactionAppModel.getTransactionAmount()));
+		}
+		catch(NumberFormatException nfe)
+		{
+			model.addAttribute("response", new Response("error",
+					"Please enter proper value in amount"));
+			model.addAttribute("contentView", "updateUserTransactions");
+			return "employee/emp_template";
+		}
 		transaction.setTransactionStatus(transactionAppModel.getTransactionStatus());
 		transactionService.updateTransaction(transaction);
 		attributes.addFlashAttribute("response", new Response("success", "updated transaction"));
 		}
 		else
 		{
-			attributes.addFlashAttribute("response", new Response("error",
+			model.addAttribute("response", new Response("error",
 					"Wrong captcha, please try again!"));
 			model.addAttribute("contentView", "updateUserTransactions");
 			return "employee/emp_template";
