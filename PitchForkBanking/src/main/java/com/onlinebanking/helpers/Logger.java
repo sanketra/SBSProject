@@ -20,7 +20,9 @@ public class Logger {
 	public static Logger getinstance() {
 		if (instance == null) {
 			instance = new Logger();
-			PropertyConfigurator.configure("C:\\MyFiles\\FALL 2014\\SS\\Project\\PitchForkBanking\\src\\main\\resources\\log4j.properties");
+			// TODO: Please configure to relative path.
+			// Also update log4j.xml to log to a file specified by relative path.
+			//PropertyConfigurator.configure("C:\\MyFiles\\FALL 2014\\SS\\Project\\PitchForkBanking\\src\\main\\resources\\log4j.properties");
 		}
 		return instance;
 	}
