@@ -11,8 +11,6 @@ import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Account;
-import com.onlinebanking.models.RequestStatus;
-import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.User;
 
 @Service
@@ -20,6 +18,7 @@ public class UserServiceImpl implements UserService {
 	
 	private UserHome userHome;
 	private AccountHome accountHome;
+	@SuppressWarnings("unused")
 	private RequestsHome requestsHome;
 	
 	public void setAccountHome(AccountHome accountHome) {

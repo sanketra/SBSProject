@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.CryptoHelper;
+import com.onlinebanking.helpers.Logger;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
@@ -81,7 +82,7 @@ public class UserController {
 	@RequestMapping(value = "/user/home", method = RequestMethod.GET)
 	public String handleRequest(Model model, HttpServletRequest request,
 			HttpServletResponse response) {
-		URLHelper.logRequest(request);
+		Logger.getinstance().logRequest(request);
 		HttpSession session = request.getSession();
 		Authentication auth = SecurityContextHolder.getContext()
 				.getAuthentication();
@@ -107,7 +108,7 @@ public class UserController {
 	public String handleDashboardRequest(Model model,
 			HttpServletRequest request, HttpServletResponse response,
 			final RedirectAttributes attributes) {
-		URLHelper.logRequest(request);
+		Logger.getinstance().logRequest(request);
 
 		HashMap<String, String> urls = URLHelper.analyseRequest(request);
 		HttpSession session = request.getSession();
@@ -289,7 +290,7 @@ public class UserController {
 			RequestMethod.POST })
 	public String userPayment(HttpServletRequest request, Model model,
 			final RedirectAttributes attributes) {
-		URLHelper.logRequest(request);
+		Logger.getinstance().logRequest(request);
 		HttpSession session = request.getSession();
 		Response status;
 		int account_id = 0;
@@ -347,7 +348,7 @@ public class UserController {
 			RequestMethod.GET, RequestMethod.POST })
 	public String merchantRequestPayment(HttpServletRequest request,
 			Model model, final RedirectAttributes attributes) {
-		URLHelper.logRequest(request);
+		Logger.getinstance().logRequest(request);
 		HttpSession session = request.getSession();
 		Response status;
 		int account_id = 0;

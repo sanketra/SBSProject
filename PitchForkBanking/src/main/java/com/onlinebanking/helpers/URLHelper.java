@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 public class URLHelper {
 	
@@ -50,15 +49,5 @@ public class URLHelper {
 		uris.put("type", type);
 
 		return uris;
-	}
-	
-	public static void logRequest(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		System.out.println("*********************************");
-		System.out.println("Session Id: " + session.getId());
-		System.out.println("User Id: " + session.getAttribute("userId"));
-		System.out.println("Email Id: " + session.getAttribute("emailId"));
-		System.out.println("My account Id: " + session.getAttribute("account_id"));
-		System.out.println("********************************");
 	}
 }
