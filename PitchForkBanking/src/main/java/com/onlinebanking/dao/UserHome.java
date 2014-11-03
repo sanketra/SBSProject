@@ -88,6 +88,29 @@ public class UserHome {
 		}
 	}
 
+	public User getAdmin() {
+		try {
+			String role = Role.ADMIN;
+			String queryString = "Select * from user U where U.role = :role";
+			@SuppressWarnings("unchecked")
+			List<User> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(User.class)
+					.setParameter("role", role).list();
+
+			if (results.size() > 0) {
+				log.debug("get successful, no instance found");
+				return results.get(0);
+			} else {
+				log.debug("get successful, instance found");
+				return null;
+			}
+			
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	
 	public User findById(String id) {
 		log.debug("getting User instance with id: " + id);
 		try {

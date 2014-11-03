@@ -75,6 +75,5 @@ body {
 	<div class="container-fluid" align="left">
 		<jsp:include page="../common/footer.jsp" />
 	</div>
-	<c:url var="logoutAction" value="/j_spring_security_logout"></c:url>
 </body>
 </html>

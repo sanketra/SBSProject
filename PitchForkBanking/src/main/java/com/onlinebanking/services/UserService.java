@@ -7,6 +7,7 @@ import com.onlinebanking.models.User;
 
 public interface UserService {
 
+	public User getAdmin();
 	public void addUser(User p);
 	public void updateUser(User p);
 	public List<User> listUsers();

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -29,6 +28,7 @@ import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserAppModel;
+import com.onlinebanking.models.UserRegistrationModel;
 import com.onlinebanking.models.UserRequest;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
@@ -222,6 +222,10 @@ public class UserController {
 				}
 
 				return "redirect:/user/authorize";
+			} else if (urls.get("url_2").toString().equals("requestaccount")) {
+				status = this.transactionService.createAccountCreationRequest();
+				attributes.addFlashAttribute("response", status);
+				return "redirect:/user/requestaccount";
 			}
 		}
 
@@ -278,6 +282,13 @@ public class UserController {
 							.getAttribute("emailId")));
 			model.addAttribute("user", u);
 			model.addAttribute("profile", "active");
+			return "user/template";
+		} else if (urls.get("url_2").toString().equals("requestaccount")) {
+			String userType = userService.getUserRole((String) session
+					.getAttribute("emailId"));
+			model.addAttribute("role", userType);
+			model.addAttribute("contentView", "requestaccount");
+			model.addAttribute("requestaccount", "active");
 			return "user/template";
 		} else {
 			attributes.addFlashAttribute("response", new Response("error",
@@ -445,7 +456,7 @@ public class UserController {
 		return "user/template";
 	}
 
-	// For add and update person both
+	// For update user profile
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
 	public String addUserProfile(@ModelAttribute("user") @Valid UserAppModel u, BindingResult bindingResult,
@@ -509,10 +520,7 @@ public class UserController {
 
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
 	public String listUsers(Model model) {
-		// TODO: User
-		model.addAttribute("user", new User());
-		// TODO: Needs to be removed.
-		model.addAttribute("listUsers", this.userService.listUsers());
+		model.addAttribute("user", new UserRegistrationModel());
 		return "registration";
 	}
 
@@ -598,21 +606,34 @@ public class UserController {
 
 	// For add and update person both
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addUser(@ModelAttribute("user") User p,
-			final RedirectAttributes attributes) {
+	public String addUser(@ModelAttribute("user") @Valid UserRegistrationModel p,
+			BindingResult bindingResult, final RedirectAttributes attributes) {
 
-		if (this.userService.getUserById(p.getUserId()) == null) {
-			// new person, add it
-			this.userService.addUser(p);
+		if (bindingResult.hasErrors()) {
+			attributes.addFlashAttribute("response", new Response("error",
+					bindingResult.getAllErrors().get(0).getDefaultMessage()));
+			return "redirect:/registration";
+        }
+		
+		if (p.getUserId() != null && this.userService.getUserById(p.getUserId()) != null) {
+			// Error. User Id was reused to add user.
+			attributes.addFlashAttribute("response", new Response("error",
+					"Account registration failed!!"));
+			return "redirect:/registration";
 		} else {
-			// existing person, call update
-			this.userService.updateUser(p);
+			if (!p.getPassword().equals(p.getConfirmPassword())) {
+				attributes.addFlashAttribute("response", new Response("error",
+						"Password & confirm password should be same."));
+				return "redirect:/registration";
+			}
+			
+			User u = ValidationHelper.getUserFromUserRegistrationModel(p, new User());
+			this.userService.addUser(u);
 		}
 
 		attributes.addFlashAttribute("response", new Response("success",
 				"Account registration successful!!"));
 		return "redirect:/registration";
-
 	}
 	
 	@RequestMapping(value = "/addEmployee", method = RequestMethod.POST)
@@ -631,16 +652,5 @@ public class UserController {
 				"Account registration successful!!"));
 		return "redirect:/admin_home";
 
-	}
-
-	@RequestMapping("/remove/{id}")
-	public String removeUser(@PathVariable("id") String id) {
-		this.userService.removeUser(id);
-		return "redirect:/registration";
-	}
-
-	@RequestMapping(value = "/header")
-	public String header(HttpServletRequest request, Model model) {
-		return "header";
 	}
 }

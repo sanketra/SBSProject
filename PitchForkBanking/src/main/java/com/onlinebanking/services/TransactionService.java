@@ -9,6 +9,7 @@ import com.onlinebanking.models.UserRequest;
 
 public interface TransactionService {
 
+	public Response createAccountCreationRequest();
 	public Response requestPayment(String fromAccount, String toAccount, String amount);
 	public Response createTransaction(String fromAccount, String toAccount, String amount, TransactionType type);
 	public Response addRequest(UserRequest userRequest);
