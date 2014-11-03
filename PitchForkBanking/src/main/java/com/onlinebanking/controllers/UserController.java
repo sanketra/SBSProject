@@ -222,6 +222,10 @@ public class UserController {
 				}
 
 				return "redirect:/user/authorize";
+			} else if (urls.get("url_2").toString().equals("requestaccount")) {
+				status = this.transactionService.createAccountCreationRequest();
+				attributes.addFlashAttribute("response", status);
+				return "redirect:/user/requestaccount";
 			}
 		}
 
@@ -278,6 +282,13 @@ public class UserController {
 							.getAttribute("emailId")));
 			model.addAttribute("user", u);
 			model.addAttribute("profile", "active");
+			return "user/template";
+		} else if (urls.get("url_2").toString().equals("requestaccount")) {
+			String userType = userService.getUserRole((String) session
+					.getAttribute("emailId"));
+			model.addAttribute("role", userType);
+			model.addAttribute("contentView", "requestaccount");
+			model.addAttribute("requestaccount", "active");
 			return "user/template";
 		} else {
 			attributes.addFlashAttribute("response", new Response("error",

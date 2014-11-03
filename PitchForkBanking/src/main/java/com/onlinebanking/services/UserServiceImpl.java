@@ -31,6 +31,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
+	public User getAdmin() {
+		return this.userHome.getAdmin();
+	}
+	
+	@Override
+	@Transactional
 	public void addUser(User p) {
 		p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
 		this.userHome.persist(p);

@@ -16,5 +16,6 @@
 		<li class= "${transaction}"><a
 			href="${pageContext.request.contextPath}/user/transactions">Transactions</a></li>
 		<li class= "${authorize}"><a href="${pageContext.request.contextPath}/user/authorize">Authorize</a></li>
+		<li class= "${requestaccount}"><a href="${pageContext.request.contextPath}/user/requestaccount">Request Account</a></li>
 	</ul>
 </aside>

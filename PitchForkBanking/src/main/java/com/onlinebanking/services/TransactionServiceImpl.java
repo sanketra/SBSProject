@@ -49,6 +49,39 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	@Transactional
+	public Response createAccountCreationRequest() {
+		try {
+			Authentication auth = SecurityContextHolder.getContext()
+					.getAuthentication();
+			User user = userHome.getUserByEmailId(auth.getName());
+			List<Account> accounts = this.accountHome.getUserAccounts(user.getUserId());
+			
+			if (accounts.size() >= 2) {
+				return new Response("error", "Maxmimum number of accounts reached.");
+			}
+			
+			User admin = this.userHome.getAdmin();
+			
+			if (admin == null) {
+				return new Response("error", "Could not create the request.");
+			}
+
+			Requests request = new Requests();
+			request.setFromUser(user.getUserId());
+			request.setToUser(admin.getUserId());
+			request.setType("createaccount");
+			request.setStatus("pending");
+			requestsHome.persist(request);
+			return new Response("success", "Request created successfully!!");
+		} catch (Exception e) {
+			return new Response("error",
+					"Exception occurred. Could not complete request");
+		}
+
+	}
+
+	@Override
+	@Transactional
 	public Response addRequest(UserRequest userRequest) {
 		try {
 			Authentication auth = SecurityContextHolder.getContext()
@@ -90,7 +123,7 @@ public class TransactionServiceImpl implements TransactionService {
 			if (!request.getStatus().equalsIgnoreCase(RequestStatus.PENDING)) {
 				continue;
 			}
-			
+
 			String fromUserId = request.getFromUser();
 			User fromUser = userHome.findById(fromUserId);
 			UserRequest requestedUser = new UserRequest();
@@ -117,7 +150,7 @@ public class TransactionServiceImpl implements TransactionService {
 			if (!request.getStatus().equalsIgnoreCase(RequestStatus.PENDING)) {
 				continue;
 			}
-			
+
 			String toUserId = request.getToUser();
 			User toUser = userHome.findById(toUserId);
 			UserRequest requestedUser = new UserRequest();
@@ -164,19 +197,19 @@ public class TransactionServiceImpl implements TransactionService {
 	@Override
 	@Transactional
 	public List<UserRequest> getApprovedProfileRequestsFromUser() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
 		String username = auth.getName();
 		User u = userHome.getUserByEmailId(username);
 		String userId = u.getUserId();
 		List<Requests> profileRequests = requestsHome
 				.getApprovedProfileRequestsForUser(userId);
 		List<UserRequest> userRequests = new ArrayList<UserRequest>();
-		for(Requests request : profileRequests)
-		{
+		for (Requests request : profileRequests) {
 			String toUserId = request.getToUser();
 			User toUser = userHome.findById(toUserId);
 			UserRequest requestedUser = new UserRequest();
-			
+
 			requestedUser.setFname(toUser.getFname());
 			requestedUser.setLname(toUser.getLname());
 			requestedUser.setEmailId(toUser.getEmailId());
@@ -184,40 +217,40 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 		return userRequests;
 	}
-	
+
 	@Override
 	@Transactional
 	public List<UserRequest> getApprovedRequests() {
 		try {
-		List<Requests> approvedRequest = requestsHome
-				.getAllApprovedRequests();
-		
-		List<UserRequest> userRequests = new ArrayList<UserRequest>();
-		for(Requests request : approvedRequest)
-		{
-			String toUserId = request.getToUser();
-			String fromUserId = request.getFromUser();
-			
-			User toUser = userHome.findById(toUserId);
-			User fromUser = userHome.findById(fromUserId);
-			
-			UserRequest requestedUser = new UserRequest();
-			
-			requestedUser.setEmployeeName(fromUser.getFname() + " " + fromUser.getLname());
-			requestedUser.setFname(toUser.getFname());
-			requestedUser.setLname(toUser.getLname());
-			requestedUser.setRequestType(request.getType());
-			requestedUser.setStatus(request.getStatus());
-			requestedUser.setRequestId(request.getRequestId());
-			
-			userRequests.add(requestedUser);
-		}
-		return userRequests;
+			List<Requests> approvedRequest = requestsHome
+					.getAllApprovedRequests();
+
+			List<UserRequest> userRequests = new ArrayList<UserRequest>();
+			for (Requests request : approvedRequest) {
+				String toUserId = request.getToUser();
+				String fromUserId = request.getFromUser();
+
+				User toUser = userHome.findById(toUserId);
+				User fromUser = userHome.findById(fromUserId);
+
+				UserRequest requestedUser = new UserRequest();
+
+				requestedUser.setEmployeeName(fromUser.getFname() + " "
+						+ fromUser.getLname());
+				requestedUser.setFname(toUser.getFname());
+				requestedUser.setLname(toUser.getLname());
+				requestedUser.setRequestType(request.getType());
+				requestedUser.setStatus(request.getStatus());
+				requestedUser.setRequestId(request.getRequestId());
+
+				userRequests.add(requestedUser);
+			}
+			return userRequests;
 		} catch (Exception e) {
 			return new ArrayList<UserRequest>();
 		}
 	}
-	
+
 	@Override
 	@Transactional
 	public List<UserRequest> getAllPendingRequests() {
@@ -246,31 +279,32 @@ public class TransactionServiceImpl implements TransactionService {
 			return new ArrayList<UserRequest>();
 		}
 	}
-	
+
 	@Override
 	@Transactional
 	public List<UserRequest> getPendingRequests() {
 		try {
-			
+
 			List<Requests> pendingRequest = requestsHome
 					.getAllPendingRequests();
 			List<UserRequest> userRequests = new ArrayList<UserRequest>();
 			for (Requests request : pendingRequest) {
 				String toUserId = request.getToUser();
 				String fromUserId = request.getFromUser();
-				
+
 				User toUser = userHome.findById(toUserId);
 				User fromUser = userHome.findById(fromUserId);
-				
+
 				UserRequest requestedUser = new UserRequest();
-				
-				requestedUser.setEmployeeName(fromUser.getFname() + " " + fromUser.getLname());
+
+				requestedUser.setEmployeeName(fromUser.getFname() + " "
+						+ fromUser.getLname());
 				requestedUser.setFname(toUser.getFname());
 				requestedUser.setLname(toUser.getLname());
 				requestedUser.setRequestType(request.getType());
 				requestedUser.setStatus(request.getStatus());
 				requestedUser.setRequestId(request.getRequestId());
-				
+
 				userRequests.add(requestedUser);
 			}
 			return userRequests;
@@ -278,35 +312,35 @@ public class TransactionServiceImpl implements TransactionService {
 			return new ArrayList<UserRequest>();
 		}
 	}
-	
+
 	@Override
 	@Transactional
 	public List<UserRequest> getDeclinedRequests() {
 		try {
-		List<Requests> approvedRequest = requestsHome
-				.getAllDeclinedRequests();
-		
-		List<UserRequest> userRequests = new ArrayList<UserRequest>();
-		for(Requests request : approvedRequest)
-		{
-			String toUserId = request.getToUser();
-			String fromUserId = request.getFromUser();
-			
-			User toUser = userHome.findById(toUserId);
-			User fromUser = userHome.findById(fromUserId);
-			
-			UserRequest requestedUser = new UserRequest();
-			
-			requestedUser.setEmployeeName(fromUser.getFname() + " " + fromUser.getLname());
-			requestedUser.setFname(toUser.getFname());
-			requestedUser.setLname(toUser.getLname());
-			requestedUser.setRequestType(request.getType());
-			requestedUser.setStatus(request.getStatus());
-			requestedUser.setRequestId(request.getRequestId());
-			
-			userRequests.add(requestedUser);
-		}
-		return userRequests;
+			List<Requests> approvedRequest = requestsHome
+					.getAllDeclinedRequests();
+
+			List<UserRequest> userRequests = new ArrayList<UserRequest>();
+			for (Requests request : approvedRequest) {
+				String toUserId = request.getToUser();
+				String fromUserId = request.getFromUser();
+
+				User toUser = userHome.findById(toUserId);
+				User fromUser = userHome.findById(fromUserId);
+
+				UserRequest requestedUser = new UserRequest();
+
+				requestedUser.setEmployeeName(fromUser.getFname() + " "
+						+ fromUser.getLname());
+				requestedUser.setFname(toUser.getFname());
+				requestedUser.setLname(toUser.getLname());
+				requestedUser.setRequestType(request.getType());
+				requestedUser.setStatus(request.getStatus());
+				requestedUser.setRequestId(request.getRequestId());
+
+				userRequests.add(requestedUser);
+			}
+			return userRequests;
 		} catch (Exception e) {
 			return new ArrayList<UserRequest>();
 		}
@@ -457,7 +491,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 		return list;
 	}
-	
+
 	@Override
 	@Transactional
 	public Response updateAccessRequest(String id, String status) {
@@ -484,7 +518,7 @@ public class TransactionServiceImpl implements TransactionService {
 					.getTransactionAmount()) {
 				return new Response("error", "Insufficient funds!!");
 			}
-			
+
 			if (t.getTransactionAmount() < Constants.CRITICALTRANSACTION) {
 				t.getAccountByFromAcountNum().setAmount(
 						t.getAccountByFromAcountNum().getAmount()
@@ -500,7 +534,8 @@ public class TransactionServiceImpl implements TransactionService {
 			} else {
 				t.setTransactionStatus(TransactionStatus.ADMINPENDING);
 				this.transactionHome.updatePaymentRequests(t);
-				return new Response("success", "Payment waiting Admin approval!");
+				return new Response("success",
+						"Payment waiting Admin approval!");
 			}
 		} else {
 			t.setTransactionStatus(TransactionStatus.DECLINED);
