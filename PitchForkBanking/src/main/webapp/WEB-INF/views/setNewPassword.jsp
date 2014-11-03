@@ -44,7 +44,7 @@ body {
 	<div class="container">
 		<jsp:include page="common/response.jsp" />
 		<c:url var="newPasswordUrl" value="/setNewPassword"></c:url>
-		<form class="form-signin" action="${newPasswordUrl}" method="GET">
+		<form class="form-signin" action="${newPasswordUrl}" method="POST">
 			<h4 class="form-signin-heading">Set New Password</h4>
 			<br> <input type='text' name='One Time Password'
 				class="input-block-level" placeholder="Enter One Time Password" />
