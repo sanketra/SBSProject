@@ -130,10 +130,8 @@
 					};
 				</script> <script type="text/javascript"
 						src="https://www.google.com/recaptcha/api/challenge?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS">
-		var RecaptchaOptions = {
-			theme : 'white'
-		};
-	</script>
+					
+				</script>
 					<noscript>
 						<iframe
 							src="https://www.google.com/recaptcha/api/noscript?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS"
