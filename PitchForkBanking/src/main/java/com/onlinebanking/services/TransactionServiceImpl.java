@@ -70,7 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
 			request.setFromUser(user.getUserId());
 			request.setToUser(admin.getUserId());
 			request.setType("createaccount");
-			request.setStatus("pending");
+			request.setStatus(RequestStatus.PENDING);
 			requestsHome.persist(request);
 			return new Response("success", "Request created successfully!!");
 		} catch (Exception e) {
@@ -100,7 +100,7 @@ public class TransactionServiceImpl implements TransactionService {
 			request.setFromUser(fromUserId);
 			request.setToUser(toUser.getUserId());
 			request.setType(userRequest.getRequestType());
-			request.setStatus("pending");
+			request.setStatus(RequestStatus.PENDING);
 
 			requestsHome.persist(request);
 
