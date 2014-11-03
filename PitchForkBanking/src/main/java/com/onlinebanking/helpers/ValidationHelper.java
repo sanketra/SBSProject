@@ -85,9 +85,11 @@ public class ValidationHelper {
 
 		return list;
 	}
-
-	public static Response validateUserRequest(UserRequest userRequest) {
-		try {
+	
+	public static Response validateUserRequest(UserRequest userRequest, User toUser)
+	{
+		try
+		{
 			if (userRequest.getFname() == null || userRequest.getFname() == "") {
 				return new Response("error", "first name not entered");
 			}
@@ -99,7 +101,15 @@ public class ValidationHelper {
 					|| userRequest.getEmailId() == "") {
 				return new Response("error", "last name not entered");
 			}
+			if(toUser == null)
+			{
+				return new Response("error", "user email id not correct");
+			}
+			if (!toUser.getFname().equalsIgnoreCase(userRequest.getFname()) || !toUser.getLname().equalsIgnoreCase(userRequest.getLname())) {
+				return new Response("error", "user details not correct");
+			}
 			return new Response("success", "");
+			
 		} catch (Exception e) {
 			return new Response("error",
 					"Exception occurred. Could not complete request");

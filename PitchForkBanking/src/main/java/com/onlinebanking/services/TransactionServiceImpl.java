@@ -88,13 +88,18 @@ public class TransactionServiceImpl implements TransactionService {
 					.getAuthentication();
 			String fromUserId = userHome.getUserByEmailId(auth.getName())
 					.getUserId();
-			Response result = ValidationHelper.validateUserRequest(userRequest);
+			
+			User toUser = userHome.getUserByEmailId(userRequest.getEmailId());
+			Response result = ValidationHelper.validateUserRequest(userRequest, toUser);
 			if (result.getStatus().equalsIgnoreCase("error")) {
 				return result;
 			}
-			User toUser = userHome.getUserByEmailId(userRequest.getEmailId());
-			if (toUser == null) {
-				return new Response("error", "user details not correct");
+			
+			List<Requests> existingRequest = requestsHome.getRequestsFor(fromUserId, toUser.getUserId(), userRequest.getRequestType());
+			if(existingRequest.size() > 0)
+			{
+				return new Response("error",
+						"this request already exists");
 			}
 			Requests request = new Requests();
 			request.setFromUser(fromUserId);
@@ -106,6 +111,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 			return new Response("success", "Request added!!");
 		} catch (Exception e) {
+			System.out.println(e);
 			return new Response("error",
 					"Exception occurred. Could not complete request");
 		}
