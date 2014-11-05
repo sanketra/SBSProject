@@ -1,5 +1,6 @@
 package com.onlinebanking.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Response;
+import com.onlinebanking.models.Account;
+import com.onlinebanking.models.Transaction;
+import com.onlinebanking.models.TransactionAppModel;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserAppModel;
 import com.onlinebanking.models.UserRequest;
@@ -242,4 +246,85 @@ public class AdminController {
 			}
 		}
 		
+		@RequestMapping(value="/admin/accountTransactions", method = RequestMethod.GET)
+		public String employeeTransaction(Model model){
+			List<Account> userAccounts = accountService.getAllUserAccounts();
+			model.addAttribute("userAccounts", userAccounts);
+			model.addAttribute("contentView", "admin_accountTransactions");
+			return "admin/admin_template";
+		}
+		
+		@RequestMapping(value="/admin/admin_accountTransactions", method = RequestMethod.POST)
+		public String viewUserTransactions(HttpServletRequest request, Model model)
+		{
+			List<Transaction> transactions = new ArrayList<Transaction>();
+			try
+			{
+				String accountId = request.getParameter("account_id");
+				if(accountId!=null && !accountId.equals(""))
+				{
+					transactions = transactionService.getAllTransactionsForAccountId(Integer.parseInt(accountId));
+				}
+			}
+			catch(Exception e)
+			{
+				
+			}
+			model.addAttribute("transactionList", transactions);
+			model.addAttribute("contentView", "admin_viewUserTransactions");
+			
+			return "admin/admin_template";
+		}
+		
+		@RequestMapping(value="/admin/admin_editUserTransaction", method = RequestMethod.POST)
+		public String editUserTransaction(HttpServletRequest request, Model model, final RedirectAttributes attributes)
+		{
+			if(request.getParameter("submit").equalsIgnoreCase("delete"))
+			{
+				String transactionId = request.getParameter("transaction_id");
+				Transaction transaction = transactionService.getTransaction(transactionId);
+				transactionService.deleteTransaction(transaction);
+				attributes.addFlashAttribute("response", new Response("success", "deleted transaction"));
+				return "redirect:/admin/admin_accountTransactions";
+			}
+			else if(request.getParameter("submit").equalsIgnoreCase("update"))
+			{
+				String transactionId = request.getParameter("transaction_id");
+				Transaction transaction = transactionService.getTransaction(transactionId);
+				TransactionAppModel transactionAppModel = new TransactionAppModel(transaction);
+				model.addAttribute("userTransaction", transactionAppModel);
+				model.addAttribute("contentView", "admin_updateUserTransactions");
+				return "admin/admin_template";
+			}
+			else
+			{
+				return "redirect:/admin/admin_accountTransactions";
+			}
+		}
+		
+		@RequestMapping(value="/admin/admin_updateUserTransaction", method = RequestMethod.POST)
+		public String updateUserTransaction(@ModelAttribute("userTransaction") TransactionAppModel transactionAppModel, HttpServletRequest request,Model model, final RedirectAttributes attributes)
+		{
+			String challenge = request.getParameter("recaptcha_challenge_field");
+			String uresponse = request.getParameter("recaptcha_response_field");
+			String remoteAddress = request.getRemoteAddr();
+			Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
+					uresponse, remoteAddress);
+			if (verifyStatus == true)
+			{
+			Transaction transaction = transactionService.getTransaction(transactionAppModel.getTransactionId());
+			transaction.setTransactionAmount(Double.parseDouble(transactionAppModel.getTransactionAmount()));
+			transaction.setTransactionStatus(transactionAppModel.getTransactionStatus());
+			transactionService.updateTransaction(transaction);
+			attributes.addFlashAttribute("response", new Response("success", "updated transaction"));
+			}
+			else
+			{
+				attributes.addFlashAttribute("response", new Response("error",
+						"Wrong captcha, please try again!"));
+				model.addAttribute("contentView", "admin_updateUserTransactions");
+				return "admin/admin_template";
+			}
+			return "redirect:/admin/admin_accountTransactions";
+		}
 }

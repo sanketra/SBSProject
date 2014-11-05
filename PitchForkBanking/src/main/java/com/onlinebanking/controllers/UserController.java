@@ -43,7 +43,7 @@ public class UserController {
 	private AccountService accountService;
 	private TransactionService transactionService;
 	private OtpService otpService;
-
+	
 	@Autowired(required = true)
 	@Qualifier(value = "otpService")
 	public void setOtpService(OtpService otpService) {
@@ -482,8 +482,10 @@ public class UserController {
 			final RedirectAttributes attributes) {
 
 		if (bindingResult.hasErrors()) {
-			attributes.addFlashAttribute("response", new Response("error",
-					bindingResult.getAllErrors().get(0).getDefaultMessage()));
+			attributes.addFlashAttribute("response", new Response("error", 
+					bindingResult.getFieldError().getObjectName()
+					+ " - " 
+					+ bindingResult.getFieldError().getDefaultMessage()));
 			return "redirect:/user/profile/edit";
 		}
 

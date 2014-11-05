@@ -130,6 +130,7 @@
 	<beans:bean id="accountService"
 		class="com.onlinebanking.services.AccountServiceImpl">
 		<beans:property name="accountHome" ref="accountHome"></beans:property>
+		<beans:property name="userHome" ref="userHome"></beans:property>
 	</beans:bean>
 	<beans:bean id="captchaService"
 		class="com.onlinebanking.services.CaptchaServiceImpl">

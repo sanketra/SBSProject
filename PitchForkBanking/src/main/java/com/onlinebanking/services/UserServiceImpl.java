@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.dao.AccountHome;
-import com.onlinebanking.dao.RequestsHome;
 import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.helpers.Response;
@@ -18,15 +17,13 @@ public class UserServiceImpl implements UserService {
 	
 	private UserHome userHome;
 	private AccountHome accountHome;
-	@SuppressWarnings("unused")
-	private RequestsHome requestsHome;
-	
-	public void setAccountHome(AccountHome accountHome) {
-		this.accountHome = accountHome;
-	}
 
 	public void setUserHome(UserHome userDAO) {
 		this.userHome = userDAO;
+	}
+	
+	public void setAccountHome(AccountHome accountHome) {
+		this.accountHome = accountHome;
 	}
 
 	@Override
@@ -39,6 +36,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void addUser(User p) {
 		p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
+		p.setEnabled(0);
 		this.userHome.persist(p);
 		Account a = new Account();
 		a.setAccountType("Checking");
