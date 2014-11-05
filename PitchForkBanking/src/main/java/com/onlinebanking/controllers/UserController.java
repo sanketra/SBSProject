@@ -594,7 +594,7 @@ public class UserController {
 		// Check if account exists
 		if (userObj == null) {
 			attributes.addFlashAttribute("response", new Response("error",
-					"Account doesn't exist !, Try again"));
+					"Account doesn't exist!, Try again"));
 			return "redirect:/passwordRecovery";
 		} else {
 			// set user Id in the session
