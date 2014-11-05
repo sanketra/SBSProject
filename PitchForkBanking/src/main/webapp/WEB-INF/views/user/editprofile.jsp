@@ -4,8 +4,8 @@
 <%@ page import="net.tanesha.recaptcha.ReCaptcha"%>
 <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory"%>
 
-<!-- Validation script -->
 <title>PitchFork Bank - Edit Profile</title>
+<!-- Validation script -->
 <script>
 	function validateForm() {
 		// First Name

@@ -427,12 +427,14 @@ public class UserController {
 		// Now that user has an account id check if its a valid account of user.
 		status = this.userService.isValidUserAccount(account_id, session
 				.getAttribute("userId").toString());
-
+		
 		if (status.getStatus().equals("error")) {
 			attributes.addFlashAttribute("response", new Response("error",
 					status.getMessage()));
+			
 			return "redirect:/user/home";
 		}
+		
 
 		// Handle all post requests
 		if (URLHelper.isPOSTRequest(request)) {
