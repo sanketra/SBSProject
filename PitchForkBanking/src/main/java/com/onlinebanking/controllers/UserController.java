@@ -44,7 +44,7 @@ public class UserController {
 	private AccountService accountService;
 	private TransactionService transactionService;
 	private OtpService otpService;
-	
+
 	@Autowired(required = true)
 	@Qualifier(value = "otpService")
 	public void setOtpService(OtpService otpService) {
@@ -207,26 +207,57 @@ public class UserController {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
 				String amount = request.getParameter("amount").toString();
-				status = this.transactionService.createTransaction(fromAccount,
-						fromAccount, amount, TransactionType.CREDIT);
-				if (status.getStatus().equals("success")) {
-					attributes.addFlashAttribute("response", status);
+				// get the responses from the user
+				String challenge = request
+						.getParameter("recaptcha_challenge_field");
+				String uresponse = request
+						.getParameter("recaptcha_response_field");
+				String remoteAddress = request.getRemoteAddr();
+				// verify Captcha
+				Boolean verifyStatus = this.captchaService.verifyCaptcha(
+						challenge, uresponse, remoteAddress);
+				if (verifyStatus == true) {
+					status = this.transactionService.createTransaction(
+							fromAccount, fromAccount, amount,
+							TransactionType.CREDIT);
+					if (status.getStatus().equals("success")) {
+						attributes.addFlashAttribute("response", status);
+					} else {
+						attributes.addFlashAttribute("response", status);
+					}
 				} else {
-					attributes.addFlashAttribute("response", status);
+					attributes.addFlashAttribute("response", new Response(
+							"error", "Wrong captcha, please try again!"));
+					return "redirect:/user/credit";
 				}
-				return "redirect:/user/credit";
+
 			} else if (urls.get("url_2").toString().equals("debit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
 				String amount = request.getParameter("amount").toString();
 				status = this.transactionService.createTransaction(fromAccount,
 						fromAccount, amount, TransactionType.DEBIT);
-				if (status.getStatus().equals("success")) {
-					attributes.addFlashAttribute("response", status);
+				// get the responses from the user
+				String challenge = request
+						.getParameter("recaptcha_challenge_field");
+				String uresponse = request
+						.getParameter("recaptcha_response_field");
+				String remoteAddress = request.getRemoteAddr();
+				// verify Captcha
+				Boolean verifyStatus = this.captchaService.verifyCaptcha(
+						challenge, uresponse, remoteAddress);
+				if (verifyStatus == true) {
+					if (status.getStatus().equals("success")) {
+						attributes.addFlashAttribute("response", status);
+					} else {
+						attributes.addFlashAttribute("response", status);
+					}
 				} else {
-					attributes.addFlashAttribute("response", status);
+					attributes.addFlashAttribute("response", new Response(
+							"error", "Wrong captcha, please try again!"));
+					return "redirect:/user/debit";
 				}
-				return "redirect:/user/debit";
+
 			} else if (urls.get("url_2").toString().equals("authorize")) {
 				if (request.getParameter("approve") != null) {
 					status = this.transactionService.updateAccessRequest(
@@ -397,12 +428,14 @@ public class UserController {
 		// Now that user has an account id check if its a valid account of user.
 		status = this.userService.isValidUserAccount(account_id, session
 				.getAttribute("userId").toString());
-
+		
 		if (status.getStatus().equals("error")) {
 			attributes.addFlashAttribute("response", new Response("error",
 					status.getMessage()));
+			
 			return "redirect:/user/home";
 		}
+		
 
 		String randomString = PKI.generateRandomString();
 		model.addAttribute("randomString", randomString);
@@ -493,10 +526,12 @@ public class UserController {
 			final RedirectAttributes attributes) {
 
 		if (bindingResult.hasErrors()) {
-			attributes.addFlashAttribute("response", new Response("error", 
-					bindingResult.getFieldError().getObjectName()
-					+ " - " 
-					+ bindingResult.getFieldError().getDefaultMessage()));
+			attributes
+					.addFlashAttribute("response", new Response("error",
+							bindingResult.getFieldError().getObjectName()
+									+ " - "
+									+ bindingResult.getFieldError()
+											.getDefaultMessage()));
 			return "redirect:/user/profile/edit";
 		}
 
@@ -572,7 +607,7 @@ public class UserController {
 		// Check if account exists
 		if (userObj == null) {
 			attributes.addFlashAttribute("response", new Response("error",
-					"Account doesn't exist !, Try again"));
+					"Account doesn't exist!, Try again"));
 			return "redirect:/passwordRecovery";
 		} else {
 			// set user Id in the session

@@ -4,8 +4,8 @@
 <%@ page import="net.tanesha.recaptcha.ReCaptcha"%>
 <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory"%>
 
-<!-- Validation script -->
 <title>PitchFork Bank - Edit Profile</title>
+<!-- Validation script -->
 <script>
 	function validateForm() {
 		// First Name
@@ -14,13 +14,22 @@
 			alert("First name must be filled out");
 			return false;
 		}
+		var fnamePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (fnamePattern.test(fname) == true) {
+			alert('Special characters are not allowed in First Name');
+			return false;
+		}
 		// Last Name
 		var lname = document.forms["myForm"]["lname"].value;
 		if (lname == null || lname == "") {
 			alert("Last name must be filled out");
 			return false;
 		}
-
+		var lnamePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (lnamePattern.test(lname) == true) {
+			alert('Special characters are not allowed in Last Name');
+			return false;
+		}
 		// Email_Id
 		var emailId = document.forms["myForm"]["emailId"].value;
 		if (emailId == null || emailId == "") {
@@ -40,7 +49,7 @@
 		}
 		var addressPattern = /[*|\":<>[\]{}`\\()';@&$]/;
 		if (addressPattern.test(address) == true) {
-			alert("Special characters cannot be included in the address");
+			alert("Special characters are not allowed in Address");
 			return false;
 		}
 		// City
@@ -49,16 +58,31 @@
 			alert("City must be filled out");
 			return false;
 		}
+		var cityPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (cityPattern.test(city) == true) {
+			alert('Special characters are not allowed in City');
+			return false;
+		}
 		// State
 		var state = document.forms["myForm"]["state"].value;
 		if (state == null || state == "") {
 			alert("State must be filled out");
 			return false;
 		}
+		var statePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (statePattern.test(state) == true) {
+			alert('Special characters are not allowed in State');
+			return false;
+		}
 		// Zipcode
 		var zipcode = document.forms["myForm"]["zipcode"].value;
 		if (zipcode == null || zipcode == "") {
 			alert("Zipcode must be filled out");
+			return false;
+		}
+		var zipPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (zipPattern.test(zipcode) == true) {
+			alert('Special characters are not allowed in Zipcode');
 			return false;
 		}
 		// Phone Number
