@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+	pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -37,41 +37,41 @@
 			alert("Enter a valid Email-ID");
 			return false;
 		}
-		
+
 	}
 </script>
 
 <c:url var="submitAction" value="/employee/submitRequest"></c:url>
 <div class="container" align="right">
-<form:form name="requestForm" action = "${submitAction}" onsubmit="return validateForm()" commandName="userRequest" method="POST">
-<table class = "table">
-<tr>
-	<td>First Name:</td>
-	<td><form:input path="fname" class="input-xlarge"
+	<form:form name="requestForm" action="${submitAction}"
+		onsubmit="return validateForm()" commandName="userRequest"
+		method="POST">
+		<table class="table">
+			<tr>
+				<td>First Name:</td>
+				<td><form:input path="fname" class="input-xlarge"
 						placeholder="First Name" /></td>
-	
-</tr>
-<tr>
-	<td>Last Name:</td>
-	<td><form:input path="lname" class="input-xlarge"
+
+			</tr>
+			<tr>
+				<td>Last Name:</td>
+				<td><form:input path="lname" class="input-xlarge"
 						placeholder="Last Name" /></td>
-</tr>
-<tr>
-	<td>Email Id:</td>
-	<td><form:input path="emailId" class="input-xlarge"
+			</tr>
+			<tr>
+				<td>Email Id:</td>
+				<td><form:input path="emailId" class="input-xlarge"
 						placeholder="Email Id" /></td>
-</tr>
-<tr>
-	<td>Request Type</td>
-	<td>	
-		<form:select name="mydropdown" path="requestType">
-			<option value="Profile">Profile</option>
-			<option value="Transaction">Transaction</option>
-		</form:select>
-	</td>
-	
-</tr>
-<tr>
+			</tr>
+			<tr>
+				<td>Request Type</td>
+				<td><form:select name="mydropdown" path="requestType">
+						<option value="Profile">Profile</option>
+						<option value="Transaction">Transaction</option>
+					</form:select></td>
+
+			</tr>
+			<tr>
 				<td>Captcha</td>
 				<td><script type="text/javascript">
 					var RecaptchaOptions = {
@@ -92,12 +92,13 @@
 							value="manual_challenge">
 					</noscript></td>
 			</tr>
-<tr>
-	<td><input type="submit" value="<spring:message text="Submit" />"
-							class="btn btn-lg btn-primary" /></td>
-</tr>
-</table>
-</form:form>
+			<tr>
+				<td><input type="submit"
+					value="<spring:message text="Submit" />"
+					class="btn btn-lg btn-primary" /></td>
+			</tr>
+		</table>
+	</form:form>
 </div>
 <br>
 <br>
@@ -114,12 +115,12 @@
 				</tr>
 			</thead>
 			<c:forEach items="${pendingUserRequests}" var="userRequest">
-			<tr>
+				<tr>
 					<td>${userRequest.fname}</td>
 					<td>${userRequest.lname}</td>
 					<td>${userRequest.emailId}</td>
 					<td>${userRequest.requestType}</td>
-			</tr>
+				</tr>
 			</c:forEach>
 		</table>
 	</c:if>
