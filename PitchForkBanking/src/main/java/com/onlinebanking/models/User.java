@@ -74,7 +74,7 @@ public class User implements java.io.Serializable {
 		this.phoneno = phoneno;
 		this.role = role;
 		//TODO: Added for Admin approval purpose. 
-		this.enabled = 1;
+		this.enabled = 0;
 		this.ques1 = ques1;
 		this.answer1 = answer1;
 		this.ques2 = ques2;

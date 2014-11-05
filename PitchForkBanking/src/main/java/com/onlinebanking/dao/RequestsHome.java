@@ -170,7 +170,7 @@ public class RequestsHome {
 	
 	@SuppressWarnings("unchecked")
 	public List<Requests> getApprovedProfileRequestsForUser(String userId) {
-		log.debug("finding transaction ids of approved requests from user "+userId);
+		log.debug("finding profile ids of approved requests from user "+userId);
 		try {
 			Session session = sessionFactory.getCurrentSession();
 			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where fromUserId = :userId and status = 'approved' and type = 'profile'");

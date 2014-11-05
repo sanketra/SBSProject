@@ -6,13 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.dao.AccountHome;
-import com.onlinebanking.dao.RequestsHome;
 import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Account;
-import com.onlinebanking.models.RequestStatus;
-import com.onlinebanking.models.Requests;
+
 import com.onlinebanking.models.User;
 
 @Service
@@ -20,7 +18,6 @@ public class UserServiceImpl implements UserService {
 	
 	private UserHome userHome;
 	private AccountHome accountHome;
-	private RequestsHome requestsHome;
 	
 	public void setAccountHome(AccountHome accountHome) {
 		this.accountHome = accountHome;
@@ -34,6 +31,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void addUser(User p) {
 		p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
+		p.setEnabled(0);
 		this.userHome.persist(p);
 		Account a = new Account();
 		a.setAccountType("Checking");

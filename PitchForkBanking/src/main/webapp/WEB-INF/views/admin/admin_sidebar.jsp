@@ -8,7 +8,7 @@
 		<li><a
 			href="${pageContext.request.contextPath}/admin/employeeList">Employee List</a></li>
 		<li><a
-			href="${pageContext.request.contextPath}/admin/customerTransactions">Transactions</a></li>
+			href="${pageContext.request.contextPath}/admin/accountTransactions">Account Transactions</a></li>
 		<li><a
 			href="${pageContext.request.contextPath}/admin/processRequests">Requests</a></li>
 		<li><a
