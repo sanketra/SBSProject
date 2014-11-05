@@ -22,12 +22,12 @@
 		// Account Number
 		var account_to = document.forms["myForm"]["account_to"].value;
 		if (account_to == null || account_to == "") {
-			alert("Email-Id must be filled out");
+			alert("Account Number must be filled out");
 			return false;
 		}
 		var account_toPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
 		if (account_toPattern.test(account_to) == true) {
-			alert('Special characters are not allowed in Account');
+			alert('Special characters are not allowed in Account Number');
 			return false;
 		}
 		// Email_Id
@@ -39,6 +39,17 @@
 		var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		if (emailPattern.test(emailId) != true) {
 			alert("Enter a valid Email-ID");
+			return false;
+		}
+		// Amount
+		var amount = document.forms["myForm"]["amount"].value;
+		if (amount == null || amount == "") {
+			alert("Amount must be filled out");
+			return false;
+		}
+		var amountPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (amountPattern.test(amount) == true) {
+			alert('Special characters are not allowed in amount');
 			return false;
 		}
 	}
