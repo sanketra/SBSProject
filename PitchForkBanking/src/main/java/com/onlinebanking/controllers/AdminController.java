@@ -313,7 +313,7 @@ public class AdminController {
 			if (verifyStatus == true)
 			{
 			Transaction transaction = transactionService.getTransaction(transactionAppModel.getTransactionId());
-			transaction.setTransactionAmount(transactionAppModel.getTransactionAmount());
+			transaction.setTransactionAmount(Double.parseDouble(transactionAppModel.getTransactionAmount()));
 			transaction.setTransactionStatus(transactionAppModel.getTransactionStatus());
 			transactionService.updateTransaction(transaction);
 			attributes.addFlashAttribute("response", new Response("success", "updated transaction"));

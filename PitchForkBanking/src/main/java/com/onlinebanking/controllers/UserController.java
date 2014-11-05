@@ -16,18 +16,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.CryptoHelper;
+import com.onlinebanking.helpers.Logger;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserAppModel;
+import com.onlinebanking.models.UserRegistrationModel;
 import com.onlinebanking.models.UserRequest;
 import com.onlinebanking.services.AccountService;
 import com.onlinebanking.services.CaptchaService;
@@ -42,7 +43,7 @@ public class UserController {
 	private AccountService accountService;
 	private TransactionService transactionService;
 	private OtpService otpService;
-
+	
 	@Autowired(required = true)
 	@Qualifier(value = "otpService")
 	public void setOtpService(OtpService otpService) {
@@ -81,7 +82,7 @@ public class UserController {
 	@RequestMapping(value = "/user/home", method = RequestMethod.GET)
 	public String handleRequest(Model model, HttpServletRequest request,
 			HttpServletResponse response) {
-		URLHelper.logRequest(request);
+		Logger.getinstance().logRequest(request);
 		HttpSession session = request.getSession();
 		Authentication auth = SecurityContextHolder.getContext()
 				.getAuthentication();
@@ -107,7 +108,7 @@ public class UserController {
 	public String handleDashboardRequest(Model model,
 			HttpServletRequest request, HttpServletResponse response,
 			final RedirectAttributes attributes) {
-		URLHelper.logRequest(request);
+		Logger.getinstance().logRequest(request);
 
 		HashMap<String, String> urls = URLHelper.analyseRequest(request);
 		HttpSession session = request.getSession();
@@ -144,45 +145,63 @@ public class UserController {
 						.toString();
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
+				// get the responses from the user
+				String challenge = request
+						.getParameter("recaptcha_challenge_field");
+				String uresponse = request
+						.getParameter("recaptcha_response_field");
+				String remoteAddress = request.getRemoteAddr();
+				// verify Captcha
+				Boolean verifyStatus = this.captchaService.verifyCaptcha(
+						challenge, uresponse, remoteAddress);
+				if (verifyStatus == true) {
+					status = this.userService.isValidAccount(Integer
+							.parseInt(toAccount));
+					if (status.getStatus().equals("error")) {
+						attributes.addFlashAttribute("response", new Response(
+								"error", status.getMessage()));
+						return "redirect:/user/transfer";
+					}
+					String toUserId = this.accountService
+							.getAccountById(Integer.parseInt(toAccount))
+							.getUser().getUserId();
+					User toUser = this.userService.getUserById(toUserId);
 
-				status = this.userService.isValidAccount(Integer
-						.parseInt(toAccount));
-				if (status.getStatus().equals("error")) {
-					attributes.addFlashAttribute("response", new Response(
-							"error", status.getMessage()));
+					// Validating the to_account & user details
+					if (!toUser.getEmailId().equalsIgnoreCase(toEmailId)
+							|| !toUser.getFname()
+									.concat(" " + toUser.getLname())
+									.equals(name)) {
+						attributes.addFlashAttribute("response", new Response(
+								"error", "Incorrect account details!!"));
+						return "redirect:/user/transfer";
+					}
+
+					if (toAccount.equals(fromAccount)) {
+						attributes
+								.addFlashAttribute(
+										"response",
+										new Response("error",
+												"Cannot transfer to currently selected account!!"));
+						return "redirect:/user/transfer";
+					}
+
+					String amount = request.getParameter("amount");
+					status = this.transactionService.createTransaction(
+							fromAccount, toAccount, amount,
+							TransactionType.TRANSFER);
+
+					if (status.getStatus().equals("success")) {
+						attributes.addFlashAttribute("response", status);
+					} else {
+						attributes.addFlashAttribute("response", status);
+					}
 					return "redirect:/user/transfer";
-				}
-				String toUserId = this.accountService
-						.getAccountById(Integer.parseInt(toAccount)).getUser()
-						.getUserId();
-				User toUser = this.userService.getUserById(toUserId);
-
-				// Validating the to_account & user details
-				if (!toUser.getEmailId().equalsIgnoreCase(toEmailId)
-						|| !toUser.getFname().concat(" " + toUser.getLname())
-								.equals(name)) {
-					attributes.addFlashAttribute("response", new Response(
-							"error", "Incorrect account details!!"));
-					return "redirect:/user/transfer";
-				}
-
-				if (toAccount.equals(fromAccount)) {
-					attributes.addFlashAttribute("response", new Response(
-							"error",
-							"Cannot transfer to currently selected account!!"));
-					return "redirect:/user/transfer";
-				}
-
-				String amount = request.getParameter("amount");
-				status = this.transactionService.createTransaction(fromAccount,
-						toAccount, amount, TransactionType.TRANSFER);
-
-				if (status.getStatus().equals("success")) {
-					attributes.addFlashAttribute("response", status);
 				} else {
-					attributes.addFlashAttribute("response", status);
+					attributes.addFlashAttribute("response", new Response(
+							"error", "Wrong captcha, please try again!"));
+					return "redirect:/user/transfer";
 				}
-				return "redirect:/user/transfer";
 			} else if (urls.get("url_2").toString().equals("credit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
@@ -221,6 +240,10 @@ public class UserController {
 				}
 
 				return "redirect:/user/authorize";
+			} else if (urls.get("url_2").toString().equals("requestaccount")) {
+				status = this.transactionService.createAccountCreationRequest();
+				attributes.addFlashAttribute("response", status);
+				return "redirect:/user/requestaccount";
 			}
 		}
 
@@ -278,6 +301,13 @@ public class UserController {
 			model.addAttribute("user", u);
 			model.addAttribute("profile", "active");
 			return "user/template";
+		} else if (urls.get("url_2").toString().equals("requestaccount")) {
+			String userType = userService.getUserRole((String) session
+					.getAttribute("emailId"));
+			model.addAttribute("role", userType);
+			model.addAttribute("contentView", "requestaccount");
+			model.addAttribute("requestaccount", "active");
+			return "user/template";
 		} else {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Please select an account to proceed!!"));
@@ -289,7 +319,7 @@ public class UserController {
 			RequestMethod.POST })
 	public String userPayment(HttpServletRequest request, Model model,
 			final RedirectAttributes attributes) {
-		URLHelper.logRequest(request);
+		Logger.getinstance().logRequest(request);
 		HttpSession session = request.getSession();
 		Response status;
 		int account_id = 0;
@@ -347,7 +377,7 @@ public class UserController {
 			RequestMethod.GET, RequestMethod.POST })
 	public String merchantRequestPayment(HttpServletRequest request,
 			Model model, final RedirectAttributes attributes) {
-		URLHelper.logRequest(request);
+		Logger.getinstance().logRequest(request);
 		HttpSession session = request.getSession();
 		Response status;
 		int account_id = 0;
@@ -444,18 +474,21 @@ public class UserController {
 		return "user/template";
 	}
 
-	// For add and update person both
+	// For update user profile
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
-	public String addUserProfile(@ModelAttribute("user") @Valid UserAppModel u, BindingResult bindingResult,
-			HttpServletRequest request, final RedirectAttributes attributes) {
-		
+	public String addUserProfile(@ModelAttribute("user") @Valid UserAppModel u,
+			BindingResult bindingResult, HttpServletRequest request,
+			final RedirectAttributes attributes) {
+
 		if (bindingResult.hasErrors()) {
-			attributes.addFlashAttribute("response", new Response("error",
-					bindingResult.getAllErrors().get(0).getDefaultMessage()));
+			attributes.addFlashAttribute("response", new Response("error", 
+					bindingResult.getFieldError().getObjectName()
+					+ " - " 
+					+ bindingResult.getFieldError().getDefaultMessage()));
 			return "redirect:/user/profile/edit";
-        }
-		
+		}
+
 		// get the responses from the user
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
@@ -508,10 +541,7 @@ public class UserController {
 
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
 	public String listUsers(Model model) {
-		// TODO: User
-		model.addAttribute("user", new User());
-		// TODO: Needs to be removed.
-		model.addAttribute("listUsers", this.userService.listUsers());
+		model.addAttribute("user", new UserRegistrationModel());
 		return "registration";
 	}
 
@@ -597,23 +627,39 @@ public class UserController {
 
 	// For add and update person both
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addUser(@ModelAttribute("user") User p,
-			final RedirectAttributes attributes) {
+	public String addUser(
+			@ModelAttribute("user") @Valid UserRegistrationModel p,
+			BindingResult bindingResult, final RedirectAttributes attributes) {
 
-		if (this.userService.getUserById(p.getUserId()) == null) {
-			// new person, add it
-			this.userService.addUser(p);
+		if (bindingResult.hasErrors()) {
+			attributes.addFlashAttribute("response", new Response("error",
+					bindingResult.getAllErrors().get(0).getDefaultMessage()));
+			return "redirect:/registration";
+		}
+
+		if (p.getUserId() != null
+				&& this.userService.getUserById(p.getUserId()) != null) {
+			// Error. User Id was reused to add user.
+			attributes.addFlashAttribute("response", new Response("error",
+					"Account registration failed!!"));
+			return "redirect:/registration";
 		} else {
-			// existing person, call update
-			this.userService.updateUser(p);
+			if (!p.getPassword().equals(p.getConfirmPassword())) {
+				attributes.addFlashAttribute("response", new Response("error",
+						"Password & confirm password should be same."));
+				return "redirect:/registration";
+			}
+
+			User u = ValidationHelper.getUserFromUserRegistrationModel(p,
+					new User());
+			this.userService.addUser(u);
 		}
 
 		attributes.addFlashAttribute("response", new Response("success",
 				"Account registration successful!!"));
 		return "redirect:/registration";
-
 	}
-	
+
 	@RequestMapping(value = "/addEmployee", method = RequestMethod.POST)
 	public String addUser_employee(@ModelAttribute("user") User p,
 			final RedirectAttributes attributes) {
@@ -630,16 +676,5 @@ public class UserController {
 				"Account registration successful!!"));
 		return "redirect:/admin_home";
 
-	}
-
-	@RequestMapping("/remove/{id}")
-	public String removeUser(@PathVariable("id") String id) {
-		this.userService.removeUser(id);
-		return "redirect:/registration";
-	}
-
-	@RequestMapping(value = "/header")
-	public String header(HttpServletRequest request, Model model) {
-		return "header";
 	}
 }

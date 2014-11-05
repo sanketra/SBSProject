@@ -10,7 +10,6 @@ import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Account;
-
 import com.onlinebanking.models.User;
 
 @Service
@@ -18,15 +17,21 @@ public class UserServiceImpl implements UserService {
 	
 	private UserHome userHome;
 	private AccountHome accountHome;
+
+	public void setUserHome(UserHome userDAO) {
+		this.userHome = userDAO;
+	}
 	
 	public void setAccountHome(AccountHome accountHome) {
 		this.accountHome = accountHome;
 	}
 
-	public void setUserHome(UserHome userDAO) {
-		this.userHome = userDAO;
+	@Override
+	@Transactional
+	public User getAdmin() {
+		return this.userHome.getAdmin();
 	}
-
+	
 	@Override
 	@Transactional
 	public void addUser(User p) {

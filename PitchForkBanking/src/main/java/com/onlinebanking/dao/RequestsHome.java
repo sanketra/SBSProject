@@ -239,4 +239,24 @@ public class RequestsHome {
 			throw re;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Requests> getRequestsFor(String fromUserId, String toUserId, String type)
+	{
+		log.debug("Getting requests from user id"+fromUserId+"to user id"+toUserId);
+		try
+		{
+			Session session = sessionFactory.getCurrentSession();
+			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where fromUserId = :fromUserId and toUserId = :toUserId and type = :type");
+			return query.addEntity(Requests.class)
+					.setParameter("fromUserId", fromUserId)
+					.setParameter("toUserId", toUserId)
+					.setParameter("type", type)
+					.list();
+			
+		} catch (RuntimeException re) {
+			log.error("error occurred while retrieving requests for pair"+fromUserId+" and "+toUserId);
+			throw re;
+		}
+	}
 }

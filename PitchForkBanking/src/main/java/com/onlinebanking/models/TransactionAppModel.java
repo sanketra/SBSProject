@@ -1,9 +1,7 @@
 package com.onlinebanking.models;
-import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 
 
@@ -15,8 +13,8 @@ public class TransactionAppModel {
 	@NotEmpty @Pattern(regexp="[0-9]*", message="the field can only contain numbers")
 	private String toAccountNum;
 	private String transactionType;
-	@NotEmpty @Pattern(regexp="[0-9]*.[0-9]*", message="the field can only contain numbers") 
-	private double transactionAmount;
+	@NotEmpty
+	private String transactionAmount;
 	private String transactionTime;
 	private String transactionStatus;
 
@@ -29,7 +27,7 @@ public class TransactionAppModel {
 		this.fromAcountNum = String.valueOf(t.getAccountByFromAcountNum().getAccountNum());
 		this.toAccountNum = String.valueOf(t.getAccountByToAccountNum().getAccountNum());
 		this.transactionType = t.getTransactionType();
-		this.transactionAmount = t.getTransactionAmount();
+		this.transactionAmount = String.valueOf(t.getTransactionAmount());
 		this.transactionTime = t.getTransactionTime().toString();
 		this.transactionStatus = t.getTransactionStatus();
 	}
@@ -66,11 +64,11 @@ public class TransactionAppModel {
 		this.transactionType = transactionType;
 	}
 
-	public double getTransactionAmount() {
+	public String getTransactionAmount() {
 		return this.transactionAmount;
 	}
 
-	public void setTransactionAmount(double transactionAmount) {
+	public void setTransactionAmount(String transactionAmount) {
 		this.transactionAmount = transactionAmount;
 	}
 

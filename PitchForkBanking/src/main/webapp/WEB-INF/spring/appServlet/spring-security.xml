@@ -21,6 +21,7 @@
 
 	<http authentication-manager-ref="jdbc-auth"
 		access-decision-manager-ref="accessDecisionManager">
+		<intercept-url pattern="/*" requires-channel="https"/>
 		<intercept-url pattern="/admin" access="Admin" />
 		<intercept-url pattern="/admin/*" access="Admin" />
 		<intercept-url pattern="/admin/*/*" access="Admin" />

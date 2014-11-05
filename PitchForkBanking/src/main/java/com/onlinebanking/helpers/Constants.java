@@ -6,7 +6,7 @@ public final class Constants {
 	}
 	
 	public static enum RequestType {
-	    ACCOUNT, TRANSACTION 
+	    ACCOUNT, TRANSACTION, CREATEACCOUNT 
 	}
 	
 	public static final double CRITICALTRANSACTION = 1000.0;
