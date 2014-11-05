@@ -236,12 +236,27 @@ public class UserController {
 				String amount = request.getParameter("amount").toString();
 				status = this.transactionService.createTransaction(fromAccount,
 						fromAccount, amount, TransactionType.DEBIT);
-				if (status.getStatus().equals("success")) {
-					attributes.addFlashAttribute("response", status);
+				// get the responses from the user
+				String challenge = request
+						.getParameter("recaptcha_challenge_field");
+				String uresponse = request
+						.getParameter("recaptcha_response_field");
+				String remoteAddress = request.getRemoteAddr();
+				// verify Captcha
+				Boolean verifyStatus = this.captchaService.verifyCaptcha(
+						challenge, uresponse, remoteAddress);
+				if (verifyStatus == true) {
+					if (status.getStatus().equals("success")) {
+						attributes.addFlashAttribute("response", status);
+					} else {
+						attributes.addFlashAttribute("response", status);
+					}
 				} else {
-					attributes.addFlashAttribute("response", status);
+					attributes.addFlashAttribute("response", new Response(
+							"error", "Wrong captcha, please try again!"));
+					return "redirect:/user/debit";
 				}
-				return "redirect:/user/debit";
+
 			} else if (urls.get("url_2").toString().equals("authorize")) {
 				if (request.getParameter("approve") != null) {
 					status = this.transactionService.updateAccessRequest(
