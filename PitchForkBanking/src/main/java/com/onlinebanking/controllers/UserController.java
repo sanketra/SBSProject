@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.helpers.Logger;
+import com.onlinebanking.helpers.PKI;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
@@ -403,6 +404,9 @@ public class UserController {
 			return "redirect:/user/home";
 		}
 
+		String randomString = PKI.generateRandomString();
+		model.addAttribute("randomString", randomString);
+		
 		// Handle all post requests
 		if (URLHelper.isPOSTRequest(request)) {
 			String name = request.getParameter("name").toString();
@@ -434,6 +438,13 @@ public class UserController {
 			if (toAccount.equals(fromAccount)) {
 				attributes.addFlashAttribute("response", new Response("error",
 						"Cannot request payment to your own account!!"));
+				return "redirect:/user/requestPayment";
+			}
+			
+			if(!verifyEncryptedText(request))
+			{
+				attributes.addFlashAttribute("response", new Response("error",
+						"private key not verified!!"));
 				return "redirect:/user/requestPayment";
 			}
 
@@ -652,7 +663,17 @@ public class UserController {
 
 			User u = ValidationHelper.getUserFromUserRegistrationModel(p,
 					new User());
-			this.userService.addUser(u);
+			
+			try 
+			{
+				this.userService.addUser(u);
+			} 
+			catch (Exception e) 
+			{
+				attributes.addFlashAttribute("response", new Response("error",
+						"could not register. Please try again"));
+				return "redirect:/registration";
+			}
 		}
 
 		attributes.addFlashAttribute("response", new Response("success",
@@ -666,8 +687,18 @@ public class UserController {
 
 		if (this.userService.getUserById(p.getUserId()) == null) {
 			// new person, add it
-			this.userService.addUser(p);
-		} else {
+			try
+			{
+				this.userService.addUser(p);
+			}
+			catch(Exception e)
+			{
+				attributes.addFlashAttribute("response", new Response("error",
+						"could not create account!!"));
+				return "redirect:/admin_home";
+			}
+		} else 
+		{ //TODO: we need to remove this condition
 			// existing person, call update
 			this.userService.updateUser(p);
 		}
@@ -676,5 +707,21 @@ public class UserController {
 				"Account registration successful!!"));
 		return "redirect:/admin_home";
 
+	}
+
+	private boolean verifyEncryptedText(HttpServletRequest request) 
+	{
+		String randomString = request.getParameter("randomString");
+		String encryptedtext = request.getParameter("encrypedString");
+		boolean isCorrect = true;
+		try
+		{
+			isCorrect = userService.verifyByDecrypting(randomString, encryptedtext);
+			return isCorrect;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 }
