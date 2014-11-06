@@ -50,9 +50,6 @@ public class User implements java.io.Serializable {
 
 	public User() {
 		this.userId = UUID.randomUUID().toString();
-		//TODO: Remove once registration form is complete.
-		this.dob = new Date();
-		this.enabled = 1;
 	}
 
 	public User(String userId, String emailId, String password, String fname,
@@ -73,7 +70,6 @@ public class User implements java.io.Serializable {
 		this.ssn = ssn;
 		this.phoneno = phoneno;
 		this.role = role;
-		//TODO: Added for Admin approval purpose. 
 		this.enabled = 0;
 		this.ques1 = ques1;
 		this.answer1 = answer1;

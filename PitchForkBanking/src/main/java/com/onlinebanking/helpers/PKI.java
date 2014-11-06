@@ -159,7 +159,6 @@ public class PKI {
 
 	public static boolean checkByDecrypting(String plaintext,
 			String encryptedText, String pub) throws Exception {
-		byte[] pubByte = pub.getBytes();
 		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(
 				Base64.decodeBase64(pub));
 		KeyFactory kf = KeyFactory.getInstance("RSA");
