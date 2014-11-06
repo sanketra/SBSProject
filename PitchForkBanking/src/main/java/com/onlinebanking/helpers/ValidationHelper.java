@@ -1,11 +1,13 @@
 package com.onlinebanking.helpers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import com.onlinebanking.models.Account;
 import com.onlinebanking.models.AccountAppModel;
+import com.onlinebanking.models.EmployeeRegistrationModel;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserAppModel;
 import com.onlinebanking.models.UserRegistrationModel;
@@ -49,7 +51,7 @@ public class ValidationHelper {
 		u.setEmailId(a.getEmailId());
 		u.setFname(a.getFname());
 		u.setLname(a.getLname());
-		u.setDob(a.getDob());
+		u.setDob(new Date(a.getDob()));
 		u.setAddress(a.getAddress());
 		u.setCity(a.getCity());
 		u.setState(a.getState());
@@ -64,6 +66,30 @@ public class ValidationHelper {
 		u.setAnswer1(a.getAnswer1());
 		u.setAnswer2(a.getAnswer2());
 		u.setAnswer3(a.getAnswer3());
+		u.setEnabled(a.getEnabled());
+		return u;
+	}
+	
+	public static User getUserFromEmployeeRegistrationModel(EmployeeRegistrationModel a, User u) {
+		u.setEmailId(a.getEmailId());
+		u.setFname(a.getFname());
+		u.setLname(a.getLname());
+		u.setDob(new Date(a.getDob()));
+		u.setAddress(a.getAddress());
+		u.setCity(a.getCity());
+		u.setState(a.getState());
+		u.setPhoneno(a.getPhoneno());
+		u.setZipcode(a.getZipcode());
+		u.setPassword(a.getPassword());
+		u.setSsn(a.getSsn());
+		u.setRole(a.getRole());
+		u.setQues1(a.getQues1());
+		u.setQues2(a.getQues2());
+		u.setQues3(a.getQues3());
+		u.setAnswer1(a.getAnswer1());
+		u.setAnswer2(a.getAnswer2());
+		u.setAnswer3(a.getAnswer3());
+		u.setEnabled(a.getEnabled());
 		return u;
 	}
 
