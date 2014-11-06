@@ -205,7 +205,7 @@ public class UserServiceImpl implements UserService {
 			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse(emailId));
 			message.setSubject("Test OTP");
-			message.setText("Dear User," + "\n\nYour requested OTP is " + otp);
+			message.setText("Dear New Employee," + "\n\nYour New Password is " + otp);
 			Transport.send(message);
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);

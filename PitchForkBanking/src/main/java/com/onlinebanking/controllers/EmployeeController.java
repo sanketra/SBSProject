@@ -3,10 +3,16 @@ package com.onlinebanking.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -31,7 +37,15 @@ public class EmployeeController {
 	private TransactionService transactionService;
 	private UserService userService;
 	private CaptchaService captchaService;
+	private MessageSource messageSource;
 	
+	
+	@Autowired(required = true)
+	@Qualifier(value = "messageSource")
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
 	@Autowired(required = true)
 	@Qualifier(value = "transactionService")
 	public void setTransactionService(TransactionService transactionService) {
@@ -49,6 +63,7 @@ public class EmployeeController {
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
+	
 	
 	@RequestMapping(value = {"/employee", "/employee/*"}, method = RequestMethod.GET)
 	public String handleAdminDashboardRequests(Model model) {
@@ -103,8 +118,21 @@ public class EmployeeController {
 	
 	
 	@RequestMapping(value="/employee/updateUserProfile", method = RequestMethod.POST)
-	public String updateUserTransaction(@ModelAttribute("userProfile") UserAppModel userAppModel, HttpServletRequest request, Model model, final RedirectAttributes attributes)
+	public String updateUserTransaction(@ModelAttribute("userProfile") @Valid UserAppModel userAppModel,BindingResult bindingResult, HttpServletRequest request, Model model, final RedirectAttributes attributes)
 	{
+
+		for (Object object : bindingResult.getAllErrors()) {
+		    if(object instanceof FieldError) {
+		        FieldError fieldError = (FieldError) object;
+ 		        String message = messageSource.getMessage(fieldError, null);
+		        System.out.println(message);
+		        model.addAttribute("response", new Response("error",message));
+		        model.addAttribute("userProfile", userAppModel);
+				model.addAttribute("contentView", "updateUserProfile");
+				return "employee/emp_template";
+		    }
+		}
+		
 		User u = userService.getUserById(userAppModel.getUserId());
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
@@ -140,6 +168,7 @@ public class EmployeeController {
 	@RequestMapping(value="/employee/req_Access", method = RequestMethod.GET)
 	public String employeeRequest(Model model){
 		
+		
 		List<UserRequest> userRequests = transactionService.getAllPendingRequests();
 		model.addAttribute("userRequest", new UserRequest());
 		model.addAttribute("pendingUserRequests", userRequests);
@@ -148,7 +177,19 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value="/employee/submitRequest", method = RequestMethod.POST)
-	public String submitEmployeeRequest(@ModelAttribute("userRequest") UserRequest userRequest, HttpServletRequest request, final RedirectAttributes attributes) {
+	public String submitEmployeeRequest(@ModelAttribute("userRequest") @Valid UserRequest userRequest,BindingResult bindingResult,Model model, HttpServletRequest request, final RedirectAttributes attributes) {
+		
+		for (Object object : bindingResult.getAllErrors()) {
+		    if(object instanceof FieldError) {
+		        FieldError fieldError = (FieldError) object;
+ 		        String message = messageSource.getMessage(fieldError, null);
+		        System.out.println(message);
+		        model.addAttribute("response", new Response("error",message));
+		        model.addAttribute("userRequest", userRequest);
+				model.addAttribute("contentView", "requestAccess");
+				return "employee/emp_template";
+		    }
+		}
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
 		String remoteAddress = request.getRemoteAddr();
@@ -243,8 +284,19 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value="/employee/updateUserTransaction", method = RequestMethod.POST)
-	public String updateUserTransaction(@ModelAttribute("userTransaction") TransactionAppModel transactionAppModel, HttpServletRequest request,Model model, final RedirectAttributes attributes)
+	public String updateUserTransaction(@ModelAttribute("userTransaction") @Valid TransactionAppModel transactionAppModel,BindingResult bindingResult, HttpServletRequest request,Model model, final RedirectAttributes attributes)
 	{
+		for (Object object : bindingResult.getAllErrors()) {
+		    if(object instanceof FieldError) {
+		        FieldError fieldError = (FieldError) object;
+ 		        String message = messageSource.getMessage(fieldError, null);
+		        System.out.println(message);
+		        model.addAttribute("response", new Response("error",message));
+		        model.addAttribute("userTransaction", transactionAppModel);
+				model.addAttribute("contentView", "updateUserTransactions");
+				return "employee/emp_template";
+		    }
+		}
 		try
 		{
 			String challenge = request.getParameter("recaptcha_challenge_field");
