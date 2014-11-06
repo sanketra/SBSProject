@@ -37,17 +37,20 @@ if (transactionAmount==null || transactionAmount=="") {
 			<tr>
 				<td>From Account</td>
 				<td><form:input path="fromAcountNum" class="input-xlarge"
-						placeholder="From Account" disabled="true"/></td>
+						placeholder="From Account" disabled="true"/>
+						<form:hidden path="fromAcountNum" /></td>					
 			</tr>
 			<tr>
 				<td>To Account</td>
 				<td><form:input path="toAccountNum" class="input-xlarge"
-						placeholder="To Account" disabled="true"/></td>
+						placeholder="To Account" disabled="true"/>
+						<form:hidden path="toAccountNum" /></td>
 			</tr>
 			<tr>
 				<td>Type of Transaction</td>
 				<td><form:input path="transactionType" class="input-xlarge"
-						placeholder="Transaction Type" disabled="true"/></td>
+						placeholder="Transaction Type" disabled="true"/>
+						<form:hidden path="transactionType" /></td>
 			</tr>
 			<tr>
 				<td>Amount</td>
@@ -57,7 +60,8 @@ if (transactionAmount==null || transactionAmount=="") {
 			<tr>
 				<td>Time</td>
 				<td><form:input path="transactionTime" class="input-xlarge"
-						placeholder="Time" disabled="true"/></td>
+						placeholder="Time" disabled="true"/>
+						<form:hidden path="transactionTime" /></td>
 			</tr>
 			<tr>
 				<td>Status</td>
