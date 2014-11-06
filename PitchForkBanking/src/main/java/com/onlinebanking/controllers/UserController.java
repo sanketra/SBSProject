@@ -220,6 +220,7 @@ public class UserController {
 					status = this.transactionService.createTransaction(
 							fromAccount, fromAccount, amount,
 							TransactionType.CREDIT);
+					System.out.println(status);
 					if (status.getStatus().equals("success")) {
 						attributes.addFlashAttribute("response", status);
 					} else {
@@ -292,6 +293,8 @@ public class UserController {
 			String userType = userService.getUserRole((String) session
 					.getAttribute("emailId"));
 			model.addAttribute("role", userType);
+			otpService.sendOtp(this.userService.getUserByEmailId(session.getAttribute("emailId").toString()),
+					session.getAttribute("emailId").toString());
 			model.addAttribute("contentView", "credit");
 			model.addAttribute("credit", "active");
 			return "user/template";
