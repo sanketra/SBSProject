@@ -1,5 +1,6 @@
 package com.onlinebanking.models;
 
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -10,18 +11,19 @@ public class UserAppModel {
 	private String userId;
 	@NotEmpty @Email
 	private String emailId;
-	@NotEmpty
+	@NotEmpty  @Pattern(regexp="[a-zA-Z]+")
 	private String fname;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String lname;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp= "[\\d]+[A-Za-z0-9\\s,\\.\\-]+")
 	private String address;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String city;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String state;
-	@Size(min=5, max=5)
+	@Size(min=5, max=5) @NotEmpty @Pattern(regexp="[0-9]{5}")
 	private String zipcode;
+	@Size(min=10,max=10) @NotEmpty @Pattern(regexp="[0-9]{10}")
 	private String phoneno;
 
 	public UserAppModel() {
