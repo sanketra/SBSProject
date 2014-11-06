@@ -4,6 +4,8 @@
 		<li><a
 			href="${pageContext.request.contextPath}/admin/newUsers">New Registrations</a></li>
 		<li><a
+			href="${pageContext.request.contextPath}/admin/employeeRegistration">New Employee</a></li>
+		<li><a
 			href="${pageContext.request.contextPath}/admin/customerList">Customer List</a></li>
 		<li><a
 			href="${pageContext.request.contextPath}/admin/employeeList">Employee List</a></li>

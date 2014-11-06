@@ -733,34 +733,6 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "/addEmployee", method = RequestMethod.POST)
-	public String addUser_employee(@ModelAttribute("user") User p,
-			final RedirectAttributes attributes) {
-
-		if (this.userService.getUserById(p.getUserId()) == null) {
-			// new person, add it
-			try
-			{
-				this.userService.addUser(p);
-			}
-			catch(Exception e)
-			{
-				attributes.addFlashAttribute("response", new Response("error",
-						"could not create account!!"));
-				return "redirect:/admin_home";
-			}
-		} else 
-		{ //TODO: we need to remove this condition
-			// existing person, call update
-			this.userService.updateUser(p);
-		}
-
-		attributes.addFlashAttribute("response", new Response("success",
-				"Account registration successful!!"));
-		return "redirect:/admin_home";
-
-	}
-
 	private boolean verifyEncryptedText(HttpServletRequest request) 
 	{
 		String randomString = request.getParameter("randomString");
