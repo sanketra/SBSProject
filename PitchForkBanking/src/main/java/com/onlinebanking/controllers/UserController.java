@@ -191,18 +191,13 @@ public class UserController {
 					status = this.transactionService.createTransaction(
 							fromAccount, toAccount, amount,
 							TransactionType.TRANSFER);
-
-					if (status.getStatus().equals("success")) {
-						attributes.addFlashAttribute("response", status);
-					} else {
-						attributes.addFlashAttribute("response", status);
-					}
-					return "redirect:/user/transfer";
+					attributes.addFlashAttribute("response", status);
 				} else {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
-					return "redirect:/user/transfer";
 				}
+				
+				return "redirect:/user/transfer";
 			} else if (urls.get("url_2").toString().equals("credit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
@@ -220,18 +215,13 @@ public class UserController {
 					status = this.transactionService.createTransaction(
 							fromAccount, fromAccount, amount,
 							TransactionType.CREDIT);
-					System.out.println(status);
-					if (status.getStatus().equals("success")) {
-						attributes.addFlashAttribute("response", status);
-					} else {
-						attributes.addFlashAttribute("response", status);
-					}
+					attributes.addFlashAttribute("response", status);
 				} else {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
-					return "redirect:/user/credit";
 				}
-
+				
+				return "redirect:/user/credit";
 			} else if (urls.get("url_2").toString().equals("debit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
@@ -249,18 +239,13 @@ public class UserController {
 					status = this.transactionService.createTransaction(
 							fromAccount, fromAccount, amount,
 							TransactionType.DEBIT);
-					if (status.getStatus().equals("success")) {
-						attributes.addFlashAttribute("response", status);
-					} else {
-						attributes.addFlashAttribute("response", status);
-					}
+					attributes.addFlashAttribute("response", status);
 				} else {
 					attributes.addFlashAttribute("response", new Response(
 							"error",
 							"Wrong captcha, please try again!"));
 					return "redirect:/user/debit";
 				}
-
 			} else if (urls.get("url_2").toString().equals("authorize")) {
 				// send otp
 				otpService.sendOtp(

@@ -154,7 +154,7 @@ body {
 }
 
 .form-signin {
-	max-width: 400px;
+	max-width: 800px;
 	padding: 19px 29px 29px;
 	margin: 0 auto 20px;
 	background-color: #fff;
@@ -190,72 +190,54 @@ body {
 			<jsp:include page="common/response.jsp" />
 		</c:if>
 		<form:form name="myForm" action="${addAction}" commandName="user"
-			onsubmit="return validateForm()" class="form-horizontal">
+			onsubmit="return validateForm()" class="form-signin">
 			<form:hidden path="userId" />
 			<table>
 				<tr>
-					<td><form:label path="emailId">
-							<spring:message text="Email Id" />
-						</form:label></td>
+					<td>Email Id</td>
 					<td><form:input path="emailId" class="input-xxlarge"
 							placeholder="Email Id" /></td>
 				</tr>
 				<tr>
-					<td><form:label path="fname">
-							<spring:message text="First Name" />
-						</form:label></td>
+					<td>First Name</td>
 					<td><form:input path="fname" class="input-xxlarge"
 							placeholder="First Name" /></td>
 				</tr>
 				<tr>
-					<td><form:label path="lname">
-							<spring:message text="Last Name" />
-						</form:label></td>
+					<td>Last Name</td>
 					<td><form:input path="lname" class="input-xxlarge"
 							placeholder="Last Name" /></td>
 				</tr>
 				<tr>
-					<td><form:label path="password">
-							<spring:message text="Password" />
-						</form:label></td>
+					<td>Password</td>
 					<td><form:input type="password" path="password"
 							class="input-xxlarge" placeholder="Password" /></td>
 				</tr>
 				<tr>
-					<td><form:label path="confirmPassword">
-							<spring:message text="Confirm Password" />
-						</form:label></td>
+					<td>Confirm Password</td>
 					<td><form:input type="password" path="confirmPassword"
 							class="input-xxlarge" placeholder="Confirm Password" /></td>
 				</tr>
 				<tr>
-					<td><form:label path="dob">
-							<spring:message text="Date of Birth" />
-						</form:label></td>
+					<td>Date of Birth</td>
 					<td><form:input id="datepicker" path="dob"
 							class="input-xxlarge" /></td>
 				</tr>
 
 				<tr>
-					<td><form:label path="address">
-							<spring:message text="Address" />
-						</form:label></td>
+					<td>Address</td>
 					<td><form:textarea rows="4" cols="50" path="address"
 							class="input-xxlarge" placeholder="Address" /></td>
 				</tr>
 
 				<tr>
-					<td><form:label path="city">
-							<spring:message text="City" />
-						</form:label></td>
+					<td>City</td>
 					<td><form:input path="city" class="input-xxlarge"
 							placeholder="City" /></td>
 				</tr>
 
 				<tr>
-					<td><form:label path="state">
-							<spring:message text="State" />
-						</form:label></td>
+					<td>State</td>
 					<td><form:select path="state" class="input-xxlarge">
 							<option value="select">Select State</option>
 							<option value="Alabama">Alabama</option>
@@ -321,32 +303,24 @@ body {
 
 
 				<tr>
-					<td><form:label path="zipcode">
-							<spring:message text="Zipcode" />
-						</form:label></td>
+					<td>Zipcode</td>
 					<td><form:input path="zipcode" class="input-xxlarge"
 							placeholder="Zipcode" /></td>
 				</tr>
 				<tr>
-					<td><form:label path="ssn">
-							<spring:message text="SSN" />
-						</form:label></td>
+					<td>SSN</td>
 					<td><form:input path="ssn" class="input-xxlarge"
 							placeholder="SSN" /></td>
 				</tr>
 
 				<tr>
-					<td><form:label path="phoneno">
-							<spring:message text="Phone No." />
-						</form:label></td>
+					<td>Phone Number</td>
 					<td><form:input path="phoneno" class="input-xxlarge"
 							placeholder="xxx-xxx-xxxx" /></td>
 				</tr>
 
 				<tr>
-					<td><form:label path="role">
-							<spring:message text="Role" />
-						</form:label></td>
+					<td>Role</td>
 					<td><form:select path="role" class="input-xxlarge">
 							<option>Select Role</option>
 							<option value="User">User</option>
@@ -355,9 +329,7 @@ body {
 				</tr>
 
 				<tr>
-					<td><form:label path="ques1">
-							<spring:message text="Security Question 1  " />
-						</form:label></td>
+					<td>Security Question 1</td>
 					<td><form:select path="ques1" class="input-xxlarge">
 							<option value="select">Select Question</option>
 							<option
@@ -379,17 +351,13 @@ body {
 				</tr>
 
 				<tr>
-					<td><form:label path="answer1">
-							<spring:message text="Answer 1" />
-						</form:label></td>
+					<td>Answer 1</td>
 					<td><form:input path="answer1" class="input-xxlarge"
 							placeholder="Answer" /></td>
 				</tr>
 
 				<tr>
-					<td><form:label path="ques2">
-							<spring:message text="Security Question 2  " />
-						</form:label></td>
+					<td>Security Question 2</td>
 					<td><form:select path="ques2" class="input-xxlarge">
 							<option value="select">Select Question</option>
 							<option value="What is your mothers maiden name">What is
@@ -404,17 +372,13 @@ body {
 				</tr>
 
 				<tr>
-					<td><form:label path="answer2">
-							<spring:message text="Answer 2" />
-						</form:label></td>
+					<td>Answer 2</td>
 					<td><form:input path="answer2" class="input-xxlarge"
 							placeholder="Answer" /></td>
 				</tr>
 
 				<tr>
-					<td><form:label path="ques3">
-							<spring:message text="Security Question 3  " />
-						</form:label></td>
+					<td>Security Question 3</td>
 					<td><form:select path="ques3" class="input-xxlarge">
 							<option value="select">Select Question</option>
 							<option
@@ -435,9 +399,7 @@ body {
 				</tr>
 
 				<tr>
-					<td><form:label path="answer3">
-							<spring:message text="Answer 3" />
-						</form:label></td>
+					<td>Answer 3</td>
 					<td><form:input path="answer3" class="input-xxlarge"
 							placeholder="Answer" /></td>
 				</tr>

@@ -8,9 +8,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class UserRequest {
 	private String requestId;
-	@NotEmpty @Pattern(regexp="[a-zA-Z]*", message="the name can only contain letters")
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String fname;
-	@NotEmpty @Pattern(regexp="[a-zA-Z]*", message="the name can only contain letters")
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String lname;
 	@NotEmpty @Email
 	private String emailId;
