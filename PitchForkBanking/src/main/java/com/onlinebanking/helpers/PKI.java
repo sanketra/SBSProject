@@ -59,6 +59,15 @@ public class PKI {
 
 	private static void mailPfx(User u) throws Exception
 	{
+		PKI pki = null;
+		try
+		{
+			pki = new PKI();
+		}
+		catch(Exception e)
+		{
+			System.out.println(e);
+		}
 		String host = "smtp.gmail.com";
 		Properties properties = System.getProperties();
 		properties.put("mail.smtp.host", host);
@@ -101,9 +110,8 @@ public class PKI {
 			multipart.addBodyPart(messageBodyPart);
 
 			messageBodyPart = new MimeBodyPart();
-
-			messageBodyPart.setDataHandler(new DataHandler(new FileDataSource(
-					"D:\\A drive\\Important\\installations\\eclipse-java-kepler-SR1-win32-x86_64\\Encryptor.jar")));
+			
+			messageBodyPart.setDataHandler(new DataHandler(new FileDataSource("C:\\Encryptor.jar")));
 			multipart.addBodyPart(messageBodyPart);
 			messageBodyPart.setFileName("encryptor.jar");
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.onlinebanking.helpers.PKI;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Transaction;
 import com.onlinebanking.models.TransactionAppModel;
@@ -71,27 +73,12 @@ public class EmployeeController {
 	{
 		if(request.getParameter("email_Id")!=null)
 		{
-		if(request.getParameter("submit").equalsIgnoreCase("delete"))
-		{
-			String emailId = request.getParameter("email_Id");
-			User u = userService.getUserByEmailId(emailId);
-			userService.removeUser(u.getUserId());
-			attributes.addFlashAttribute("response", new Response("success", "deleted user"));
-			return "redirect:/employee/user_details";
-		}
-		else if(request.getParameter("submit").equalsIgnoreCase("update"))
-		{
-			String emailId = request.getParameter("email_Id");
-			User u = userService.getUserByEmailId(emailId);
-			UserAppModel userAppModel = new UserAppModel(u);
-			model.addAttribute("userProfile", userAppModel);
-			model.addAttribute("contentView", "updateUserProfile");
-			return "employee/emp_template";
-		}
-		else
-		{
-			return "redirect:/employee/user_details";
-		}
+			String selectedOperation = request.getParameter("submit");
+			String selectedRecord = request.getParameter("email_Id");
+			HttpSession session = request.getSession();
+			session.setAttribute("selectedOperation", selectedOperation);
+			session.setAttribute("selectedRecord", selectedRecord);
+			return "redirect:/employee/publicKeyVerification";
 		}
 		else
 		{
@@ -99,8 +86,73 @@ public class EmployeeController {
 			return "redirect:/employee/user_details";
 		}
 		
-		}
+	}
 	
+	@RequestMapping(value="/employee/publicKeyVerificationUserProfile", method = RequestMethod.POST)
+	public String publicKeyVerification(Model model)
+	{
+		String randomString = PKI.generateRandomString();
+		model.addAttribute("randomString", randomString);
+		model.addAttribute("contentView", "publicKeyVerification");
+		return "employee/emp_template";
+	}
+	
+	@RequestMapping(value="/employee/verifiedEncryptedTextUserProfile", method = RequestMethod.POST)
+	public String verifyEncryptedText(HttpServletRequest request, Model model, final RedirectAttributes attributes) 
+	{
+		String randomString = request.getParameter("randomString");
+		String encryptedtext = request.getParameter("encrypedString");
+		boolean isCorrect = true;
+		try
+		{
+			isCorrect = userService.verifyByDecrypting(randomString, encryptedtext);
+		}
+		catch(Exception e)
+		{
+			isCorrect = false;
+		}
+		if(isCorrect)
+		{
+			HttpSession session = request.getSession();
+			String operation = (String)session.getAttribute("selectedOperation");
+			String emailId = (String)session.getAttribute("selectedRecord");
+			session.removeAttribute("selectedOperation");
+			session.removeAttribute("selectedRecord");
+			if(operation!=null && !operation.isEmpty())
+			{
+				if(operation.equals("delete"))
+				{
+					
+					User u = userService.getUserByEmailId(emailId);
+					if(u!=null)
+					{
+						userService.removeUser(u.getUserId());
+						attributes.addFlashAttribute("response", new Response("success", "deleted user"));
+						return "redirect:/employee/user_details";
+					}
+				}
+				else if(operation.equals("update"))
+				{
+					User u = userService.getUserByEmailId(emailId);
+					if(u!=null)
+					{
+						UserAppModel userAppModel = new UserAppModel(u);
+						transactionService.deleteProfileRequest(u);
+						model.addAttribute("userProfile", userAppModel);
+						model.addAttribute("contentView", "updateUserProfile");
+						return "employee/emp_template";
+					}
+				}
+			}
+			attributes.addFlashAttribute("response", new Response("error", "Select row to proceed"));
+			return "redirect:/employee/user_details"; 
+		}
+		else
+		{
+			attributes.addFlashAttribute("response", new Response("error", "Encrypted string not proper"));
+			return "redirect:/employee/user_details"; 
+		}
+	}
 	
 	@RequestMapping(value="/employee/updateUserProfile", method = RequestMethod.POST)
 	public String updateUserTransaction(@ModelAttribute("userProfile") UserAppModel userAppModel, HttpServletRequest request, Model model, final RedirectAttributes attributes)
@@ -168,8 +220,10 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value="/employee/account_details")
-	public String employeeTransaction(Model model){
+	public String employeeTransaction(Model model, HttpServletRequest request){
 		List<UserRequest> userRequests = transactionService.getApprovedTransactionRequestsFromUser();
+		HttpSession session = request.getSession();
+		session.removeAttribute("selectedAccountId");
 		model.addAttribute("userList", userRequests);
 		model.addAttribute("contentView", "acc_details");
 		return "employee/emp_template";
@@ -182,65 +236,143 @@ public class EmployeeController {
 		try
 		{
 			String accountId = request.getParameter("account_id");
-			if(accountId!=null && !accountId.equals(""))
+			if(accountId == null || accountId.isEmpty())
 			{
-				transactions = transactionService.getAllTransactionsForAccountId(Integer.parseInt(accountId));
+				HttpSession session = request.getSession();
+				accountId = (String)session.getAttribute("selectedAccountId");
+				if(accountId == null || accountId.isEmpty())
+				{
+					attributes.addFlashAttribute("response", new Response("error", "Select account to proceed"));
+					return "redirect:/employee/account_details";
+				}
 			}
+
+			transactions = transactionService.getAllTransactionsForAccountId(Integer.parseInt(accountId));
+			HttpSession session = request.getSession();
+			session.setAttribute("selectedAccountId", accountId);
+			transactionService.deleteTransactionRequest(Integer.parseInt(accountId));
+			model.addAttribute("transactionList", transactions);
+			model.addAttribute("contentView", "viewUserTransactions");
+			return "employee/emp_template";	
 		}
 		catch(Exception e)
 		{
 			attributes.addFlashAttribute("response", new Response("error", "Select account to proceed"));
-			return "redirect:/employee/acc_details";
+			return "redirect:/employee/account_details";
 			
-		}
-		model.addAttribute("transactionList", transactions);
-		model.addAttribute("contentView", "viewUserTransactions");
-		
-		
-		return "employee/emp_template";
-		
-		
+		}	
 	}
 	
 	@RequestMapping(value="/employee/editUserTransaction", method = RequestMethod.POST)
 	public String editUserTransaction(HttpServletRequest request, Model model, final RedirectAttributes attributes)
 	{
-		if(request.getParameter("transaction_id")==null)
+		String transactionId = request.getParameter("transaction_id");
+		if(transactionId==null || transactionId.isEmpty())			
 		{
-			attributes.addFlashAttribute("response", new Response("error", "Select transaction to proceed"));
-			return "redirect:/employee/viewUserTransactions";
+			model.addAttribute("response", new Response("error", "Select transaction to proceed"));
+			return viewUserTransactions(request,model,attributes);
 		}
 		try
 		{
-			if(request.getParameter("submit").equalsIgnoreCase("delete"))
-			{
-				String transactionId = request.getParameter("transaction_id");
-				Transaction transaction = transactionService.getTransaction(transactionId);
-				transactionService.deleteTransaction(transaction);
-				attributes.addFlashAttribute("response", new Response("success", "deleted transaction"));
-				return "redirect:/employee/account_details";
-			}
-			else if(request.getParameter("submit").equalsIgnoreCase("update"))
-			{
-				String transactionId = request.getParameter("transaction_id");
-				Transaction transaction = transactionService.getTransaction(transactionId);
-				TransactionAppModel transactionAppModel = new TransactionAppModel(transaction);
-				model.addAttribute("userTransaction", transactionAppModel);
-				model.addAttribute("contentView", "updateUserTransactions");
-				return "employee/emp_template";
-			}
-			else
-			{
-				return "redirect:/employee/account_details";
-			}
+			String selectedOperation = request.getParameter("submit");
+			HttpSession session = request.getSession();
+			session.setAttribute("selectedOperation", selectedOperation);
+			session.setAttribute("selectedTransaction", transactionId);
+			return "redirect:/employee/publicKeyVerificationTransaction";
 		}
 		catch(Exception e)
 		{
-			attributes.addFlashAttribute("response", new Response("success", e.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error", "Error occurred"));
 			return "redirect:/employee/account_details";
 		}
 
 	}
+	
+	@RequestMapping(value="/employee/publicKeyVerificationTransaction", method = RequestMethod.POST)
+	public String publicKeyVerificationTransaction(Model model)
+	{
+		String randomString = PKI.generateRandomString();
+		model.addAttribute("randomString", randomString);
+		model.addAttribute("contentView", "publicKeyVerification");
+		return "employee/emp_template";
+	}
+	
+	@RequestMapping(value="/employee/verifyEncryptedTextTransaction", method = RequestMethod.POST)
+	public String verifyEncryptedTextTransaction(HttpServletRequest request, Model model, final RedirectAttributes attributes) 
+	{
+		String randomString = request.getParameter("randomString");
+		String encryptedtext = request.getParameter("encrypedString");
+		boolean isCorrect = true;
+		try
+		{
+			isCorrect = userService.verifyByDecrypting(randomString, encryptedtext);
+		}
+		catch(Exception e)
+		{
+			isCorrect = false;
+		}
+		if(isCorrect)
+		{
+			HttpSession session = request.getSession();
+			String operation = (String)session.getAttribute("selectedOperation");
+			String transactionId = (String)session.getAttribute("selectedTransaction");
+			if(operation!=null && !operation.isEmpty())
+			{
+				if(operation.equals("delete"))
+				{
+					
+					Transaction transaction = transactionService.getTransaction(transactionId);
+					if(transaction!=null)
+					{	
+						try
+						{
+							transactionService.deleteTransaction(transaction);
+							attributes.addFlashAttribute("response", new Response("success", "deleted transaction"));
+							session.removeAttribute("selectedOperation");
+							session.removeAttribute("selectedTransaction");
+							session.removeAttribute("selectedAccountId");
+							return "redirect:/employee/account_details";
+						}
+						catch(Exception e)
+						{
+							attributes.addFlashAttribute("response", new Response("error", "error occurred while deleting"));
+							return "redirect:/employee/viewUserTransactions";
+						}
+					}
+					else
+					{
+						attributes.addFlashAttribute("response", new Response("error", "error occurred while deleting"));
+						return "redirect:/employee/viewUserTransactions";
+					}
+				}
+				else if(operation.equals("update"))
+				{
+					Transaction transaction = transactionService.getTransaction(transactionId);
+					if(transaction!=null)
+					{
+						
+						TransactionAppModel transactionAppModel = new TransactionAppModel(transaction);
+						model.addAttribute("userTransaction", transactionAppModel);
+						model.addAttribute("contentView", "updateUserTransactions");
+						return "employee/emp_template";
+					}
+					else
+					{
+						attributes.addFlashAttribute("response", new Response("error", "error occurred while fetching transaction"));
+						return "redirect:/employee/viewUserTransactions";
+					}
+				}
+			}
+			attributes.addFlashAttribute("response", new Response("error", "Select row to proceed"));
+			return "redirect:/employee/viewUserTransactions"; 
+		}
+		else
+		{
+			attributes.addFlashAttribute("response", new Response("error", "Encrypted string not proper"));
+			return "redirect:/employee/viewUserTransactions"; 
+		}
+	}
+
 	
 	@RequestMapping(value="/employee/updateUserTransaction", method = RequestMethod.POST)
 	public String updateUserTransaction(@ModelAttribute("userTransaction") TransactionAppModel transactionAppModel, HttpServletRequest request,Model model, final RedirectAttributes attributes)
@@ -255,22 +387,31 @@ public class EmployeeController {
 			if (verifyStatus == true)
 			{
 				transactionService.updateTransaction(transactionAppModel);
+				HttpSession session = request.getSession();
+				session.removeAttribute("selectedOperation");
+				session.removeAttribute("selectedTransaction");
+				session.removeAttribute("selectedAccountId");
 				attributes.addFlashAttribute("response", new Response("success", "updated transaction"));
+				return "redirect:/employee/account_details";
 			}
 			else
 			{
 				model.addAttribute("response", new Response("error",
 						"Wrong captcha, please try again!"));
+				model.addAttribute("userTransaction", transactionAppModel);
 				model.addAttribute("contentView", "updateUserTransactions");
 				return "employee/emp_template";
 			}
-			return "redirect:/employee/account_details";
 		}
 		catch(Exception e)
 		{
-			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
-			return "redirect:/employee/account_details";
+			attributes.addFlashAttribute("response", new Response("error", "error updating transactions"));
+			model.addAttribute("userTransaction", transactionAppModel);
+			model.addAttribute("contentView", "updateUserTransactions");
+			return "employee/emp_template";
 		}
 
 	}
 }
+
+	
