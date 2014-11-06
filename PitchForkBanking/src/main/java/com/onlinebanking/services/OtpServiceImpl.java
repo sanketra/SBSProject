@@ -78,7 +78,7 @@ public class OtpServiceImpl implements OtpService {
 			message.setFrom(new InternetAddress("pitchforkbank@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse(emailId));
-			message.setSubject("Test OTP");
+			message.setSubject("OTP");
 			message.setText("Dear User," + "\n\nYour requested OTP is " + otp);
 			Transport.send(message);
 		} catch (MessagingException e) {

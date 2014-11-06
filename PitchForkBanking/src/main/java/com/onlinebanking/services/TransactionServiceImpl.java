@@ -20,6 +20,7 @@ import com.onlinebanking.models.Account;
 import com.onlinebanking.models.RequestStatus;
 import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.Transaction;
+import com.onlinebanking.models.TransactionAppModel;
 import com.onlinebanking.models.TransactionStatus;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserRequest;
@@ -469,14 +470,129 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	@Transactional
-	public void updateTransaction(Transaction transaction) {
-		transactionHome.merge(transaction);
+	public Response updateTransaction(TransactionAppModel transactionAppModel) throws Exception 
+	{
+		Transaction transaction = transactionHome.findById(transactionAppModel.getTransactionId());
+		if(transaction == null)
+		{
+			return new Response("error", "invalid transaction details");
+		}
+		Response status = ValidationHelper.validateTransactionAppModel(transactionAppModel, accountHome);
+		if (status.getStatus().equals("error")) 
+		{
+			return status;
+		}
+		status = deleteTransaction(transaction);
+		if (status.getStatus().equals("error")) 
+		{
+			return status;
+		}
+		
+		Double amount = Double.parseDouble(transactionAppModel.getTransactionAmount());
+		transaction.setTransactionAmount(amount);
+		transaction.setTransactionStatus(transactionAppModel.getTransactionStatus());
+		Account toAcc = accountHome.findById(Integer.parseInt(transactionAppModel.getToAccountNum()));
+		Account fromAcc = accountHome.findById(Integer.parseInt(transactionAppModel.getFromAcountNum()));
+		String transactionType = transaction.getTransactionType();
+		
+		if(transaction.getTransactionStatus().equalsIgnoreCase("success") || (amount < Constants.CRITICALTRANSACTION))
+		{
+			if(transactionType.equalsIgnoreCase("Debit"))
+			{
+				if(toAcc.getAmount() < amount)
+				{
+					return new Response("error", "Amount insufficient. Cannot perform this change");
+				}
+				toAcc.setAmount(toAcc.getAmount() - amount);
+			}
+			else if(transactionType.equalsIgnoreCase("Credit"))
+			{
+				toAcc.setAmount(toAcc.getAmount() + amount);
+			}
+			else if(transactionType.equalsIgnoreCase("Transfer"))
+			{
+				if(fromAcc.getAmount() < amount)
+				{
+					return new Response("error", "Amount insufficient. Cannot perform this change");
+				}
+				fromAcc.setAmount(fromAcc.getAmount() - amount);
+				toAcc.setAmount(toAcc.getAmount() + amount);
+			}
+			else if(transactionType.equalsIgnoreCase("Payment"))
+			{
+				if(fromAcc.getAmount() < amount)
+				{
+					return new Response("error", "Amount insufficient. Cannot perform this change");
+				}
+				fromAcc.setAmount(fromAcc.getAmount() - amount);
+				toAcc.setAmount(toAcc.getAmount() + amount);
+			}
+		}
+		
+		try 
+		{
+			transactionHome.persist(transaction);
+			this.accountHome.merge(fromAcc);
+			this.accountHome.merge(toAcc);
+		} 
+		catch (Exception e) 
+		{
+			return new Response("error",
+					"Transaction failed. Please try again!");
+		}
+
+		return new Response("success", "updated transaction");
+		
 	}
 
 	@Override
 	@Transactional
-	public void deleteTransaction(Transaction transaction) {
+	public Response deleteTransaction(Transaction transaction) throws Exception
+	{
+		if(transaction == null)
+		{
+			return new Response("error", "invalid transaction details");
+		}
+		Account toAcc = transaction.getAccountByToAccountNum();
+		Account fromAcc = transaction.getAccountByFromAcountNum();
+		Double amount = transaction.getTransactionAmount();
+		String transactionType = transaction.getTransactionType();
+		
+		if(transaction.getTransactionStatus().equalsIgnoreCase("Success"))
+		{
+			if(transactionType.equalsIgnoreCase("Credit"))
+			{
+				if(toAcc.getAmount() < amount)
+				{
+					return new Response("error", "Amount insufficient. Cannot perform this change");
+				}
+				toAcc.setAmount(toAcc.getAmount() - amount);
+			}
+			else if(transactionType.equalsIgnoreCase("Debit"))
+			{
+				toAcc.setAmount(toAcc.getAmount() + amount);
+			}
+			else if(transactionType.equalsIgnoreCase("Transfer"))
+			{
+				if(toAcc.getAmount() < amount)
+				{
+					return new Response("error", "Amount insufficient. Cannot perform this change");
+				}
+				fromAcc.setAmount(fromAcc.getAmount() + amount);
+				toAcc.setAmount(toAcc.getAmount() - amount);
+			}
+			else if(transactionType.equalsIgnoreCase("Payment"))
+			{
+				if(toAcc.getAmount() < amount)
+				{
+					return new Response("error", "Amount insufficient. Cannot perform this change");
+				}
+				fromAcc.setAmount(fromAcc.getAmount() + amount);
+				toAcc.setAmount(toAcc.getAmount() - amount);
+			}	
+		}	
 		transactionHome.delete(transaction);
+		return new Response("success", "transaction deleted");
 	}
 
 	// Please use this function only for view access.

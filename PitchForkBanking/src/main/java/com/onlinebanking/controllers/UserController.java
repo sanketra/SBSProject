@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.helpers.Logger;
+import com.onlinebanking.helpers.PKI;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.helpers.URLHelper;
 import com.onlinebanking.helpers.ValidationHelper;
@@ -431,9 +432,13 @@ public class UserController {
 		if (status.getStatus().equals("error")) {
 			attributes.addFlashAttribute("response", new Response("error",
 					status.getMessage()));
+
 			return "redirect:/user/home";
 		}
 
+		String randomString = PKI.generateRandomString();
+		model.addAttribute("randomString", randomString);
+		
 		// Handle all post requests
 		if (URLHelper.isPOSTRequest(request)) {
 			String name = request.getParameter("name").toString();
@@ -465,6 +470,13 @@ public class UserController {
 			if (toAccount.equals(fromAccount)) {
 				attributes.addFlashAttribute("response", new Response("error",
 						"Cannot request payment to your own account!!"));
+				return "redirect:/user/requestPayment";
+			}
+			
+			if(!verifyEncryptedText(request))
+			{
+				attributes.addFlashAttribute("response", new Response("error",
+						"private key not verified!!"));
 				return "redirect:/user/requestPayment";
 			}
 
@@ -508,7 +520,7 @@ public class UserController {
 	// For update user profile
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
-	public String addUserProfile(@ModelAttribute("user") @Valid UserAppModel u,
+	public String updateUserProfile(@ModelAttribute("user") @Valid UserAppModel u,
 			BindingResult bindingResult, HttpServletRequest request,
 			final RedirectAttributes attributes) {
 
@@ -526,6 +538,7 @@ public class UserController {
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
 		String remoteAddress = request.getRemoteAddr();
+		Response status;
 		// verify Captcha
 		Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
 				uresponse, remoteAddress);
@@ -542,19 +555,22 @@ public class UserController {
 			} else {
 				// Existing User, call update
 				user = ValidationHelper.getUserFromUserAppModel(u, user);
-				this.userService.updateUser(user);
-				session.setAttribute("emailId", u.getEmailId());
+				status = this.userService.updateUser(user);
+				
+				if (status.getStatus().equals("error")) {
+					attributes.addFlashAttribute("response", status);
+					return "redirect:/user/profile/edit";
+				} else {
+					session.setAttribute("emailId", u.getEmailId());
+					attributes.addFlashAttribute("response", status);
+					return "redirect:/user/profile";
+				}
 			}
-		}
-		// Wrong Captcha
-		else {
+		} else {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Wrong captcha, please try again!"));
 			return "redirect:/user/profile/edit";
 		}
-		attributes.addFlashAttribute("response", new Response("success",
-				"Profile edited successflly!"));
-		return "redirect:/user/profile";
 	}
 
 	@RequestMapping(value = "/login")
@@ -585,7 +601,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/passwordRecovery", method = RequestMethod.POST)
-	public String recoverPassword(HttpServletRequest request,
+	public String recoverPassword(Model model, HttpServletRequest request,
 			final RedirectAttributes attributes) {
 		// get email-id from user
 		String emailId = request.getParameter("emailId").toString();
@@ -603,59 +619,85 @@ public class UserController {
 			// send OTP
 			otpService.sendOtp(this.userService.getUserByEmailId(emailId),
 					emailId);
+			String userId = session.getAttribute("OTP-User-Id").toString();
+			model.addAttribute("question1", this.userService
+					.getUserById(userId).getQues1());
+			model.addAttribute("question2", this.userService
+					.getUserById(userId).getQues2());
+			model.addAttribute("question3", this.userService
+					.getUserById(userId).getQues3());
+			session.setAttribute("attempt", "0");
 			return "setNewPassword";
 		}
 	}
 
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.GET)
 	public String setNewPassword(Model model, HttpServletRequest request) {
-		// get question from database
 		HttpSession session = request.getSession();
 		String userId = session.getAttribute("OTP-User-Id").toString();
-		System.out.println(userId);
-		model.addAttribute("question", this.userService.getUserById(userId)
+		model.addAttribute("question1", this.userService.getUserById(userId)
 				.getQues1());
-		System.out.println(this.userService.getUserById(userId).getQues1());
+		model.addAttribute("question2", this.userService.getUserById(userId)
+				.getQues2());
+		model.addAttribute("question3", this.userService.getUserById(userId)
+				.getQues3());
 		return "setNewPassword";
 	}
 
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.POST)
 	public String setNewPasswordPost(HttpServletRequest request,
 			final RedirectAttributes attributes, Model model) {
-
+		HttpSession session = request.getSession();
+		int i = Integer.parseInt(session.getAttribute("attempt").toString());
+		i++;
+		session.setAttribute("attempt", Integer.toString(i));
+		System.out.println(session.getAttribute("attempt"));
 		// get otp and passwords from user
 		String newOtp = request.getParameter("One Time Password").toString();
 		String newPassword = request.getParameter("New Password").toString();
 		String renternewPassword = request
 				.getParameter("Re-Enter New Password").toString();
-		// verify otp and password match
-		HttpSession session = request.getSession();
+		// verify otp
 		String userId = session.getAttribute("OTP-User-Id").toString();
-		Boolean result = otpService.verifyOtp(
+		Boolean otpMatch = otpService.verifyOtp(
 				this.otpService.getUserotpById(userId), newOtp);
+		// verify password match
 		Boolean passwordMatch = (newPassword.equals(renternewPassword));
-		if (result == true && passwordMatch == true) {
+		// verify security questions
+		String ans1 = request.getParameter("Answer1").toString();
+		String ans2 = request.getParameter("Answer2").toString();
+		String ans3 = request.getParameter("Answer2").toString();
+		Boolean questionMatch = (ans1.equals(this.userService
+				.getUserById(userId).getAnswer1().toString())
+				&& ans2.equals(this.userService.getUserById(userId)
+						.getAnswer1().toString()) && ans3
+				.equals(this.userService.getUserById(userId).getAnswer1()
+						.toString()));
+		// block user based on attempts
+		if(i>3){
+			attributes.addFlashAttribute("response", new Response("error",
+					"Number of attempts reached! you have been temporarily blocked"));
+			return "redirect:/setNewPassword";
+		}
+		// logic
+		if (otpMatch == true && passwordMatch == true && questionMatch == true) {
 			User obj = this.userService.getUserById(userId);
 			obj.setPassword(CryptoHelper.getEncryptedString(newPassword));
 			this.userService.updateUser(obj);
 			return "login";
-		} else if (result == false && passwordMatch == true) {
+		} else if (otpMatch == false) {
 			attributes.addFlashAttribute("response", new Response("error",
-					"Wrong OTP"));
-			return "redirect:/setNewPassword";
-		} else if (result == false && passwordMatch == false) {
-			attributes.addFlashAttribute("response", new Response("error",
-					"Passwords do not match. Please try again!"));
+					"Wrong OTP!, Try again"));
 			return "redirect:/setNewPassword";
 		} else {
 			attributes
 					.addFlashAttribute(
 							"response",
-							new Response("error",
-									"Passwords do not match. Please go back to generate new One-Time Password"));
+							new Response(
+									"error",
+									"passwords do not match or incorrect answers. Please go back to generate new One-Time Password and try again"));
 			return "redirect:/setNewPassword";
 		}
-
 	}
 
 	// For add and update person both
@@ -685,12 +727,25 @@ public class UserController {
 
 			User u = ValidationHelper.getUserFromUserRegistrationModel(p,
 					new User());
-			this.userService.addUser(u);
+			Response status = this.userService.addUser(u);
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/registration";
 		}
-
-		attributes.addFlashAttribute("response", new Response("success",
-				"Account registration successful!!"));
-		return "redirect:/registration";
 	}
 
+	private boolean verifyEncryptedText(HttpServletRequest request) 
+	{
+		String randomString = request.getParameter("randomString");
+		String encryptedtext = request.getParameter("encrypedString");
+		boolean isCorrect = true;
+		try
+		{
+			isCorrect = userService.verifyByDecrypting(randomString, encryptedtext);
+			return isCorrect;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+	}
 }

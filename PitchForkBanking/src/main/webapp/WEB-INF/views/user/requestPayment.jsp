@@ -27,6 +27,17 @@
 				required="required" placeholder="Amount" /></td>
 			</tr>
 			<tr>
+			<td>Identifier String</td>
+				<td>
+				${randomString}
+				<input type="hidden" name ="randomString" value="${randomString}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>Encrypted String</td>
+				<td><input type="text" name="encrypedString"/></td>
+			</tr>
+			<tr>
 				<td colspan="2">
 						<input type="submit" value="<spring:message text="Request" />"
 							class="btn btn-lg btn-primary" /></td>

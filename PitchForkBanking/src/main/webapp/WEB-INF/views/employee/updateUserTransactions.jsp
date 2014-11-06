@@ -37,17 +37,20 @@ if (transactionAmount==null || transactionAmount=="") {
 			<tr>
 				<td>From Account</td>
 				<td><form:input path="fromAcountNum" class="input-xlarge"
-						placeholder="From Account" disabled="true"/></td>
+						placeholder="From Account" disabled="true"/>
+						<form:hidden path="fromAcountNum" /></td>					
 			</tr>
 			<tr>
 				<td>To Account</td>
 				<td><form:input path="toAccountNum" class="input-xlarge"
-						placeholder="To Account" disabled="true"/></td>
+						placeholder="To Account" disabled="true"/>
+						<form:hidden path="toAccountNum" /></td>
 			</tr>
 			<tr>
 				<td>Type of Transaction</td>
 				<td><form:input path="transactionType" class="input-xlarge"
-						placeholder="Transaction Type" disabled="true"/></td>
+						placeholder="Transaction Type" disabled="true"/>
+						<form:hidden path="transactionType" /></td>
 			</tr>
 			<tr>
 				<td>Amount</td>
@@ -57,12 +60,13 @@ if (transactionAmount==null || transactionAmount=="") {
 			<tr>
 				<td>Time</td>
 				<td><form:input path="transactionTime" class="input-xlarge"
-						placeholder="Time" disabled="true"/></td>
+						placeholder="Time" disabled="true"/>
+						<form:hidden path="transactionTime" /></td>
 			</tr>
 			<tr>
 				<td>Status</td>
 				<td><form:select path="transactionStatus" class="input-xlarge">
-							<option value="approved" ${userTransaction.transactionStatus=='approved'? 'selected' : ''}>approved</option>
+							<option value="success" ${userTransaction.transactionStatus=='approved'? 'selected' : ''}>approved</option>
 							<option value="pending" ${userTransaction.transactionStatus=='pending'? 'selected' : ''}>pending</option>
                             <option value="declined" ${userTransaction.transactionStatus=='declined'? 'selected' : ''}>declined</option>
                      </form:select>
@@ -70,16 +74,24 @@ if (transactionAmount==null || transactionAmount=="") {
 			</tr>
 			<tr>
 				<td>Captcha</td>
-				<td>
-					<%
-						ReCaptcha c = ReCaptchaFactory
-									.newReCaptcha(
-											"6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS",
-											"6LdU5vsSAAAAAPAyZqM1Bx3Kh12wdMvimkjC5Xqpyour_private_key",
-											false);
-							out.print(c.createRecaptchaHtml(null, null));
-					%>
-				</td>
+				<td><script type="text/javascript">
+					var RecaptchaOptions = {
+						theme : 'clean'
+					};
+				</script> <script type="text/javascript"
+						src="https://www.google.com/recaptcha/api/challenge?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS">
+					
+				</script>
+					<noscript>
+						<iframe
+							src="https://www.google.com/recaptcha/api/noscript?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS"
+							height="260" width="400"></iframe>
+						<br>
+						<textarea name="recaptcha_challenge_field" rows="3" cols="40">
+       </textarea>
+						<input type="hidden" name="recaptcha_response_field"
+							value="manual_challenge">
+					</noscript></td>
 			</tr>
 			<tr>
 				<td>

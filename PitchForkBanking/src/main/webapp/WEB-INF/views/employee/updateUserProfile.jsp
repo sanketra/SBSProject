@@ -18,64 +18,91 @@ function validateForm() {
         alert("First name must be filled out");
         return false;
     }
+     var fnamePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+ 	if (fnamePattern.test(fname) == true) {
+ 		alert('Special characters are not allowed in First Name');
+ 		return false;
+ 	}
     // Last Name
-    var lname = document.forms["myForm"]["lname"].value;
-    if (lname==null || lname=="") {
-        alert("Last name must be filled out");
-        return false;
-    }
+     var lname = document.forms["myForm"]["lname"].value;
+     if (lname==null || lname=="") {
+         alert("Last name must be filled out");
+         return false;
+     }
+     var lnamePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+ 	if (lnamePattern.test(lname) == true) {
+ 		alert('Special characters are not allowed in Last Name');
+ 		return false;
+ 	}
 
-    // Email_Id
-    var emailId = document.forms["myForm"]["emailId"].value;
-    if (emailId==null || emailId=="") {
-        alert("Email-Id must be filled out");
-        return false;
-    }
-    var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if(emailPattern.test(emailId)!=true){
-    	alert("Enter a valid Email-ID");
-    	return false;
-    }
-    // Address
-    var address = document.forms["myForm"]["address"].value;
-    if (address==null || address=="") {
-        alert("Address must be filled out");
-        return false;
-    }
-    var addressPattern = /[*|\":<>[\]{}`\\()';@&$]/;
-    if(addressPattern.test(address)==true){
-    	alert("Special characters cannot be included in the address");
-    	return false;
-    }
-    // City
-    var city = document.forms["myForm"]["city"].value;
-    if (city==null || city=="") {
-        alert("City must be filled out");
-        return false;
-    }
-    // State
-    var state = document.forms["myForm"]["state"].value;
-    if (state==null || state=="") {
-        alert("State must be filled out");
-        return false;
-    }
-    // Zipcode
-    var zipcode = document.forms["myForm"]["zipcode"].value;
-    if (zipcode==null || zipcode=="") {
-        alert("Zipcode must be filled out");
-        return false;
-    }
-    // Phone Number
-    var phoneno = document.forms["myForm"]["phoneno"].value;
-    if (phoneno==null || phoneno=="") {
-        alert("Phone number must be filled out");
-        return false;
-    }
-    var phonePattern = /^[0-9]{3}\-?[0-9]{3}\-?[0-9]{4}$/;
-    if(phonePattern.test(phoneno)!=true){
-    	alert("Enter a valid Phone number");
-    	return false;
-    }
+//     // Email_Id
+     var emailId = document.forms["myForm"]["emailId"].value;
+     if (emailId==null || emailId=="") {
+         alert("Email-Id must be filled out");
+         return false;
+     }
+     var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+     if(emailPattern.test(emailId)!=true){
+     	alert("Enter a valid Email-ID");
+     	return false;
+     }
+//     // Address
+     var address = document.forms["myForm"]["address"].value;
+     if (address==null || address=="") {
+         alert("Address must be filled out");
+         return false;
+     }
+     var addressPattern = /[*|\":<>[\]{}`\\()';@&$]/;
+     if(addressPattern.test(address)==true){
+     	alert("Special characters cannot be included in the address");
+     	return false;
+     }
+     // City
+     var city = document.forms["myForm"]["city"].value;
+     if (city==null || city=="") {
+         alert("City must be filled out");
+         return false;
+     }
+
+    var cityPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+ 	if (cityPattern.test(city) == true) {
+ 		alert('Special characters are not allowed in City Name');
+ 		return false;
+ 	}
+     // State
+     var state = document.forms["myForm"]["state"].value;
+     if (state==null || state=="") {
+         alert("State must be filled out");
+         return false;
+     }
+
+     var statePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+ 	if (statePattern.test(state) == true) {
+ 		alert('Special characters are not allowed in State Name');
+ 		return false;
+ 	}
+     // Zipcode
+     var zipcode = document.forms["myForm"]["zipcode"].value;
+     if (zipcode==null || zipcode=="") {
+         alert("Zipcode must be filled out");
+         return false;
+     }
+     var zipcodePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+ 	if (zipcodePattern.test(zipcode) == true) {
+ 		alert('Special characters are not allowed in Zipcode');
+ 		return false;
+ 	}
+     // Phone Number
+     var phoneno = document.forms["myForm"]["phoneno"].value;
+     if (phoneno==null || phoneno=="") {
+         alert("Phone number must be filled out");
+         return false;
+     }
+   var phonePattern = /^[0-9]{3}\-?[0-9]{3}\-?[0-9]{4}$/;
+     if(phonePattern.test(phoneno)!=true){
+     	alert("Enter a valid Phone number");
+     	     	return false;
+     }
 }
 </script>
 
@@ -127,16 +154,24 @@ function validateForm() {
 			</tr>
 			<tr>
 				<td>Captcha</td>
-				<td>
-					<%
-						ReCaptcha c = ReCaptchaFactory
-									.newReCaptcha(
-											"6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS",
-											"6LdU5vsSAAAAAPAyZqM1Bx3Kh12wdMvimkjC5Xqpyour_private_key",
-											false);
-							out.print(c.createRecaptchaHtml(null, null));
-					%>
-				</td>
+				<td><script type="text/javascript">
+					var RecaptchaOptions = {
+						theme : 'clean'
+					};
+				</script> <script type="text/javascript"
+						src="https://www.google.com/recaptcha/api/challenge?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS">
+					
+				</script>
+					<noscript>
+						<iframe
+							src="https://www.google.com/recaptcha/api/noscript?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS"
+							height="260" width="400"></iframe>
+						<br>
+						<textarea name="recaptcha_challenge_field" rows="3" cols="40">
+       </textarea>
+						<input type="hidden" name="recaptcha_response_field"
+							value="manual_challenge">
+					</noscript></td>
 			</tr>
 			<tr>
 				<td colspan="2"><c:if test="${!empty userProfile.emailId}">

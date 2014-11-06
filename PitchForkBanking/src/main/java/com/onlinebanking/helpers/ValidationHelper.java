@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import com.onlinebanking.dao.AccountHome;
 import com.onlinebanking.models.Account;
 import com.onlinebanking.models.AccountAppModel;
 import com.onlinebanking.models.EmployeeRegistrationModel;
+import com.onlinebanking.models.TransactionAppModel;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserAppModel;
 import com.onlinebanking.models.UserRegistrationModel;
@@ -139,6 +141,28 @@ public class ValidationHelper {
 		} catch (Exception e) {
 			return new Response("error",
 					"Exception occurred. Could not complete request");
+		}
+	}
+	
+	public static Response validateTransactionAppModel(TransactionAppModel transactionAppModel, AccountHome accountHome)
+	{
+		Response status = validateAmount(transactionAppModel.getTransactionAmount());
+		if (status.getStatus().equals("error")) {
+			return status;
+		}
+		try
+		{
+			Account toAccId = accountHome.findById(Integer.parseInt(transactionAppModel.getToAccountNum()));
+			Account fromAccId = accountHome.findById(Integer.parseInt(transactionAppModel.getFromAcountNum()));
+			if(toAccId == null || fromAccId == null)
+			{
+				return new Response("error", "account number does not exist");
+			}
+			return new Response("success","");
+		}
+		catch(NumberFormatException nfe)
+		{
+			return new Response("error", "invalid account number");
 		}
 	}
 }

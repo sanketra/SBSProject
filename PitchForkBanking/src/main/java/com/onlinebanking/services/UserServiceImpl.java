@@ -1,5 +1,6 @@
 package com.onlinebanking.services;
 
+import java.security.PublicKey;
 import java.util.List;
 import java.util.Properties;
 
@@ -11,21 +12,28 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.dao.AccountHome;
 import com.onlinebanking.dao.UserHome;
+import com.onlinebanking.dao.UserPublicKeyHome;
 import com.onlinebanking.helpers.CryptoHelper;
+import com.onlinebanking.helpers.PKI;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Account;
 import com.onlinebanking.models.User;
+import com.onlinebanking.models.UserPublicKey;
 
 @Service
 public class UserServiceImpl implements UserService {
 	
 	private UserHome userHome;
 	private AccountHome accountHome;
+	private UserPublicKeyHome userPublicKeyHome;
 
 	public void setUserHome(UserHome userDAO) {
 		this.userHome = userDAO;
@@ -33,6 +41,10 @@ public class UserServiceImpl implements UserService {
 	
 	public void setAccountHome(AccountHome accountHome) {
 		this.accountHome = accountHome;
+	}
+	
+	public void setUserPublicKeyHome(UserPublicKeyHome userPublicKeyHome) {
+		this.userPublicKeyHome = userPublicKeyHome;
 	}
 
 	@Override
@@ -43,21 +55,30 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public void addUser(User p) {
-		p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
-		this.userHome.persist(p);
-		Account a = new Account();
-		a.setAccountType("Checking");
-		a.setAmount(1000);
-		a.setUser(p);
-		this.accountHome.persist(a);
-		
+	public Response addUser(User p) {
+		try {
+			p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
+			this.userHome.persist(p);
+			Account a = new Account();
+			a.setAccountType("Checking");
+			a.setAmount(1000);
+			a.setUser(p);
+			this.accountHome.persist(a);
+			return new Response("success", "User registered successfully!!");
+		} catch (Exception e) {
+			return new Response("error", "Failed to register user!!");
+		}
 	}
 
 	@Override
 	@Transactional
-	public void updateUser(User p) {
-		this.userHome.merge(p);
+	public Response updateUser(User p) {
+		try {
+			this.userHome.merge(p);
+			return new Response("success", "User updated successfully!!");
+		} catch (RuntimeException e) {
+			return new Response("error", "Failed to update user details!!");
+		}
 	}
 
 	@Override
@@ -188,5 +209,27 @@ public class UserServiceImpl implements UserService {
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	private void generatePublicPrivateKeyForUser(User u) throws Exception
+	{
+		PublicKey pub = PKI.generatePublicPrivateKeyPair(u);
+		String pubKey = Base64.encodeBase64String(pub.getEncoded());
+		UserPublicKey upub = new UserPublicKey(u.getUserId(), pubKey);
+		userPublicKeyHome.persist(upub);
+	}
+	
+	@Override
+	@Transactional
+	public boolean verifyByDecrypting(String plainText, String encrypted) throws Exception
+	{
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User u = userHome.getUserByEmailId(auth.getName());
+		UserPublicKey upub = userPublicKeyHome.findById(u.getUserId());
+		if(upub == null)
+		{
+			return false;
+		}
+		return PKI.checkByDecrypting(plainText, encrypted, upub.getPublicKey());
 	}
 }
