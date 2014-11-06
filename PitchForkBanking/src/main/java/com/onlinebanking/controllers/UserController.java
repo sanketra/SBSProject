@@ -15,9 +15,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Constants.TransactionType;
@@ -576,6 +578,13 @@ public class UserController {
 	@RequestMapping(value = "/denied")
 	public String denied() {
 		return "denied";
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleAllException(Exception ex, HttpServletRequest request) {
+		ModelAndView model = new ModelAndView("denied");
+		model.addObject("Response", new Response("error", "Exception"));
+		return model;
 	}
 
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
