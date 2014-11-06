@@ -21,4 +21,6 @@ public interface UserService {
 	public String getUserRole(String emailId);
 	public List<User> listNewUsers();
 	public Response updateUserRegistrationFlag(String id, String status);
+	public boolean verifyByDecrypting(String plainText, String encrypted)
+			throws Exception;
 }

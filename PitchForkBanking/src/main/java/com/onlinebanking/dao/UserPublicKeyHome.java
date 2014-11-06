@@ -90,7 +90,7 @@ public class UserPublicKeyHome {
 		try {
 			UserPublicKey instance = (UserPublicKey) sessionFactory
 					.getCurrentSession().get(
-							"com.onlinebanking.dao.UserPublicKey", id);
+							"com.onlinebanking.models.UserPublicKey", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {

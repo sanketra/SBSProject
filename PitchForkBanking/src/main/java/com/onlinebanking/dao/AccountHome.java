@@ -137,4 +137,21 @@ public class AccountHome {
 			throw re;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Account> getAllUserAccounts() {
+		try {
+			String queryString = "Select * from account";
+			Session s = sessionFactory.getCurrentSession();
+			List<Account> results = s.createSQLQuery(queryString).
+					addEntity(Account.class).
+					list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("get all user accounts failed", re);
+			throw re;
+		}
+	}
 }

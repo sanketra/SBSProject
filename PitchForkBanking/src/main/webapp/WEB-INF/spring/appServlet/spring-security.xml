@@ -68,7 +68,7 @@
 		<beans:property name="url"
 			value="jdbc:mysql://localhost:3306/pitchforkbank" />
 		<beans:property name="username" value="root" />
-		<beans:property name="password" value="root" />
+		<beans:property name="password" value="pooja" />
 
 
 	</beans:bean>
@@ -126,10 +126,12 @@
 	<beans:bean id="userService" class="com.onlinebanking.services.UserServiceImpl">
 		<beans:property name="userHome" ref="userHome"></beans:property>
 		<beans:property name="accountHome" ref="accountHome"></beans:property>
+		<beans:property name="userPublicKeyHome" ref="userPublicKey"></beans:property>
 	</beans:bean>
 	<beans:bean id="accountService"
 		class="com.onlinebanking.services.AccountServiceImpl">
 		<beans:property name="accountHome" ref="accountHome"></beans:property>
+		<beans:property name="userHome" ref="userHome"></beans:property>
 	</beans:bean>
 	<beans:bean id="captchaService"
 		class="com.onlinebanking.services.CaptchaServiceImpl">

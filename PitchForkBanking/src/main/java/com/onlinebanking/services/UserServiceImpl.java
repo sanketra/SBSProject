@@ -1,32 +1,41 @@
 package com.onlinebanking.services;
 
+import java.security.PublicKey;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.dao.AccountHome;
-import com.onlinebanking.dao.RequestsHome;
 import com.onlinebanking.dao.UserHome;
+import com.onlinebanking.dao.UserPublicKeyHome;
 import com.onlinebanking.helpers.CryptoHelper;
+import com.onlinebanking.helpers.PKI;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Account;
 import com.onlinebanking.models.User;
+import com.onlinebanking.models.UserPublicKey;
 
 @Service
 public class UserServiceImpl implements UserService {
 	
 	private UserHome userHome;
 	private AccountHome accountHome;
-	@SuppressWarnings("unused")
-	private RequestsHome requestsHome;
+	private UserPublicKeyHome userPublicKeyHome;
+
+	public void setUserHome(UserHome userDAO) {
+		this.userHome = userDAO;
+	}
 	
 	public void setAccountHome(AccountHome accountHome) {
 		this.accountHome = accountHome;
 	}
-
-	public void setUserHome(UserHome userDAO) {
-		this.userHome = userDAO;
+	
+	public void setUserPublicKeyHome(UserPublicKeyHome userPublicKeyHome) {
+		this.userPublicKeyHome = userPublicKeyHome;
 	}
 
 	@Override
@@ -160,5 +169,27 @@ public class UserServiceImpl implements UserService {
 			removeUser(id);
 			return new Response("success", "User Declined!");
 		}
+	}
+
+	private void generatePublicPrivateKeyForUser(User u) throws Exception
+	{
+		PublicKey pub = PKI.generatePublicPrivateKeyPair(u);
+		String pubKey = Base64.encodeBase64String(pub.getEncoded());
+		UserPublicKey upub = new UserPublicKey(u.getUserId(), pubKey);
+		userPublicKeyHome.persist(upub);
+	}
+	
+	@Override
+	@Transactional
+	public boolean verifyByDecrypting(String plainText, String encrypted) throws Exception
+	{
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User u = userHome.getUserByEmailId(auth.getName());
+		UserPublicKey upub = userPublicKeyHome.findById(u.getUserId());
+		if(upub == null)
+		{
+			return false;
+		}
+		return PKI.checkByDecrypting(plainText, encrypted, upub.getPublicKey());
 	}
 }
