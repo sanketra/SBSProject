@@ -684,4 +684,32 @@ public class TransactionServiceImpl implements TransactionService {
 		return transactionHome.findById(transactionId);
 	}
 
+	@Override
+	@Transactional
+	public void deleteTransactionRequest(int accountId) {
+		Account toAcc = accountHome.findById(accountId);
+		String toUserId = toAcc.getUser().getUserId();
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		User fromUser = userHome.getUserByEmailId(auth.getName());
+		List<Requests> existingRequest = requestsHome.getRequestsFor(fromUser.getUserId(), toUserId, "Transaction");
+		for(Requests request : existingRequest)
+		{
+			requestsHome.delete(request);
+		}
+	}
+
+	@Override
+	@Transactional
+	public void deleteProfileRequest(User u) {
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		User fromUser = userHome.getUserByEmailId(auth.getName());
+		List<Requests> existingRequest = requestsHome.getRequestsFor(fromUser.getUserId(), u.getUserId(), "Profile");
+		for(Requests request : existingRequest)
+		{
+			requestsHome.delete(request);
+		}
+	}
+
 }

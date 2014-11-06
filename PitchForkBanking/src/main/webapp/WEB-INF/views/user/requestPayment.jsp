@@ -27,6 +27,10 @@
 				required="required" placeholder="Amount" /></td>
 			</tr>
 			<tr>
+			<td colspan="2"><b>Further authentication is required to perform this operation.
+			Copy the below identifier string, paste in the jar, encrypt it and paste in below text field.</b></td>
+			<tr>
+			
 			<td>Identifier String</td>
 				<td>
 				${randomString}

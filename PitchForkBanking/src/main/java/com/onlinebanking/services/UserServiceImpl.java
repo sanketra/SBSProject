@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
 			this.generatePublicPrivateKeyForUser(p);
 			return new Response("success", "User registered successfully!!");
 		} catch (Exception e) {
+			System.out.println(e);
 			return new Response("error", "Failed to register user!!");
 		}
 	}
