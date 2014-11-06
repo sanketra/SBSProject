@@ -235,8 +235,6 @@ public class UserController {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
 				String amount = request.getParameter("amount").toString();
-				status = this.transactionService.createTransaction(fromAccount,
-						fromAccount, amount, TransactionType.DEBIT);
 				// get the responses from the user
 				String challenge = request
 						.getParameter("recaptcha_challenge_field");
@@ -247,6 +245,9 @@ public class UserController {
 				Boolean verifyStatus = this.captchaService.verifyCaptcha(
 						challenge, uresponse, remoteAddress);
 				if (verifyStatus == true) {
+					status = this.transactionService.createTransaction(
+							fromAccount, fromAccount, amount,
+							TransactionType.DEBIT);
 					if (status.getStatus().equals("success")) {
 						attributes.addFlashAttribute("response", status);
 					} else {
@@ -438,7 +439,7 @@ public class UserController {
 
 		String randomString = PKI.generateRandomString();
 		model.addAttribute("randomString", randomString);
-		
+
 		// Handle all post requests
 		if (URLHelper.isPOSTRequest(request)) {
 			String name = request.getParameter("name").toString();
@@ -472,9 +473,8 @@ public class UserController {
 						"Cannot request payment to your own account!!"));
 				return "redirect:/user/requestPayment";
 			}
-			
-			if(!verifyEncryptedText(request))
-			{
+
+			if (!verifyEncryptedText(request)) {
 				attributes.addFlashAttribute("response", new Response("error",
 						"private key not verified!!"));
 				return "redirect:/user/requestPayment";
@@ -520,7 +520,8 @@ public class UserController {
 	// For update user profile
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
-	public String updateUserProfile(@ModelAttribute("user") @Valid UserAppModel u,
+	public String updateUserProfile(
+			@ModelAttribute("user") @Valid UserAppModel u,
 			BindingResult bindingResult, HttpServletRequest request,
 			final RedirectAttributes attributes) {
 
@@ -556,7 +557,7 @@ public class UserController {
 				// Existing User, call update
 				user = ValidationHelper.getUserFromUserAppModel(u, user);
 				status = this.userService.updateUser(user);
-				
+
 				if (status.getStatus().equals("error")) {
 					attributes.addFlashAttribute("response", status);
 					return "redirect:/user/profile/edit";
@@ -674,9 +675,12 @@ public class UserController {
 				.equals(this.userService.getUserById(userId).getAnswer1()
 						.toString()));
 		// block user based on attempts
-		if(i>3){
-			attributes.addFlashAttribute("response", new Response("error",
-					"Number of attempts reached! you have been temporarily blocked"));
+		if (i > 3) {
+			attributes
+					.addFlashAttribute(
+							"response",
+							new Response("error",
+									"Number of attempts reached! you have been temporarily blocked"));
 			return "redirect:/setNewPassword";
 		}
 		// logic
@@ -739,19 +743,15 @@ public class UserController {
 
 		if (this.userService.getUserById(p.getUserId()) == null) {
 			// new person, add it
-			try
-			{
+			try {
 				this.userService.addUser(p);
-			}
-			catch(Exception e)
-			{
+			} catch (Exception e) {
 				attributes.addFlashAttribute("response", new Response("error",
 						"could not create account!!"));
 				return "redirect:/admin_home";
 			}
-		} else 
-		{ //TODO: we need to remove this condition
-			// existing person, call update
+		} else { // TODO: we need to remove this condition
+					// existing person, call update
 			this.userService.updateUser(p);
 		}
 
@@ -761,18 +761,15 @@ public class UserController {
 
 	}
 
-	private boolean verifyEncryptedText(HttpServletRequest request) 
-	{
+	private boolean verifyEncryptedText(HttpServletRequest request) {
 		String randomString = request.getParameter("randomString");
 		String encryptedtext = request.getParameter("encrypedString");
 		boolean isCorrect = true;
-		try
-		{
-			isCorrect = userService.verifyByDecrypting(randomString, encryptedtext);
+		try {
+			isCorrect = userService.verifyByDecrypting(randomString,
+					encryptedtext);
 			return isCorrect;
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			return false;
 		}
 	}
