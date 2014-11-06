@@ -62,7 +62,7 @@ if (transactionAmount==null || transactionAmount=="") {
 			<tr>
 				<td>Status</td>
 				<td><form:select path="transactionStatus" class="input-xlarge">
-							<option value="approved" ${userTransaction.transactionStatus=='approved'? 'selected' : ''}>approved</option>
+							<option value="success" ${userTransaction.transactionStatus=='approved'? 'selected' : ''}>approved</option>
 							<option value="pending" ${userTransaction.transactionStatus=='pending'? 'selected' : ''}>pending</option>
                             <option value="declined" ${userTransaction.transactionStatus=='declined'? 'selected' : ''}>declined</option>
                      </form:select>

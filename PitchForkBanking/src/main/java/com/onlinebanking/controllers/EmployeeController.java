@@ -67,7 +67,8 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value="/employee/editUserProfile", method = RequestMethod.POST)
-	public String editUserProfile(HttpServletRequest request, Model model, final RedirectAttributes attributes){
+	public String editUserProfile(HttpServletRequest request, Model model, final RedirectAttributes attributes)
+	{
 		if(request.getParameter("email_Id")!=null)
 		{
 		if(request.getParameter("submit").equalsIgnoreCase("delete"))
@@ -200,62 +201,67 @@ public class EmployeeController {
 	@RequestMapping(value="/employee/editUserTransaction", method = RequestMethod.POST)
 	public String editUserTransaction(HttpServletRequest request, Model model, final RedirectAttributes attributes)
 	{
-		if(request.getParameter("submit").equalsIgnoreCase("delete"))
+		try
 		{
-			String transactionId = request.getParameter("transaction_id");
-			Transaction transaction = transactionService.getTransaction(transactionId);
-			transactionService.deleteTransaction(transaction);
-			attributes.addFlashAttribute("response", new Response("success", "deleted transaction"));
+			if(request.getParameter("submit").equalsIgnoreCase("delete"))
+			{
+				String transactionId = request.getParameter("transaction_id");
+				Transaction transaction = transactionService.getTransaction(transactionId);
+				transactionService.deleteTransaction(transaction);
+				attributes.addFlashAttribute("response", new Response("success", "deleted transaction"));
+				return "redirect:/employee/account_details";
+			}
+			else if(request.getParameter("submit").equalsIgnoreCase("update"))
+			{
+				String transactionId = request.getParameter("transaction_id");
+				Transaction transaction = transactionService.getTransaction(transactionId);
+				TransactionAppModel transactionAppModel = new TransactionAppModel(transaction);
+				model.addAttribute("userTransaction", transactionAppModel);
+				model.addAttribute("contentView", "updateUserTransactions");
+				return "employee/emp_template";
+			}
+			else
+			{
+				return "redirect:/employee/account_details";
+			}
+		}
+		catch(Exception e)
+		{
+			attributes.addFlashAttribute("response", new Response("success", e.getMessage()));
 			return "redirect:/employee/account_details";
 		}
-		else if(request.getParameter("submit").equalsIgnoreCase("update"))
-		{
-			String transactionId = request.getParameter("transaction_id");
-			Transaction transaction = transactionService.getTransaction(transactionId);
-			TransactionAppModel transactionAppModel = new TransactionAppModel(transaction);
-			model.addAttribute("userTransaction", transactionAppModel);
-			model.addAttribute("contentView", "updateUserTransactions");
-			return "employee/emp_template";
-		}
-		else
-		{
-			return "redirect:/employee/account_details";
-		}
+
 	}
 	
 	@RequestMapping(value="/employee/updateUserTransaction", method = RequestMethod.POST)
 	public String updateUserTransaction(@ModelAttribute("userTransaction") TransactionAppModel transactionAppModel, HttpServletRequest request,Model model, final RedirectAttributes attributes)
 	{
-		String challenge = request.getParameter("recaptcha_challenge_field");
-		String uresponse = request.getParameter("recaptcha_response_field");
-		String remoteAddress = request.getRemoteAddr();
-		Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
-				uresponse, remoteAddress);
-		if (verifyStatus == true)
-		{
-		Transaction transaction = transactionService.getTransaction(transactionAppModel.getTransactionId());
 		try
 		{
-			transaction.setTransactionAmount(Double.parseDouble(transactionAppModel.getTransactionAmount()));
+			String challenge = request.getParameter("recaptcha_challenge_field");
+			String uresponse = request.getParameter("recaptcha_response_field");
+			String remoteAddress = request.getRemoteAddr();
+			Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
+					uresponse, remoteAddress);
+			if (verifyStatus == true)
+			{
+				transactionService.updateTransaction(transactionAppModel);
+				attributes.addFlashAttribute("response", new Response("success", "updated transaction"));
+			}
+			else
+			{
+				model.addAttribute("response", new Response("error",
+						"Wrong captcha, please try again!"));
+				model.addAttribute("contentView", "updateUserTransactions");
+				return "employee/emp_template";
+			}
+			return "redirect:/employee/account_details";
 		}
-		catch(NumberFormatException nfe)
+		catch(Exception e)
 		{
-			model.addAttribute("response", new Response("error",
-					"Please enter proper value in amount"));
-			model.addAttribute("contentView", "updateUserTransactions");
-			return "employee/emp_template";
+			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
+			return "redirect:/employee/account_details";
 		}
-		transaction.setTransactionStatus(transactionAppModel.getTransactionStatus());
-		transactionService.updateTransaction(transaction);
-		attributes.addFlashAttribute("response", new Response("success", "updated transaction"));
-		}
-		else
-		{
-			model.addAttribute("response", new Response("error",
-					"Wrong captcha, please try again!"));
-			model.addAttribute("contentView", "updateUserTransactions");
-			return "employee/emp_template";
-		}
-		return "redirect:/employee/account_details";
+
 	}
 }
