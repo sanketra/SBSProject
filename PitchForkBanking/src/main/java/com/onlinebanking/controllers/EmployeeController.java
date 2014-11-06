@@ -175,7 +175,7 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value="/employee/viewUserTransactions", method = RequestMethod.POST)
-	public String viewUserTransactions(HttpServletRequest request, Model model)
+	public String viewUserTransactions(HttpServletRequest request, Model model, final RedirectAttributes attributes)
 	{
 		List<Transaction> transactions = new ArrayList<Transaction>();
 		try
@@ -188,6 +188,8 @@ public class EmployeeController {
 		}
 		catch(Exception e)
 		{
+			attributes.addFlashAttribute("response", new Response("error", "Select account to proceed"));
+			return "redirect:/employee/acc_details";
 			
 		}
 		model.addAttribute("transactionList", transactions);
@@ -195,11 +197,18 @@ public class EmployeeController {
 		
 		
 		return "employee/emp_template";
+		
+		
 	}
 	
 	@RequestMapping(value="/employee/editUserTransaction", method = RequestMethod.POST)
 	public String editUserTransaction(HttpServletRequest request, Model model, final RedirectAttributes attributes)
 	{
+		if(request.getParameter("transaction_id")==null)
+		{
+			attributes.addFlashAttribute("response", new Response("error", "Select transaction to proceed"));
+			return "redirect:/employee/viewUserTransactions";
+		}
 		if(request.getParameter("submit").equalsIgnoreCase("delete"))
 		{
 			String transactionId = request.getParameter("transaction_id");
