@@ -8,8 +8,8 @@ import com.onlinebanking.models.User;
 public interface UserService {
 
 	public User getAdmin();
-	public void addUser(User p) throws Exception;
-	public void updateUser(User p);
+	public Response addUser(User p);
+	public Response updateUser(User p);
 	public List<User> listUsers();
 	public List<User> listCustomers();
 	public List<User> listEmployees();
@@ -21,6 +21,7 @@ public interface UserService {
 	public String getUserRole(String emailId);
 	public List<User> listNewUsers();
 	public Response updateUserRegistrationFlag(String id, String status);
+	public void sendUniquePassword(String otp, String emailId);
 	public boolean verifyByDecrypting(String plainText, String encrypted)
 			throws Exception;
 }
