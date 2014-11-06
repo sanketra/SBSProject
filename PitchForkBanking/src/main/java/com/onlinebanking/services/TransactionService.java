@@ -11,6 +11,7 @@ import com.onlinebanking.models.UserRequest;
 
 public interface TransactionService {
 
+	public int getNumberOfPendingCreateAccountRequests(String userId);
 	public Response createAccountCreationRequest();
 	public Response requestPayment(String fromAccount, String toAccount, String amount);
 	public Response createTransaction(String fromAccount, String toAccount, String amount, TransactionType type);

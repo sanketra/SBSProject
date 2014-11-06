@@ -58,31 +58,97 @@ public class OtpServiceImpl implements OtpService {
 			userotpHome.persist(userotpObj);
 		}
 		// Send OTP via Email to the requester
-		Properties props = new Properties();
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.socketFactory.port", "465");
-		props.put("mail.smtp.socketFactory.class",
-				"javax.net.ssl.SSLSocketFactory");
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.port", "465");
+		final int[] CHOICES = { 1, 2, 3 };
+		int choice = random.nextInt(10000);
+		choice = choice % 3;
+		System.out.println(choice);
+		if (choice == 0) {
+			Properties props = new Properties();
+			props.put("mail.smtp.host", "smtp.gmail.com");
+			props.put("mail.smtp.socketFactory.port", "465");
+			props.put("mail.smtp.socketFactory.class",
+					"javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.port", "465");
 
-		Session session = Session.getDefaultInstance(props,
-				new javax.mail.Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(
-								"pitchforkbank@gmail.com", "softwaresecurity");
-					}
-				});
-		try {
-			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("pitchforkbank@gmail.com"));
-			message.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse(emailId));
-			message.setSubject("Test OTP");
-			message.setText("Dear User," + "\n\nYour requested OTP is " + otp);
-			Transport.send(message);
-		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+			Session session = Session.getDefaultInstance(props,
+					new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(
+									"pitchforkbank@gmail.com",
+									"softwaresecurity");
+						}
+					});
+			try {
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress("pitchforkbank@gmail.com"));
+				message.setRecipients(Message.RecipientType.TO,
+						InternetAddress.parse(emailId));
+				message.setSubject("OTP");
+				message.setText("Dear User," + "\n\nYour requested OTP is "
+						+ otp);
+				Transport.send(message);
+			} catch (MessagingException e) {
+				throw new RuntimeException(e);
+			}
+		} else if (choice == 1) {
+			Properties props = new Properties();
+			props.put("mail.smtp.host", "smtp.gmail.com");
+			props.put("mail.smtp.socketFactory.port", "465");
+			props.put("mail.smtp.socketFactory.class",
+					"javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.port", "465");
+
+			Session session = Session.getDefaultInstance(props,
+					new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(
+									"pitchforkbank1@gmail.com",
+									"softwaresecurity");
+						}
+					});
+			try {
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress("pitchforkbank1@gmail.com"));
+				message.setRecipients(Message.RecipientType.TO,
+						InternetAddress.parse(emailId));
+				message.setSubject("OTP");
+				message.setText("Dear User," + "\n\nYour requested OTP is "
+						+ otp);
+				Transport.send(message);
+			} catch (MessagingException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			Properties props = new Properties();
+			props.put("mail.smtp.host", "smtp.gmail.com");
+			props.put("mail.smtp.socketFactory.port", "465");
+			props.put("mail.smtp.socketFactory.class",
+					"javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.port", "465");
+
+			Session session = Session.getDefaultInstance(props,
+					new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(
+									"pitchforkbank2@gmail.com",
+									"soft@123@sec");
+						}
+					});
+			try {
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress("pitchforkbank2@gmail.com"));
+				message.setRecipients(Message.RecipientType.TO,
+						InternetAddress.parse(emailId));
+				message.setSubject("OTP");
+				message.setText("Dear User," + "\n\nYour requested OTP is "
+						+ otp);
+				Transport.send(message);
+			} catch (MessagingException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 	}

@@ -50,6 +50,14 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	@Transactional
+	public int getNumberOfPendingCreateAccountRequests(String userId) {
+		int returnVal = 0;
+		returnVal = this.requestsHome.getPendingAccountCreationRequests(userId);
+		return returnVal;
+	}
+	
+	@Override
+	@Transactional
 	public Response createAccountCreationRequest() {
 		try {
 			Authentication auth = SecurityContextHolder.getContext()
@@ -59,6 +67,10 @@ public class TransactionServiceImpl implements TransactionService {
 			
 			if (accounts.size() >= 2) {
 				return new Response("error", "Maxmimum number of accounts reached.");
+			}
+			
+			if (getNumberOfPendingCreateAccountRequests(user.getUserId()) > 0) {
+				return new Response("error", "Request already exist.");
 			}
 			
 			User admin = this.userHome.getAdmin();
@@ -411,7 +423,7 @@ public class TransactionServiceImpl implements TransactionService {
 		Account fromAcc = this.accountHome.findById(Integer
 				.parseInt(fromAccount));
 
-		if (type == TransactionType.TRANSFER && fromAcc.getAmount() < amount) {
+		if ((type == TransactionType.TRANSFER || type == TransactionType.DEBIT) && fromAcc.getAmount() < amount) {
 			return new Response("error", "Insufficient funds!!");
 		}
 
