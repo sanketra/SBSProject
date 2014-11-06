@@ -151,7 +151,7 @@ public class EmployeeRegistrationModel {
 		String pass, otp;
 		SecureRandom random = new SecureRandom();
 		otp = new BigInteger(130, random).toString(32);
-		pass = otp.substring(0, 5);
+		pass = otp.substring(0, 9);
 		setPassword(pass);
 		return password;
 	}
