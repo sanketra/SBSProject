@@ -520,7 +520,7 @@ public class UserController {
 	// For update user profile
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
-	public String addUserProfile(@ModelAttribute("user") @Valid UserAppModel u,
+	public String updateUserProfile(@ModelAttribute("user") @Valid UserAppModel u,
 			BindingResult bindingResult, HttpServletRequest request,
 			final RedirectAttributes attributes) {
 
@@ -538,6 +538,7 @@ public class UserController {
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
 		String remoteAddress = request.getRemoteAddr();
+		Response status;
 		// verify Captcha
 		Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
 				uresponse, remoteAddress);
@@ -554,19 +555,22 @@ public class UserController {
 			} else {
 				// Existing User, call update
 				user = ValidationHelper.getUserFromUserAppModel(u, user);
-				this.userService.updateUser(user);
-				session.setAttribute("emailId", u.getEmailId());
+				status = this.userService.updateUser(user);
+				
+				if (status.getStatus().equals("error")) {
+					attributes.addFlashAttribute("response", status);
+					return "redirect:/user/profile/edit";
+				} else {
+					session.setAttribute("emailId", u.getEmailId());
+					attributes.addFlashAttribute("response", status);
+					return "redirect:/user/profile";
+				}
 			}
-		}
-		// Wrong Captcha
-		else {
+		} else {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Wrong captcha, please try again!"));
 			return "redirect:/user/profile/edit";
 		}
-		attributes.addFlashAttribute("response", new Response("success",
-				"Profile edited successflly!"));
-		return "redirect:/user/profile";
 	}
 
 	@RequestMapping(value = "/login")
@@ -723,22 +727,10 @@ public class UserController {
 
 			User u = ValidationHelper.getUserFromUserRegistrationModel(p,
 					new User());
-			
-			try 
-			{
-				this.userService.addUser(u);
-			} 
-			catch (Exception e) 
-			{
-				attributes.addFlashAttribute("response", new Response("error",
-						"could not register. Please try again"));
-				return "redirect:/registration";
-			}
+			Response status = this.userService.addUser(u);
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/registration";
 		}
-
-		attributes.addFlashAttribute("response", new Response("success",
-				"Account registration successful!!"));
-		return "redirect:/registration";
 	}
 
 	@RequestMapping(value = "/addEmployee", method = RequestMethod.POST)

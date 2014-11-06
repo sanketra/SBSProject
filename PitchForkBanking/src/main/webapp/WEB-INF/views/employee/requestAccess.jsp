@@ -19,10 +19,21 @@
 			alert("First name must be filled out");
 			return false;
 		}
+		var fnamePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (fnamePattern.test(fname) == true) {
+			alert('Special characters are not allowed in First Name');
+			return false;
+		}
 		// Last Name
 		var lname = document.forms["requestForm"]["lname"].value;
 		if (lname == null || lname == "") {
 			alert("Last name must be filled out");
+			return false;
+		}
+		
+		var lnamePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (lnamePattern.test(lname) == true) {
+			alert('Special characters are not allowed in Last Name');
 			return false;
 		}
 

@@ -46,22 +46,30 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public void addUser(User p) throws Exception {
-		p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
-		p.setEnabled(0);
-		this.userHome.persist(p);
-		Account a = new Account();
-		a.setAccountType("Checking");
-		a.setAmount(1000);
-		a.setUser(p);
-		this.accountHome.persist(a);
-		generatePublicPrivateKeyForUser(p);
+	public Response addUser(User p) {
+		try {
+			p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
+			this.userHome.persist(p);
+			Account a = new Account();
+			a.setAccountType("Checking");
+			a.setAmount(1000);
+			a.setUser(p);
+			this.accountHome.persist(a);
+			return new Response("success", "User registered successfully!!");
+		} catch (Exception e) {
+			return new Response("error", "Failed to register user!!");
+		}
 	}
 
 	@Override
 	@Transactional
-	public void updateUser(User p) {
-		this.userHome.merge(p);
+	public Response updateUser(User p) {
+		try {
+			this.userHome.merge(p);
+			return new Response("success", "User updated successfully!!");
+		} catch (RuntimeException e) {
+			return new Response("error", "Failed to update user details!!");
+		}
 	}
 
 	@Override

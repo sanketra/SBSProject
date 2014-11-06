@@ -33,7 +33,6 @@ import com.onlinebanking.services.UserService;
 public class AdminController {
 	
 	private UserService userService;
-	@SuppressWarnings("unused")
 	private AccountService accountService;
 	private TransactionService transactionService;
 	private CaptchaService captchaService;
@@ -279,25 +278,33 @@ public class AdminController {
 		@RequestMapping(value="/admin/admin_editUserTransaction", method = RequestMethod.POST)
 		public String editUserTransaction(HttpServletRequest request, Model model, final RedirectAttributes attributes)
 		{
-			if(request.getParameter("submit").equalsIgnoreCase("delete"))
+			try
 			{
-				String transactionId = request.getParameter("transaction_id");
-				Transaction transaction = transactionService.getTransaction(transactionId);
-				transactionService.deleteTransaction(transaction);
-				attributes.addFlashAttribute("response", new Response("success", "deleted transaction"));
-				return "redirect:/admin/admin_accountTransactions";
+				if(request.getParameter("submit").equalsIgnoreCase("delete"))
+				{
+					String transactionId = request.getParameter("transaction_id");
+					Transaction transaction = transactionService.getTransaction(transactionId);
+					transactionService.deleteTransaction(transaction);
+					attributes.addFlashAttribute("response", new Response("success", "deleted transaction"));
+					return "redirect:/admin/admin_accountTransactions";
+				}
+				else if(request.getParameter("submit").equalsIgnoreCase("update"))
+				{
+					String transactionId = request.getParameter("transaction_id");
+					Transaction transaction = transactionService.getTransaction(transactionId);
+					TransactionAppModel transactionAppModel = new TransactionAppModel(transaction);
+					model.addAttribute("userTransaction", transactionAppModel);
+					model.addAttribute("contentView", "admin_updateUserTransactions");
+					return "admin/admin_template";
+				}
+				else
+				{
+					return "redirect:/admin/admin_accountTransactions";
+				}
 			}
-			else if(request.getParameter("submit").equalsIgnoreCase("update"))
+			catch(Exception e)
 			{
-				String transactionId = request.getParameter("transaction_id");
-				Transaction transaction = transactionService.getTransaction(transactionId);
-				TransactionAppModel transactionAppModel = new TransactionAppModel(transaction);
-				model.addAttribute("userTransaction", transactionAppModel);
-				model.addAttribute("contentView", "admin_updateUserTransactions");
-				return "admin/admin_template";
-			}
-			else
-			{
+				attributes.addFlashAttribute("response", new Response("success", e.getMessage()));
 				return "redirect:/admin/admin_accountTransactions";
 			}
 		}
@@ -305,26 +312,31 @@ public class AdminController {
 		@RequestMapping(value="/admin/admin_updateUserTransaction", method = RequestMethod.POST)
 		public String updateUserTransaction(@ModelAttribute("userTransaction") TransactionAppModel transactionAppModel, HttpServletRequest request,Model model, final RedirectAttributes attributes)
 		{
-			String challenge = request.getParameter("recaptcha_challenge_field");
-			String uresponse = request.getParameter("recaptcha_response_field");
-			String remoteAddress = request.getRemoteAddr();
-			Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
-					uresponse, remoteAddress);
-			if (verifyStatus == true)
+			try
 			{
-			Transaction transaction = transactionService.getTransaction(transactionAppModel.getTransactionId());
-			transaction.setTransactionAmount(Double.parseDouble(transactionAppModel.getTransactionAmount()));
-			transaction.setTransactionStatus(transactionAppModel.getTransactionStatus());
-			transactionService.updateTransaction(transaction);
-			attributes.addFlashAttribute("response", new Response("success", "updated transaction"));
+				String challenge = request.getParameter("recaptcha_challenge_field");
+				String uresponse = request.getParameter("recaptcha_response_field");
+				String remoteAddress = request.getRemoteAddr();
+				Boolean verifyStatus = this.captchaService.verifyCaptcha(challenge,
+						uresponse, remoteAddress);
+				if (verifyStatus == true)
+				{
+				transactionService.updateTransaction(transactionAppModel);
+				attributes.addFlashAttribute("response", new Response("success", "updated transaction"));
+				}
+				else
+				{
+					attributes.addFlashAttribute("response", new Response("error",
+							"Wrong captcha, please try again!"));
+					model.addAttribute("contentView", "admin_updateUserTransactions");
+					return "admin/admin_template";
+				}
+				return "redirect:/admin/admin_accountTransactions";
 			}
-			else
+			catch(Exception e)
 			{
-				attributes.addFlashAttribute("response", new Response("error",
-						"Wrong captcha, please try again!"));
-				model.addAttribute("contentView", "admin_updateUserTransactions");
-				return "admin/admin_template";
+				attributes.addFlashAttribute("response", new Response("success", e.getMessage()));
+				return "redirect:/admin/admin_accountTransactions";
 			}
-			return "redirect:/admin/admin_accountTransactions";
 		}
 }
