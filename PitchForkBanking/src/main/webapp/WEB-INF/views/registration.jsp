@@ -199,7 +199,7 @@ body {
 							placeholder="Email Id" /></td>
 				</tr>
 				<tr>
-					<td>First Name"</td>
+					<td>First Name</td>
 					<td><form:input path="fname" class="input-xxlarge"
 							placeholder="First Name" /></td>
 				</tr>
