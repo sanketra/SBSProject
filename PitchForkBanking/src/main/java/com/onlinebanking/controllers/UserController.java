@@ -622,6 +622,7 @@ public class UserController {
 					.getUserById(userId).getQues2());
 			model.addAttribute("question3", this.userService
 					.getUserById(userId).getQues3());
+			session.setAttribute("attempt", "0");
 			return "setNewPassword";
 		}
 	}
@@ -642,13 +643,17 @@ public class UserController {
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.POST)
 	public String setNewPasswordPost(HttpServletRequest request,
 			final RedirectAttributes attributes, Model model) {
+		HttpSession session = request.getSession();
+		int i = Integer.parseInt(session.getAttribute("attempt").toString());
+		i++;
+		session.setAttribute("attempt", Integer.toString(i));
+		System.out.println(session.getAttribute("attempt"));
 		// get otp and passwords from user
 		String newOtp = request.getParameter("One Time Password").toString();
 		String newPassword = request.getParameter("New Password").toString();
 		String renternewPassword = request
 				.getParameter("Re-Enter New Password").toString();
 		// verify otp
-		HttpSession session = request.getSession();
 		String userId = session.getAttribute("OTP-User-Id").toString();
 		Boolean otpMatch = otpService.verifyOtp(
 				this.otpService.getUserotpById(userId), newOtp);
@@ -664,6 +669,13 @@ public class UserController {
 						.getAnswer1().toString()) && ans3
 				.equals(this.userService.getUserById(userId).getAnswer1()
 						.toString()));
+		// block user based on attempts
+		if(i>3){
+			attributes.addFlashAttribute("response", new Response("error",
+					"Number of attempts reached! you have been temporarily blocked"));
+			return "redirect:/setNewPassword";
+		}
+		// logic
 		if (otpMatch == true && passwordMatch == true && questionMatch == true) {
 			User obj = this.userService.getUserById(userId);
 			obj.setPassword(CryptoHelper.getEncryptedString(newPassword));
