@@ -48,9 +48,15 @@ body {
 			<h4 class="form-signin-heading">Set New Password</h4>
 			<br> <input type='text' name='One Time Password'
 				class="input-block-level" placeholder="Enter One Time Password" />
-			<br> <input type='text' name='Answer' class="input-block-level"
-				placeholder="${question}" /> <br> <input
-				type='text' name='Answer' class="input-block-level"
+			<br>
+			<h5>${question1}?</h5>
+			<br> <input type='text' name='Answer1' class="input-block-level"
+				placeholder="Enter your answer here" /> <br>
+			<h5>${question2}?</h5>
+			<br> <input type='text' name='Answer2' class="input-block-level"
+				placeholder="Enter your answer here" /> <br>
+			<h5>${question3}?</h5>
+			<br> <input type='text' name='Answer3' class="input-block-level"
 				placeholder="Enter your answer here" /> <br> <input
 				type='password' name='New Password' class="input-block-level"
 				placeholder="New Password" /> <br> <input type='password'
