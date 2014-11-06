@@ -11,7 +11,14 @@
 			"no-cache, no-store, must-revalidate");
 	response.setHeader("Expires", "0");
 %>
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
 <script>
+$(function() {
+$( "#datepicker" ).datepicker();
+});
+
 function validateForm() {
 	// First Name
 	var fname = document.forms["myForm"]["fname"].value;
@@ -128,8 +135,8 @@ function validateForm() {
 			</tr>
 			<tr>
 				<td>Date of Birth</td>
-				<td><form:input path="dob" class="input-xxlarge" 
-				placeholder="yyyy/mm/dd" /></td>
+				<td><form:input id="datepicker" path="dob"
+						class="input-xxlarge" placeholder="yyyy/mm/dd" /></td>
 			</tr>
 			<tr>
 				<td>Address</td>
