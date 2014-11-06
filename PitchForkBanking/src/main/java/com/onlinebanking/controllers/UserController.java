@@ -428,14 +428,13 @@ public class UserController {
 		// Now that user has an account id check if its a valid account of user.
 		status = this.userService.isValidUserAccount(account_id, session
 				.getAttribute("userId").toString());
-		
+
 		if (status.getStatus().equals("error")) {
 			attributes.addFlashAttribute("response", new Response("error",
 					status.getMessage()));
-			
+
 			return "redirect:/user/home";
 		}
-		
 
 		String randomString = PKI.generateRandomString();
 		model.addAttribute("randomString", randomString);
@@ -598,7 +597,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/passwordRecovery", method = RequestMethod.POST)
-	public String recoverPassword(HttpServletRequest request,
+	public String recoverPassword(Model model, HttpServletRequest request,
 			final RedirectAttributes attributes) {
 		// get email-id from user
 		String emailId = request.getParameter("emailId").toString();
@@ -616,59 +615,73 @@ public class UserController {
 			// send OTP
 			otpService.sendOtp(this.userService.getUserByEmailId(emailId),
 					emailId);
+			String userId = session.getAttribute("OTP-User-Id").toString();
+			model.addAttribute("question1", this.userService
+					.getUserById(userId).getQues1());
+			model.addAttribute("question2", this.userService
+					.getUserById(userId).getQues2());
+			model.addAttribute("question3", this.userService
+					.getUserById(userId).getQues3());
 			return "setNewPassword";
 		}
 	}
 
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.GET)
 	public String setNewPassword(Model model, HttpServletRequest request) {
-		// get question from database
 		HttpSession session = request.getSession();
 		String userId = session.getAttribute("OTP-User-Id").toString();
-		System.out.println(userId);
-		model.addAttribute("question", this.userService.getUserById(userId)
+		model.addAttribute("question1", this.userService.getUserById(userId)
 				.getQues1());
-		System.out.println(this.userService.getUserById(userId).getQues1());
+		model.addAttribute("question2", this.userService.getUserById(userId)
+				.getQues2());
+		model.addAttribute("question3", this.userService.getUserById(userId)
+				.getQues3());
 		return "setNewPassword";
 	}
 
 	@RequestMapping(value = "/setNewPassword", method = RequestMethod.POST)
 	public String setNewPasswordPost(HttpServletRequest request,
 			final RedirectAttributes attributes, Model model) {
-
 		// get otp and passwords from user
 		String newOtp = request.getParameter("One Time Password").toString();
 		String newPassword = request.getParameter("New Password").toString();
 		String renternewPassword = request
 				.getParameter("Re-Enter New Password").toString();
-		// verify otp and password match
+		// verify otp
 		HttpSession session = request.getSession();
 		String userId = session.getAttribute("OTP-User-Id").toString();
-		Boolean result = otpService.verifyOtp(
+		Boolean otpMatch = otpService.verifyOtp(
 				this.otpService.getUserotpById(userId), newOtp);
+		// verify password match
 		Boolean passwordMatch = (newPassword.equals(renternewPassword));
-		if (result == true && passwordMatch == true) {
+		// verify security questions
+		String ans1 = request.getParameter("Answer1").toString();
+		String ans2 = request.getParameter("Answer2").toString();
+		String ans3 = request.getParameter("Answer2").toString();
+		Boolean questionMatch = (ans1.equals(this.userService
+				.getUserById(userId).getAnswer1().toString())
+				&& ans2.equals(this.userService.getUserById(userId)
+						.getAnswer1().toString()) && ans3
+				.equals(this.userService.getUserById(userId).getAnswer1()
+						.toString()));
+		if (otpMatch == true && passwordMatch == true && questionMatch == true) {
 			User obj = this.userService.getUserById(userId);
 			obj.setPassword(CryptoHelper.getEncryptedString(newPassword));
 			this.userService.updateUser(obj);
 			return "login";
-		} else if (result == false && passwordMatch == true) {
+		} else if (otpMatch == false) {
 			attributes.addFlashAttribute("response", new Response("error",
-					"Wrong OTP"));
-			return "redirect:/setNewPassword";
-		} else if (result == false && passwordMatch == false) {
-			attributes.addFlashAttribute("response", new Response("error",
-					"Passwords do not match. Please try again!"));
+					"Wrong OTP!, Try again"));
 			return "redirect:/setNewPassword";
 		} else {
 			attributes
 					.addFlashAttribute(
 							"response",
-							new Response("error",
-									"Passwords do not match. Please go back to generate new One-Time Password"));
+							new Response(
+									"error",
+									"passwords do not match or incorrect answers. Please go back to generate new One-Time Password and try again"));
 			return "redirect:/setNewPassword";
 		}
-
 	}
 
 	// For add and update person both
