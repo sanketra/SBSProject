@@ -42,7 +42,9 @@ body {
 </head>
 <body>
 	<div class="container">
-		<jsp:include page="common/response.jsp" />
+		<c:if test="${!empty response}">
+			<jsp:include page="common/response.jsp" />
+		</c:if>
 		<c:url var="recoverUrl" value="/passwordRecovery"></c:url>
 		<form class="form-signin" action="${recoverUrl}" method="POST">
 			<h4 class="form-signin-heading">Forgot Password?</h4>
