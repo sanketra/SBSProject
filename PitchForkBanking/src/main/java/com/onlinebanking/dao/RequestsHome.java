@@ -14,6 +14,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 
 import com.onlinebanking.models.Requests;
+import com.onlinebanking.models.Role;
+import com.onlinebanking.models.User;
 
 /**
  * Home object for domain model class Requests.
@@ -208,6 +210,45 @@ public class RequestsHome {
 			
 		} catch (RuntimeException re) {
 			log.error("error occurred while retrieving pending requests", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Requests> getAllPendingUserAccessRequests() {
+		log.debug("Getting all Pending additional account requests");
+		try {
+			String status = "pending";
+			String type1 = "Profile";
+			String type2 = "Transaction";
+			String queryString = "SELECT * FROM Requests R where R.status = :status AND (R.type = :type1 OR R.type = :type2) ";
+			List<Requests> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(Requests.class)
+					.setParameter("status", status).setParameter("type1", type1).setParameter("type2", type2).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Requests> getAllPendingAdditionalAccountRequests() {
+		log.debug("Getting all Pending additional account requests");
+		try {
+			String status = "pending";
+			String type = "createaccount";
+			String queryString = "SELECT * FROM Requests R where R.status = :status AND R.type = :type ";
+			List<Requests> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(Requests.class)
+					.setParameter("status", status).setParameter("type", type).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
 			throw re;
 		}
 	}

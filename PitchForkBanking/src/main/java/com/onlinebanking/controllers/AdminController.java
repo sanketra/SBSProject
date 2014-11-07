@@ -117,12 +117,9 @@ public class AdminController {
 	@RequestMapping(value = "/admin/processRequests", method = RequestMethod.GET)
 	public String accessRequests(Model model) {
 
-		List<UserRequest> pendingRequests = transactionService
-				.getPendingRequests();
-		List<UserRequest> approvedRequests = transactionService
-				.getApprovedRequests();
-		List<UserRequest> declinedRequests = transactionService
-				.getDeclinedRequests();
+		List<UserRequest> pendingRequests = transactionService.getAllPendingUserAccessRequests();
+	    List<UserRequest> approvedRequests = transactionService.getApprovedRequests();
+		List<UserRequest> declinedRequests = transactionService.getDeclinedRequests();
 		model.addAttribute("pendingUserRequests", pendingRequests);
 		model.addAttribute("approvedUserRequests", approvedRequests);
 		model.addAttribute("declinedUserRequests", declinedRequests);
@@ -150,6 +147,34 @@ public class AdminController {
 		}
 
 		return "redirect:/admin/processRequests";
+	}
+	
+	@RequestMapping(value = "/admin/processNewAccountRequests", method = RequestMethod.GET)
+	public String newAccountRequests(Model model) {
+
+		List<UserRequest> pendingAdditionalAccountRequests = transactionService.getAllPendingAdditionalAccountRequests();
+		model.addAttribute("pendingAdditionalAccountRequests", pendingAdditionalAccountRequests);
+		model.addAttribute("contentView", "admin_newAccountRequests");
+
+		return "admin/admin_template";
+
+	}
+
+	@RequestMapping(value = "/admin/admin_newAccountRequests", method = RequestMethod.POST)
+	public String processNewAccountRequests(Model model, HttpServletRequest request,
+			HttpServletResponse response, final RedirectAttributes attributes) {
+		Response status;
+		if (request.getParameter("approve") != null) {
+			status = this.userService.updateNewAccountRequest(request.getParameter("approve"), "approve");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/processNewAccountRequests";
+		} else if (request.getParameter("decline") != null) {
+			status = this.userService.updateNewAccountRequest(request.getParameter("decline"), "decline");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/processNewAccountRequests";
+		}
+		
+		return "redirect:/admin/processNewAccountRequests";
 	}
 
 	@RequestMapping(value = "/admin/customerList", method = RequestMethod.GET)

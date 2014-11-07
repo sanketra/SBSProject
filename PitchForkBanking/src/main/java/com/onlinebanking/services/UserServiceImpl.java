@@ -19,12 +19,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinebanking.dao.AccountHome;
+import com.onlinebanking.dao.RequestsHome;
 import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.dao.UserPublicKeyHome;
 import com.onlinebanking.helpers.CryptoHelper;
 import com.onlinebanking.helpers.PKI;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Account;
+import com.onlinebanking.models.RequestStatus;
+import com.onlinebanking.models.Requests;
 import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserPublicKey;
 
@@ -34,6 +37,7 @@ public class UserServiceImpl implements UserService {
 	private UserHome userHome;
 	private AccountHome accountHome;
 	private UserPublicKeyHome userPublicKeyHome;
+	private RequestsHome requestsHome;
 
 	public void setUserHome(UserHome userDAO) {
 		this.userHome = userDAO;
@@ -45,6 +49,11 @@ public class UserServiceImpl implements UserService {
 	
 	public void setUserPublicKeyHome(UserPublicKeyHome userPublicKeyHome) {
 		this.userPublicKeyHome = userPublicKeyHome;
+	}
+	
+	
+	public void setRequestsHome(RequestsHome requestsHome) {
+		this.requestsHome = requestsHome;
 	}
 
 	@Override
@@ -85,6 +94,45 @@ public class UserServiceImpl implements UserService {
 			return new Response("success", "User updated successfully!!");
 		} catch (RuntimeException e) {
 			return new Response("error", "Failed to update user details!!");
+		}
+	}
+
+	@Override
+	@Transactional
+	public Response updateNewAccountRequest(String id, String status) {
+		Requests t = this.requestsHome.findById(id);
+		User u = getUserById(t.getFromUser());
+		Response response;
+		
+		if (status.equals("approve")) {
+			response = createAccount(u);
+			if (response.getStatus().contentEquals("success")) {
+				t.setStatus(RequestStatus.APPROVED);
+				this.requestsHome.merge(t);
+				return new Response("success", "Request approved! - New Savings Account Created");
+			}
+			else {
+				return new Response("error", "New Account creation failed!");
+			}
+		} else {
+			t.setStatus(RequestStatus.DECLINED);
+			this.requestsHome.merge(t);
+			return new Response("success", "Request declined!");
+		}
+	}
+	
+	@Override
+	@Transactional
+	public Response createAccount(User p) {
+		try {
+			Account a = new Account();
+			a.setAccountType("Savings");
+			a.setAmount(1000);
+			a.setUser(p);
+			this.accountHome.persist(a);
+			return new Response("success", "New account created successfully!!");
+		} catch (Exception e) {
+			return new Response("error", "Failed to create New Account for User!!");
 		}
 	}
 
