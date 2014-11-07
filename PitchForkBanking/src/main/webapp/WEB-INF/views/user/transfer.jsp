@@ -62,7 +62,7 @@
 			alert('Special characters are not allowed in amount');
 			return false;
 		}
-		var amountPattern2 = /^[0-9]+.?[0-9]+$/;
+		var amountPattern2 = /^[0-9]+.?[0-9]*$/;
 		if (amountPattern2.test(amount) != true) {
 			alert('Only numbers are allowed in amount');
 			return false;
