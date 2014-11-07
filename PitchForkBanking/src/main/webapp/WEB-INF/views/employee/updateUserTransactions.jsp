@@ -11,46 +11,49 @@
 <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory"%>
 <title>Update Transaction</title>
 <script>
-function validateForm()
-{
-var transactionAmount = document.forms["myForm"]["transactionAmount"].value;
-if (transactionAmount==null || transactionAmount=="") {
-    alert("Enter Transaction amount");
-    return false;
-}
-//var amountPattern = ^[0-9]+(\.[0-9]{1,2})?$;
-//if(amountPattern.test(transactionAmount)!=true){
-//	alert("Enter a valid Amount");
-//	return false;
-}
-
-
+	function validateForm() {
+		var transactionAmount = document.forms["myForm"]["transactionAmount"].value;
+		if (transactionAmount == null || transactionAmount == "") {
+			alert("Enter Transaction amount");
+			return false;
+		}
+		var transactionAmountPattern = /^\d{0,6}\.?\d{0,2}$/;
+		if (!transactionAmount.match(transactionAmountPattern)) {
+			alert("Enter a valid Transaction Amount");
+			return false;
+		}
+	}
 </script>
 
 
 
 <c:url var="submitAction" value="/employee/updateUserTransaction"></c:url>
 <div class="container">
-	<form:form name="myForm" action="updateUserTransaction" onsubmit="return validateForm()" commandName="userTransaction" class="form-horizontal" method="POST">
+	<form:form name="myForm" action="updateUserTransaction"
+		onsubmit="return validateForm()" commandName="userTransaction"
+		class="form-horizontal" method="POST">
 		<form:hidden path="transactionId" />
 		<table class="table">
 			<tr>
 				<td>From Account</td>
 				<td><form:input path="fromAcountNum" class="input-xlarge"
-						placeholder="From Account" disabled="true"/>
-						<form:hidden path="fromAcountNum" /></td>					
+
+						placeholder="From Account" disabled="true" /></td>
+						<form:hidden path="fromAcountNum" />					
 			</tr>
 			<tr>
 				<td>To Account</td>
 				<td><form:input path="toAccountNum" class="input-xlarge"
-						placeholder="To Account" disabled="true"/>
-						<form:hidden path="toAccountNum" /></td>
+
+						placeholder="To Account" disabled="true" /></td>
+
+						<form:hidden path="toAccountNum" />
 			</tr>
 			<tr>
 				<td>Type of Transaction</td>
 				<td><form:input path="transactionType" class="input-xlarge"
-						placeholder="Transaction Type" disabled="true"/>
-						<form:hidden path="transactionType" /></td>
+						placeholder="Transaction Type" disabled="true" /></td>
+						<form:hidden path="transactionType" />
 			</tr>
 			<tr>
 				<td>Amount</td>
@@ -60,17 +63,19 @@ if (transactionAmount==null || transactionAmount=="") {
 			<tr>
 				<td>Time</td>
 				<td><form:input path="transactionTime" class="input-xlarge"
-						placeholder="Time" disabled="true"/>
-						<form:hidden path="transactionTime" /></td>
+						placeholder="Time" disabled="true" /></td>
+						<form:hidden path="transactionTime" />
 			</tr>
 			<tr>
 				<td>Status</td>
 				<td><form:select path="transactionStatus" class="input-xlarge">
-							<option value="success" ${userTransaction.transactionStatus=='approved'? 'selected' : ''}>approved</option>
-							<option value="pending" ${userTransaction.transactionStatus=='pending'? 'selected' : ''}>pending</option>
-                            <option value="declined" ${userTransaction.transactionStatus=='declined'? 'selected' : ''}>declined</option>
-                     </form:select>
-               </td>
+						<option value="success"
+							${userTransaction.transactionStatus=='approved'? 'selected' : ''}>approved</option>
+						<option value="pending"
+							${userTransaction.transactionStatus=='pending'? 'selected' : ''}>pending</option>
+						<option value="declined"
+							${userTransaction.transactionStatus=='declined'? 'selected' : ''}>declined</option>
+					</form:select></td>
 			</tr>
 			<tr>
 				<td>Captcha</td>
@@ -94,9 +99,8 @@ if (transactionAmount==null || transactionAmount=="") {
 					</noscript></td>
 			</tr>
 			<tr>
-				<td>
-					<input type="submit" value="Update" class="btn btn-lg btn-primary" />
-				</td>
+				<td><input type="submit" value="Update"
+					class="btn btn-lg btn-primary" /></td>
 			</tr>
 		</table>
 	</form:form>

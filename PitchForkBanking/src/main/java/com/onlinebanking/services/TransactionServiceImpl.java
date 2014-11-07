@@ -50,6 +50,14 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	@Transactional
+	public int getNumberOfPendingCreateAccountRequests(String userId) {
+		int returnVal = 0;
+		returnVal = this.requestsHome.getPendingAccountCreationRequests(userId);
+		return returnVal;
+	}
+	
+	@Override
+	@Transactional
 	public Response createAccountCreationRequest() {
 		try {
 			Authentication auth = SecurityContextHolder.getContext()
@@ -59,6 +67,10 @@ public class TransactionServiceImpl implements TransactionService {
 			
 			if (accounts.size() >= 2) {
 				return new Response("error", "Maxmimum number of accounts reached.");
+			}
+			
+			if (getNumberOfPendingCreateAccountRequests(user.getUserId()) > 0) {
+				return new Response("error", "Request already exist.");
 			}
 			
 			User admin = this.userHome.getAdmin();
@@ -436,7 +448,7 @@ public class TransactionServiceImpl implements TransactionService {
 		Account fromAcc = this.accountHome.findById(Integer
 				.parseInt(fromAccount));
 
-		if (type == TransactionType.TRANSFER && fromAcc.getAmount() < amount) {
+		if ((type == TransactionType.TRANSFER || type == TransactionType.DEBIT) && fromAcc.getAmount() < amount) {
 			return new Response("error", "Insufficient funds!!");
 		}
 
@@ -695,6 +707,34 @@ public class TransactionServiceImpl implements TransactionService {
 	@Transactional
 	public Transaction getTransaction(String transactionId) {
 		return transactionHome.findById(transactionId);
+	}
+
+	@Override
+	@Transactional
+	public void deleteTransactionRequest(int accountId) {
+		Account toAcc = accountHome.findById(accountId);
+		String toUserId = toAcc.getUser().getUserId();
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		User fromUser = userHome.getUserByEmailId(auth.getName());
+		List<Requests> existingRequest = requestsHome.getRequestsFor(fromUser.getUserId(), toUserId, "Transaction");
+		for(Requests request : existingRequest)
+		{
+			requestsHome.delete(request);
+		}
+	}
+
+	@Override
+	@Transactional
+	public void deleteProfileRequest(User u) {
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		User fromUser = userHome.getUserByEmailId(auth.getName());
+		List<Requests> existingRequest = requestsHome.getRequestsFor(fromUser.getUserId(), u.getUserId(), "Profile");
+		for(Requests request : existingRequest)
+		{
+			requestsHome.delete(request);
+		}
 	}
 
 }

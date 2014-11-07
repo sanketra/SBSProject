@@ -6,10 +6,12 @@ import com.onlinebanking.helpers.Constants.TransactionType;
 import com.onlinebanking.helpers.Response;
 import com.onlinebanking.models.Transaction;
 import com.onlinebanking.models.TransactionAppModel;
+import com.onlinebanking.models.User;
 import com.onlinebanking.models.UserRequest;
 
 public interface TransactionService {
 
+	public int getNumberOfPendingCreateAccountRequests(String userId);
 	public Response createAccountCreationRequest();
 	public Response requestPayment(String fromAccount, String toAccount, String amount);
 	public Response createTransaction(String fromAccount, String toAccount, String amount, TransactionType type);
@@ -28,7 +30,10 @@ public interface TransactionService {
 	public List<UserRequest> getApprovedProfileRequestsFromUser();
 	public Response updateAccessRequest(String id, String status);
 	public List<UserRequest> getDeclinedRequests();
+
 	public List<UserRequest> getAllPendingAdditionalAccountRequests();
 	public List<UserRequest> getAllPendingUserAccessRequests();
-	//public Response updateNewAccountRequest(String id, String status);
+
+	public void deleteTransactionRequest(int accountId);
+	public void deleteProfileRequest(User u);
 }

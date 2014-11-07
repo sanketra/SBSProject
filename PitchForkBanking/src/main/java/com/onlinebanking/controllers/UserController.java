@@ -15,9 +15,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Constants.TransactionType;
@@ -191,18 +193,13 @@ public class UserController {
 					status = this.transactionService.createTransaction(
 							fromAccount, toAccount, amount,
 							TransactionType.TRANSFER);
-
-					if (status.getStatus().equals("success")) {
-						attributes.addFlashAttribute("response", status);
-					} else {
-						attributes.addFlashAttribute("response", status);
-					}
-					return "redirect:/user/transfer";
+					attributes.addFlashAttribute("response", status);
 				} else {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
-					return "redirect:/user/transfer";
 				}
+				
+				return "redirect:/user/transfer";
 			} else if (urls.get("url_2").toString().equals("credit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
@@ -220,23 +217,17 @@ public class UserController {
 					status = this.transactionService.createTransaction(
 							fromAccount, fromAccount, amount,
 							TransactionType.CREDIT);
-					if (status.getStatus().equals("success")) {
-						attributes.addFlashAttribute("response", status);
-					} else {
-						attributes.addFlashAttribute("response", status);
-					}
+					attributes.addFlashAttribute("response", status);
 				} else {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
-					return "redirect:/user/credit";
 				}
-
+				
+				return "redirect:/user/credit";
 			} else if (urls.get("url_2").toString().equals("debit")) {
 				String fromAccount = session.getAttribute("account_id")
 						.toString();
 				String amount = request.getParameter("amount").toString();
-				status = this.transactionService.createTransaction(fromAccount,
-						fromAccount, amount, TransactionType.DEBIT);
 				// get the responses from the user
 				String challenge = request
 						.getParameter("recaptcha_challenge_field");
@@ -247,31 +238,38 @@ public class UserController {
 				Boolean verifyStatus = this.captchaService.verifyCaptcha(
 						challenge, uresponse, remoteAddress);
 				if (verifyStatus == true) {
-					if (status.getStatus().equals("success")) {
-						attributes.addFlashAttribute("response", status);
-					} else {
-						attributes.addFlashAttribute("response", status);
-					}
+					status = this.transactionService.createTransaction(
+							fromAccount, fromAccount, amount,
+							TransactionType.DEBIT);
+					attributes.addFlashAttribute("response", status);
 				} else {
 					attributes.addFlashAttribute("response", new Response(
-							"error", "Wrong captcha, please try again!"));
+							"error",
+							"Wrong captcha, please try again!"));
 					return "redirect:/user/debit";
 				}
-
 			} else if (urls.get("url_2").toString().equals("authorize")) {
-				if (request.getParameter("approve") != null) {
-					status = this.transactionService.updateAccessRequest(
-							request.getParameter("approve"), "approve");
-					attributes.addFlashAttribute("response", status);
-					return "redirect:/user/authorize";
-				} else if (request.getParameter("decline") != null) {
-					status = this.transactionService.updateAccessRequest(
-							request.getParameter("decline"), "decline");
-					attributes.addFlashAttribute("response", status);
-					return "redirect:/user/authorize";
+				// send otp
+				otpService.sendOtp(
+						this.userService.getUserByEmailId(session.getAttribute(
+								"emailId").toString()),
+						session.getAttribute("emailId").toString());
+				if (true) {
+					return "";
 				}
-
-				return "redirect:/user/authorize";
+				// if (request.getParameter("approve") != null) {
+				// status = this.transactionService.updateAccessRequest(
+				// request.getParameter("approve"), "approve");
+				// attributes.addFlashAttribute("response", status);
+				// return "redirect:/user/authorize";
+				// } else if (request.getParameter("decline") != null) {
+				// status = this.transactionService.updateAccessRequest(
+				// request.getParameter("decline"), "decline");
+				// attributes.addFlashAttribute("response", status);
+				// return "redirect:/user/authorize";
+				// }
+				//
+				// return "redirect:/user/authorize";
 			} else if (urls.get("url_2").toString().equals("requestaccount")) {
 				status = this.transactionService.createAccountCreationRequest();
 				attributes.addFlashAttribute("response", status);
@@ -438,7 +436,7 @@ public class UserController {
 
 		String randomString = PKI.generateRandomString();
 		model.addAttribute("randomString", randomString);
-		
+
 		// Handle all post requests
 		if (URLHelper.isPOSTRequest(request)) {
 			String name = request.getParameter("name").toString();
@@ -472,9 +470,8 @@ public class UserController {
 						"Cannot request payment to your own account!!"));
 				return "redirect:/user/requestPayment";
 			}
-			
-			if(!verifyEncryptedText(request))
-			{
+
+			if (!verifyEncryptedText(request)) {
 				attributes.addFlashAttribute("response", new Response("error",
 						"private key not verified!!"));
 				return "redirect:/user/requestPayment";
@@ -520,7 +517,8 @@ public class UserController {
 	// For update user profile
 	@RequestMapping(value = "/user/profile/update", method = {
 			RequestMethod.GET, RequestMethod.POST })
-	public String updateUserProfile(@ModelAttribute("user") @Valid UserAppModel u,
+	public String updateUserProfile(
+			@ModelAttribute("user") @Valid UserAppModel u,
 			BindingResult bindingResult, HttpServletRequest request,
 			final RedirectAttributes attributes) {
 
@@ -556,7 +554,7 @@ public class UserController {
 				// Existing User, call update
 				user = ValidationHelper.getUserFromUserAppModel(u, user);
 				status = this.userService.updateUser(user);
-				
+
 				if (status.getStatus().equals("error")) {
 					attributes.addFlashAttribute("response", status);
 					return "redirect:/user/profile/edit";
@@ -586,6 +584,13 @@ public class UserController {
 	@RequestMapping(value = "/denied")
 	public String denied() {
 		return "denied";
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleAllException(Exception ex, HttpServletRequest request) {
+		ModelAndView model = new ModelAndView("denied");
+		model.addObject("Response", new Response("error", "Exception"));
+		return model;
 	}
 
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
@@ -674,9 +679,12 @@ public class UserController {
 				.equals(this.userService.getUserById(userId).getAnswer1()
 						.toString()));
 		// block user based on attempts
-		if(i>3){
-			attributes.addFlashAttribute("response", new Response("error",
-					"Number of attempts reached! you have been temporarily blocked"));
+		if (i > 3) {
+			attributes
+					.addFlashAttribute(
+							"response",
+							new Response("error",
+									"Number of attempts reached! you have been temporarily blocked"));
 			return "redirect:/setNewPassword";
 		}
 		// logic
@@ -700,7 +708,26 @@ public class UserController {
 		}
 	}
 
-	// For add and update person both
+	// authorise verify otp
+	@RequestMapping(value = "/verifyOtp", method = RequestMethod.GET)
+	public String verifyOtp() {
+
+		return "setNewPassword";
+	}
+
+	@RequestMapping(value = "/verifyOtp", method = RequestMethod.POST)
+	public String verifyOtpPost(HttpServletRequest request,
+			final RedirectAttributes attributes) {
+		// verify otp
+		String otpPassword = request.getParameter("otpPassword");
+		HttpSession session = request.getSession();
+		String id = this.userService.getUserByEmailId(
+				session.getAttribute("emailId").toString()).getUserId();
+		Boolean otpMatch = otpService.verifyOtp(
+				this.otpService.getUserotpById(id), otpPassword);
+		return null;
+	}
+
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String addUser(
 			@ModelAttribute("user") @Valid UserRegistrationModel p,
@@ -733,18 +760,15 @@ public class UserController {
 		}
 	}
 
-	private boolean verifyEncryptedText(HttpServletRequest request) 
-	{
+	private boolean verifyEncryptedText(HttpServletRequest request) {
 		String randomString = request.getParameter("randomString");
 		String encryptedtext = request.getParameter("encrypedString");
 		boolean isCorrect = true;
-		try
-		{
-			isCorrect = userService.verifyByDecrypting(randomString, encryptedtext);
+		try {
+			isCorrect = userService.verifyByDecrypting(randomString,
+					encryptedtext);
 			return isCorrect;
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			return false;
 		}
 	}

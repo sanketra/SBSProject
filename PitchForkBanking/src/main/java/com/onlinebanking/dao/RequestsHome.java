@@ -300,4 +300,19 @@ public class RequestsHome {
 			throw re;
 		}
 	}
+	
+	public int getPendingAccountCreationRequests(String userId) {
+		try
+		{
+			Session session = sessionFactory.getCurrentSession();
+			SQLQuery query = session.createSQLQuery("SELECT * FROM Requests where fromUserId = :userId and type = :type and status = :status");
+			return query.addEntity(Requests.class)
+					.setParameter("userId", userId)
+					.setParameter("type", "createaccount")
+					.setParameter("status", "pending")
+					.list().size();
+		} catch (RuntimeException re) {
+			throw re;
+		}
+	}
 }

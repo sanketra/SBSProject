@@ -1,6 +1,8 @@
 package com.onlinebanking.models;
 
-import javax.validation.constraints.NotNull;
+import java.util.Date;
+
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -9,52 +11,49 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class UserRegistrationModel {
 
 	private String userId;
-	@NotEmpty @Email
+	@NotEmpty //@Email
 	private String emailId;
-	@NotEmpty
+	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
 	private String fname;
-	@NotEmpty
+	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
 	private String lname;
-	@NotEmpty
-	private String dob;
-	@NotEmpty
+	private Date dob;
+	@NotEmpty 
 	private String address;
-	@NotEmpty
+	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
 	private String city;
-	@NotEmpty
+	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
 	private String state;
 	@NotEmpty
 	private String password;
 	@NotEmpty
 	private String confirmPassword;
-	@Size(min=5, max=5)
+	@Size(min=5, max=5) @NotEmpty
 	private String zipcode;
-	@NotEmpty
+	@NotEmpty  //@Pattern(regexp = "^\\[0-9]{9}$")
 	private String ssn;
-	@NotEmpty
+	@NotEmpty //@Pattern(regexp="[0-9]{10}")
 	private String phoneno;
 	@NotEmpty
 	private String role;
 	@NotEmpty
 	private String ques1;
-	@NotEmpty
+	@NotEmpty //@Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer1;
-	@NotEmpty
+	@NotEmpty 
 	private String ques2;
-	@NotEmpty
+	@NotEmpty //@Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer2;
 	@NotEmpty
 	private String ques3;
-	@NotEmpty
+	@NotEmpty //@Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer3;
-	@NotNull
-	private int enabled = 0;
 	
-	public String getDob() {
+	public Date getDob() {
 		return dob;
 	}
 
-	public void setDob(String dob) {
+	public void setDob(Date dob) {
 		this.dob = dob;
 	}
 
@@ -223,14 +222,6 @@ public class UserRegistrationModel {
 
 	public void setPhoneno(String phoneno) {
 		this.phoneno = phoneno;
-	}
-	
-	public int getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(int enabled) {
-		this.enabled = enabled;
 	}
 
 }

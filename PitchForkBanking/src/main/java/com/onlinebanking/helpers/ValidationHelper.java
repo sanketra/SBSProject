@@ -53,7 +53,7 @@ public class ValidationHelper {
 		u.setEmailId(a.getEmailId());
 		u.setFname(a.getFname());
 		u.setLname(a.getLname());
-		u.setDob(new Date(a.getDob()));
+		u.setDob(a.getDob());
 		u.setAddress(a.getAddress());
 		u.setCity(a.getCity());
 		u.setState(a.getState());
@@ -68,7 +68,6 @@ public class ValidationHelper {
 		u.setAnswer1(a.getAnswer1());
 		u.setAnswer2(a.getAnswer2());
 		u.setAnswer3(a.getAnswer3());
-		u.setEnabled(a.getEnabled());
 		return u;
 	}
 	
