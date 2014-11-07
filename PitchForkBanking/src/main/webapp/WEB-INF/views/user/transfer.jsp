@@ -14,9 +14,14 @@
 			alert("Name must be filled out");
 			return false;
 		}
-		var namePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (namePattern.test(name) == true) {
+		var namePattern1 = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (namePattern1.test(name) == true) {
 			alert('Special characters are not allowed in Name');
+			return false;
+		}
+		var namePattern2 = /^[a-zA-Z ]*$/;
+		if (namePattern2.test(name) != true) {
+			alert('Only alphabets are allowed in Name');
 			return false;
 		}
 		// Account Number
@@ -25,9 +30,14 @@
 			alert("Account Number must be filled out");
 			return false;
 		}
-		var account_toPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (account_toPattern.test(account_to) == true) {
+		var account_toPattern1 = /[*|\":<>[\]{}`\\()';@&$]/;
+		if (account_toPattern1.test(account_to) == true) {
 			alert('Special characters are not allowed in Account Number');
+			return false;
+		}
+		var account_toPattern2 = /^[0-9]+$/;
+		if (account_toPattern2.test(account_to) != true) {
+			alert('Only numbers are allowed in Account Number');
 			return false;
 		}
 		// Email_Id
@@ -47,9 +57,14 @@
 			alert("Amount must be filled out");
 			return false;
 		}
-		var amountPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (amountPattern.test(amount) == true) {
+		var amountPattern1 = /[*|\":<>[\]{}`\\()';@&$]/;
+		if (amountPattern1.test(amount) == true) {
 			alert('Special characters are not allowed in amount');
+			return false;
+		}
+		var amountPattern2 = /^[0-9]+.?[0-9]+$/;
+		if (amountPattern2.test(amount) != true) {
+			alert('Only numbers are allowed in amount');
 			return false;
 		}
 	}
@@ -63,7 +78,7 @@
 			<tr>
 				<td>Name</td>
 				<td><input name="name" autocomplete="off" type="text"
-					class="input-block-level" placeholder="Account Holder Name" /></td>
+					class="input-block-level" placeholder="FirstName LastName" /></td>
 			</tr>
 			<tr>
 				<td>Account Number</td>
@@ -87,12 +102,12 @@
 						theme : 'clean'
 					};
 				</script> <script type="text/javascript"
-						src="https://www.google.com/recaptcha/api/challenge?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS">
+						src="https://www.google.com/recaptcha/api/challenge?k=6LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk">
 					
 				</script>
 					<noscript>
 						<iframe
-							src="https://www.google.com/recaptcha/api/noscript?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS"
+							src="https://www.google.com/recaptcha/api/noscript?k=66LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk"
 							height="260" width="400"></iframe>
 						<br>
 						<textarea name="recaptcha_challenge_field" rows="3" cols="40">

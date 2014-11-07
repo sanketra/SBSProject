@@ -1,6 +1,6 @@
 package com.onlinebanking.dao;
 
-// Generated Oct 21, 2014 6:59:51 PM by Hibernate Tools 3.4.0.CR1
+// Generated using hibernate tools
 
 import java.util.List;
 
@@ -130,6 +130,24 @@ public class TransactionHome {
 			List<Transaction> results = s.createSQLQuery(queryString).
 					addEntity(Transaction.class).
 					setParameter("id", id).
+					list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Transaction> getAllCriticalTransactions() {
+		log.debug("finding Critical Transaction Requests");
+		try {
+			String queryString = "Select * from transaction T where T.transactionStatus = 'pending' ";
+			Session s = sessionFactory.getCurrentSession();
+			List<Transaction> results = s.createSQLQuery(queryString).
+					addEntity(Transaction.class).
 					list();
 			log.debug("find by example successful, result size: "
 					+ results.size());

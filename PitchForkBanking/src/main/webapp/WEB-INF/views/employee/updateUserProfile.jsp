@@ -105,7 +105,6 @@ function validateForm() {
      }
 }
 </script>
-
 <c:url var="submitAction" value="/employee/updateUserProfile"></c:url>
 <div class="container">
 	<form:form name = "myForm" action="${submitAction}" onsubmit="return validateForm()" commandName="userProfile"
@@ -159,12 +158,12 @@ function validateForm() {
 						theme : 'clean'
 					};
 				</script> <script type="text/javascript"
-						src="https://www.google.com/recaptcha/api/challenge?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS">
+						src="https://www.google.com/recaptcha/api/challenge?k=6LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk">
 					
 				</script>
 					<noscript>
 						<iframe
-							src="https://www.google.com/recaptcha/api/noscript?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS"
+							src="https://www.google.com/recaptcha/api/noscript?k=6LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk"
 							height="260" width="400"></iframe>
 						<br>
 						<textarea name="recaptcha_challenge_field" rows="3" cols="40">

@@ -1,10 +1,16 @@
 package com.onlinebanking.helpers;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.PropertyConfigurator;
 
 import com.onlinebanking.controllers.UserController;
 
@@ -21,7 +27,7 @@ public class Logger {
 			instance = new Logger();
 			// TODO: Please configure to relative path.
 			// Also update log4j.xml to log to a file specified by relative path.
-			//PropertyConfigurator.configure("C:\\MyFiles\\FALL 2014\\SS\\Project\\PitchForkBanking\\src\\main\\resources\\log4j.properties");
+			//PropertyConfigurator.configure("C:\\Users\\Administrator\\Documents\\GitHub\\git\\SBSProject\\PitchForkBanking\\src\\main\\resources\\log4j.properties");
 		}
 		return instance;
 	}

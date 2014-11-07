@@ -42,7 +42,9 @@ body {
 </head>
 <body>
 	<div class="container">
-		<jsp:include page="common/response.jsp" />
+		<c:if test="${!empty response}">
+			<jsp:include page="common/response.jsp" />
+		</c:if>
 		<c:url var="newPasswordUrl" value="/setNewPassword"></c:url>
 		<form class="form-signin" action="${newPasswordUrl}" method="POST">
 			<h4 class="form-signin-heading">Set New Password</h4>

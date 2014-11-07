@@ -24,7 +24,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 	public boolean verifyCaptcha(String challenge, String uresponse,
 			String remoteAddress) {
 		ReCaptchaImpl captcha = new ReCaptchaImpl();
-		captcha.setPrivateKey("6LdU5vsSAAAAAPAyZqM1Bx3Kh12wdMvimkjC5Xqp");
+		captcha.setPrivateKey("6LfLUv0SAAAAAM9or63lxIkOI5n9fStxa2qdhsY8");
 		if (uresponse == null) {
 			return false;
 		}

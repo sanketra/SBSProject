@@ -12,10 +12,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Request Access</title>
+<title>Account List</title>
 </head>
 <body>
-
 <div class = "container">
 <c:url var="selectAction" value="/employee/viewUserTransactions"></c:url>
 <form action="${selectAction}" class="form-signin" method="POST">

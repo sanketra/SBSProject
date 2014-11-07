@@ -59,16 +59,7 @@ public class PKI {
 
 	private static void mailPfx(User u) throws Exception
 	{
-		PKI pki = null;
-		try
-		{
-			pki = new PKI();
-		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-		}
-		//String host = "smtp.gmail.com";
+		String host = "smtp.gmail.com";
 		Properties properties = System.getProperties();
 		properties.put("mail.smtp.host", "smtp.gmail.com");
 		properties.put("mail.smtp.socketFactory.port", "465");

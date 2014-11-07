@@ -3,15 +3,38 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ page import="net.tanesha.recaptcha.ReCaptcha"%>
 <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory"%>
+
+<title>PitchFork Bank - Credit</title>
+<!-- Validation script -->
+<script>
+	function validateForm() {
+		// Amount
+		var amount = document.forms["myForm"]["amount"].value;
+		if (amount == null || amount == "") {
+			alert("Amount must be filled out");
+			return false;
+		}
+		var amountPattern1 = /[*|\":<>[\]{}`\\()';@&$]/;
+		if (amountPattern1.test(amount) == true) {
+			alert('Special characters are not allowed in amount');
+			return false;
+		}
+		var amountPattern2 = /^[0-9]+.?[0-9]+$/;
+		if (amountPattern2.test(amount) != true) {
+			alert('Only numbers are allowed in amount');
+			return false;
+		}
+	}
+</script>
 <c:url var="submitAction" value="/user/credit"></c:url>
 <div class="container">
-	<form:form action="${submitAction}" class="form-horizontal"
-		method="POST">
+	<form:form name="myForm" action="${submitAction}"
+		onsubmit="return validateForm()" class="form-horizontal" method="POST">
 		<table class="table borderless">
 			<tr>
 				<td>Amount</td>
 				<td><input name="amount" autocomplete="off" type="text"
-					class="input-block-level" required="required" placeholder="Amount" /></td>
+					class="input-block-level" placeholder="Amount" /></td>
 			</tr>
 			<tr>
 				<td>Captcha</td>
@@ -20,12 +43,12 @@
 						theme : 'clean'
 					};
 				</script> <script type="text/javascript"
-						src="https://www.google.com/recaptcha/api/challenge?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS">
+						src="https://www.google.com/recaptcha/api/challenge?k=6LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk">
 					
 				</script>
 					<noscript>
 						<iframe
-							src="https://www.google.com/recaptcha/api/noscript?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS"
+							src="https://www.google.com/recaptcha/api/noscript?k=6LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk"
 							height="260" width="400"></iframe>
 						<br>
 						<textarea name="recaptcha_challenge_field" rows="3" cols="40">

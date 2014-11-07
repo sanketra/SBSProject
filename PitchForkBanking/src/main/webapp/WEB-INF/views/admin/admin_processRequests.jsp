@@ -10,6 +10,7 @@
 	response.setHeader("Expires", "0");
 %>
 
+<h3 align="center">Pending Requests</h3>
 <div class="container">
 	<c:url var="selectAction" value="/admin/admin_processRequests"></c:url>
 	<table class="table table-bordered">

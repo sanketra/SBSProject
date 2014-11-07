@@ -1,6 +1,6 @@
 package com.onlinebanking.models;
 
-// Generated Oct 19, 2014 4:55:42 PM by Hibernate Tools 3.4.0.CR1
+// Generated using hibernate tools
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
