@@ -10,11 +10,13 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,14 @@ public class UserController {
 	private AccountService accountService;
 	private TransactionService transactionService;
 	private OtpService otpService;
+	private MessageSource messageSource;
+	
+	
+	@Autowired(required = true)
+	@Qualifier(value = "messageSource")
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
 
 	@Autowired(required = true)
 	@Qualifier(value = "otpService")
@@ -84,15 +94,18 @@ public class UserController {
 
 	@RequestMapping(value = "/user/home", method = RequestMethod.GET)
 	public String handleRequest(Model model, HttpServletRequest request,
-			HttpServletResponse response) {
-		Logger.getinstance().logRequest(request);
+			HttpServletResponse response) {	
 		HttpSession session = request.getSession();
 		Authentication auth = SecurityContextHolder.getContext()
 				.getAuthentication();
 		User u = this.userService.getUserByEmailId(auth.getName());
-		session.setAttribute("userId", u.getUserId());
-		session.setAttribute("emailId", u.getEmailId());
-
+		if (u != null) {
+			session.setAttribute("userId", u.getUserId());
+			session.setAttribute("emailId", u.getEmailId());
+		} else if (session.getAttribute("emailId") != null) {
+			u = this.userService.getUserByEmailId((String) session.getAttribute("emailId"));
+		}
+		
 		// If the account_id is already selected, remove it so that user can
 		// select it again.
 		if (session.getAttribute("account_id") != null) {
@@ -110,8 +123,7 @@ public class UserController {
 			RequestMethod.GET, RequestMethod.POST })
 	public String handleDashboardRequest(Model model,
 			HttpServletRequest request, HttpServletResponse response,
-			final RedirectAttributes attributes) {
-		Logger.getinstance().logRequest(request);
+			final RedirectAttributes attributes) {							
 
 		HashMap<String, String> urls = URLHelper.analyseRequest(request);
 		HttpSession session = request.getSession();
@@ -198,7 +210,7 @@ public class UserController {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
 				}
-
+				Logger.getinstance().logRequest(request, "Transfer");
 				return "redirect:/user/transfer";
 			} else if (urls.get("url_2").toString().equals("credit")) {
 				String fromAccount = session.getAttribute("account_id")
@@ -222,7 +234,7 @@ public class UserController {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
 				}
-
+				Logger.getinstance().logRequest(request, "Credit	");
 				return "redirect:/user/credit";
 			} else if (urls.get("url_2").toString().equals("debit")) {
 				String fromAccount = session.getAttribute("account_id")
@@ -246,6 +258,7 @@ public class UserController {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
 				}
+				Logger.getinstance().logRequest(request, "Debit");
 				return "redirect:/user/debit";
 			} else if (urls.get("url_2").toString().equals("authorize")) {
 				// send otp
@@ -262,6 +275,7 @@ public class UserController {
 							request.getParameter("decline"));
 					session.setAttribute("approveordecline", "decline");
 				}
+				Logger.getinstance().logRequest(request, "Authorize		");
 				return "verifyOtp";
 			} else if (urls.get("url_2").toString().equals("requestaccount")) {
 				status = this.transactionService.createAccountCreationRequest();
@@ -335,14 +349,14 @@ public class UserController {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Please select an account to proceed!!"));
 			return "redirect:/user/home";
-		}
+		}	
 	}
 
 	@RequestMapping(value = "/user/payment", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String userPayment(HttpServletRequest request, Model model,
 			final RedirectAttributes attributes) {
-		Logger.getinstance().logRequest(request);
+		Logger.getinstance().logRequest(request, "Payment");
 		HttpSession session = request.getSession();
 		Response status;
 		int account_id = 0;
@@ -400,7 +414,7 @@ public class UserController {
 			RequestMethod.GET, RequestMethod.POST })
 	public String merchantRequestPayment(HttpServletRequest request,
 			Model model, final RedirectAttributes attributes) {
-		Logger.getinstance().logRequest(request);
+		Logger.getinstance().logRequest(request	, "Request Payment");
 		HttpSession session = request.getSession();
 		Response status;
 		int account_id = 0;
@@ -514,16 +528,22 @@ public class UserController {
 			@ModelAttribute("user") @Valid UserAppModel u,
 			BindingResult bindingResult, HttpServletRequest request,
 			final RedirectAttributes attributes) {
-
-		if (bindingResult.hasErrors()) {
-			attributes
-					.addFlashAttribute("response", new Response("error",
-							bindingResult.getFieldError().getObjectName()
-									+ " - "
-									+ bindingResult.getFieldError()
-											.getDefaultMessage()));
-			return "redirect:/user/profile/edit";
+		
+		for (Object object : bindingResult.getAllErrors()) {
+		    if(object instanceof FieldError) {
+		        FieldError fieldError = (FieldError) object;
+ 		        String message = messageSource.getMessage(fieldError, null);
+		        attributes.addFlashAttribute("response", new Response("error",
+						message));
+		        return "redirect:/user/profile/edit";
+		    }
 		}
+			
+		
+
+		
+			
+		
 
 		// get the responses from the user
 		String challenge = request.getParameter("recaptcha_challenge_field");
@@ -747,11 +767,17 @@ public class UserController {
 			@ModelAttribute("user") @Valid UserRegistrationModel p,
 			BindingResult bindingResult, final RedirectAttributes attributes) {
 
-		if (bindingResult.hasErrors()) {
-			attributes.addFlashAttribute("response", new Response("error",
-					bindingResult.getAllErrors().get(0).getDefaultMessage()));
-			return "redirect:/registration";
+		for (Object object : bindingResult.getAllErrors()) {
+		    if(object instanceof FieldError) {
+		        FieldError fieldError = (FieldError) object;
+ 		        String message = messageSource.getMessage(fieldError, null);
+		        attributes.addFlashAttribute("response", new Response("error",
+						message));
+				return "redirect:/registration";
+		    }
 		}
+			
+		
 
 		if (p.getUserId() != null
 				&& this.userService.getUserById(p.getUserId()) != null) {

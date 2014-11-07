@@ -1,5 +1,6 @@
 package com.onlinebanking.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -7,6 +8,7 @@ import javax.transaction.Transactional;
 import com.onlinebanking.dao.AccountHome;
 import com.onlinebanking.dao.UserHome;
 import com.onlinebanking.models.Account;
+import com.onlinebanking.models.Role;
 import com.onlinebanking.models.User;
 
 public class AccountServiceImpl implements AccountService{
@@ -40,13 +42,15 @@ public class AccountServiceImpl implements AccountService{
 	@Transactional
 	public List<Account> getAllUserAccounts() {
 		List<Account> accounts = accountHome.getAllUserAccounts();
-		
+		List<Account> acc = new ArrayList<Account>();
 		for(Account account:accounts)
 		{
 			User u = this.userHome.findById(account.getUser().getUserId());
-			account.setUser(u);
+			if(u.getRole().contentEquals(Role.USER) || u.getRole().contentEquals(Role.MERCHANT)){
+				account.setUser(u);
+				acc.add(account);
+			}
 		}
-		
-		return accounts;
+		return acc;
 	}
 }

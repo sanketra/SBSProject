@@ -1,10 +1,5 @@
 package com.onlinebanking.helpers;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -14,7 +9,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import com.onlinebanking.controllers.UserController;
 
-public class Logger {
+public class Logger {						
 
 	public static Logger instance;
 	private static final Log log = LogFactory.getLog(UserController.class);
@@ -27,18 +22,16 @@ public class Logger {
 			instance = new Logger();
 			// TODO: Please configure to relative path.
 			// Also update log4j.xml to log to a file specified by relative path.
-			//PropertyConfigurator.configure("C:\\Users\\Administrator\\Documents\\GitHub\\git\\SBSProject\\PitchForkBanking\\src\\main\\resources\\log4j.properties");
+			PropertyConfigurator.configure("C:\\Users\\user\\git\\SBSProject\\PitchForkBanking\\src\\main\\resources\\log4j.properties");																				
 		}
-		return instance;
+		return instance;	
 	}
 	
-	public void logRequest(HttpServletRequest request) {
+	public void logRequest(HttpServletRequest request, String event	) {
 		HttpSession session = request.getSession();
 		log.info("*********************************");
-		log.info("Session Id: " + session.getId());
-		log.info("User Id: " + session.getAttribute("userId"));
 		log.info("Email Id: " + session.getAttribute("emailId"));
-		log.info("My account Id: " + session.getAttribute("account_id"));
+		log.info("Event: " + event										);
 		log.info("********************************");
 	}
 

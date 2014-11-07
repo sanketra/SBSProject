@@ -1,7 +1,5 @@
 package com.onlinebanking.models;
 
-import java.util.Date;
-
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -11,49 +9,50 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class UserRegistrationModel {
 
 	private String userId;
-	@NotEmpty //@Email
+	@NotEmpty @Email
 	private String emailId;
-	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String fname;
-	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String lname;
-	private Date dob;
-	@NotEmpty 
+	@NotEmpty @Pattern(regexp="(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)")
+	private String dob;
+	@NotEmpty @Pattern(regexp= "[a-zA-Z0-9]+") 
 	private String address;
-	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String city;
-	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String state;
-	@NotEmpty
+	@NotEmpty  @Pattern(regexp= "^(?=.*[A-Z].*)(?=.*[!@#$&*].*)(?=.*[0-9].*)(?=.*[a-z].*).{8}$")
 	private String password;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp= "^(?=.*[A-Z].*)(?=.*[!@#$&*].*)(?=.*[0-9].*)(?=.*[a-z].*).{8}$")
 	private String confirmPassword;
-	@Size(min=5, max=5) @NotEmpty
+	@Size(min=5, max=5) @NotEmpty @Pattern(regexp = "[0-9]{5}")
 	private String zipcode;
-	@NotEmpty  //@Pattern(regexp = "^\\[0-9]{9}$")
+	@NotEmpty  @Pattern(regexp = "[0-9]{9}")
 	private String ssn;
-	@NotEmpty //@Pattern(regexp="[0-9]{10}")
+	@NotEmpty @Pattern(regexp="[0-9]{10}")
 	private String phoneno;
-	@NotEmpty
+	//@NotEmpty
 	private String role;
 	@NotEmpty
 	private String ques1;
-	@NotEmpty //@Pattern(regexp="[a-zA-Z0-9]+")
+	@NotEmpty @Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer1;
 	@NotEmpty 
 	private String ques2;
-	@NotEmpty //@Pattern(regexp="[a-zA-Z0-9]+")
+	@NotEmpty @Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer2;
 	@NotEmpty
 	private String ques3;
-	@NotEmpty //@Pattern(regexp="[a-zA-Z0-9]+")
+	@NotEmpty @Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer3;
 	
-	public Date getDob() {
+	public String getDob() {
 		return dob;
 	}
 
-	public void setDob(Date dob) {
+	public void setDob(String dob) {
 		this.dob = dob;
 	}
 
