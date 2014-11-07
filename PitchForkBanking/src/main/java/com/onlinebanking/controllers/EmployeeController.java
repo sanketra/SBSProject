@@ -177,7 +177,6 @@ public class EmployeeController {
 		    if(object instanceof FieldError) {
 		        FieldError fieldError = (FieldError) object;
  		        String message = messageSource.getMessage(fieldError, null);
-		        System.out.println(message);
 		        model.addAttribute("response", new Response("error",message));
 		        model.addAttribute("userProfile", userAppModel);
 				model.addAttribute("contentView", "updateUserProfile");
@@ -235,7 +234,6 @@ public class EmployeeController {
 		    if(object instanceof FieldError) {
 		        FieldError fieldError = (FieldError) object;
  		        String message = messageSource.getMessage(fieldError, null);
-		        System.out.println(message);
 		        model.addAttribute("response", new Response("error",message));
 		        model.addAttribute("userRequest", userRequest);
 				model.addAttribute("contentView", "requestAccess");
@@ -422,7 +420,6 @@ public class EmployeeController {
 		    if(object instanceof FieldError) {
 		        FieldError fieldError = (FieldError) object;
  		        String message = messageSource.getMessage(fieldError, null);
-		        System.out.println(message);
 		        model.addAttribute("response", new Response("error",message));
 		        model.addAttribute("userTransaction", transactionAppModel);
 				model.addAttribute("contentView", "updateUserTransactions");

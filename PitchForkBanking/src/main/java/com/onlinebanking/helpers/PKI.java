@@ -68,9 +68,9 @@ public class PKI {
 		{
 			System.out.println(e);
 		}
-		String host = "smtp.gmail.com";
+		//String host = "smtp.gmail.com";
 		Properties properties = System.getProperties();
-		properties.put("mail.smtp.host", host);
+		properties.put("mail.smtp.host", "smtp.gmail.com");
 		properties.put("mail.smtp.socketFactory.port", "465");
 		properties.put("mail.smtp.socketFactory.class",
 				"javax.net.ssl.SSLSocketFactory");

@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -14,39 +15,39 @@ public class EmployeeRegistrationModel {
 	private String userId;
 	@NotEmpty @Email
 	private String emailId;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String fname;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String lname;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp="(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)")
 	private String dob;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp= "[a-zA-Z0-9]+")
 	private String address;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String city;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String state;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp= "^(?=.*[A-Z].*)(?=.*[!@#$&*].*)(?=.*[0-9].*)(?=.*[a-z].*).{8}$")
 	private String password = "newpassword";
-	@Size(min=5, max=5)
+	@Size(min=5, max=5) @NotEmpty @Pattern(regexp="[0-9]{5}")
 	private String zipcode;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp = "[0-9]{9}")
 	private String ssn;
-	@NotEmpty
+	@NotEmpty @Pattern(regexp = "[0-9]{10}")
 	private String phoneno;
 	@NotEmpty
 	private String role = "Employee";
 	@NotEmpty
 	private String ques1 = "q1";
-	@NotEmpty
+	@NotEmpty  @Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer1 = "a1";
 	@NotEmpty
 	private String ques2 = "q2";
-	@NotEmpty
+	@NotEmpty  @Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer2 = "a2";
 	@NotEmpty
 	private String ques3 = "q3";
-	@NotEmpty
+	@NotEmpty  @Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer3 = "a3";
 	@NotNull
 	private int enabled = 1;
