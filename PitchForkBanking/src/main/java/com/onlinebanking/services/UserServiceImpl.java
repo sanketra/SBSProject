@@ -125,7 +125,6 @@ public class UserServiceImpl implements UserService {
 			a.setAmount(1000);
 			a.setUser(p);
 			this.accountHome.persist(a);
-			this.generatePublicPrivateKeyForUser(p);
 			return new Response("success", "New account created successfully!!");
 		} catch (Exception e) {
 			return new Response("error", "Failed to create New Account for User!!");
