@@ -19,7 +19,7 @@
 			alert('Special characters are not allowed in Name');
 			return false;
 		}
-		var namePattern2 = /^[a-zA-Z]*$/;
+		var namePattern2 = /^[a-zA-Z ]*$/;
 		if (namePattern2.test(name) != true) {
 			alert('Only alphabets are allowed in Name');
 			return false;
