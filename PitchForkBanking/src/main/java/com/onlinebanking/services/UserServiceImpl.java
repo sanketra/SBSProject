@@ -64,12 +64,17 @@ public class UserServiceImpl implements UserService {
 			a.setAmount(1000);
 			a.setUser(p);
 			this.accountHome.persist(a);
-			this.generatePublicPrivateKeyForUser(p);
-			return new Response("success", "User registered successfully!!");
-		} catch (Exception e) {
-			System.out.println(e);
+		} catch (RuntimeException e) {
 			return new Response("error", "Failed to register user!!");
 		}
+		
+		try {
+			this.generatePublicPrivateKeyForUser(p);
+		} catch (Exception e) {
+			return new Response("error", "User registered, but failed to generate PKI.");
+		}
+		
+		return new Response("success", "User registered successfully!!");
 	}
 
 	@Override

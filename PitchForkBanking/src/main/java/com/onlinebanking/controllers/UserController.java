@@ -587,10 +587,11 @@ public class UserController {
 	}
 	
 	@ExceptionHandler(Exception.class)
-	public ModelAndView handleAllException(Exception ex, HttpServletRequest request) {
+	public String handleAllException(Exception ex, 
+			HttpServletRequest request) {
 		ModelAndView model = new ModelAndView("denied");
-		model.addObject("Response", new Response("error", "Exception"));
-		return model;
+		model.addObject("response", new Response("error", "Illegal Operation. Please go back & enter correct details."));
+		return "redirect:/denied";
 	}
 
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
