@@ -35,23 +35,21 @@
 			<tr>
 				<td>From Account</td>
 				<td><form:input path="fromAcountNum" class="input-xlarge"
-
 						placeholder="From Account" disabled="true" /></td>
-						<form:hidden path="fromAcountNum" />					
+				<form:hidden path="fromAcountNum" />
 			</tr>
 			<tr>
 				<td>To Account</td>
 				<td><form:input path="toAccountNum" class="input-xlarge"
-
 						placeholder="To Account" disabled="true" /></td>
 
-						<form:hidden path="toAccountNum" />
+				<form:hidden path="toAccountNum" />
 			</tr>
 			<tr>
 				<td>Type of Transaction</td>
 				<td><form:input path="transactionType" class="input-xlarge"
 						placeholder="Transaction Type" disabled="true" /></td>
-						<form:hidden path="transactionType" />
+				<form:hidden path="transactionType" />
 			</tr>
 			<tr>
 				<td>Amount</td>
@@ -62,7 +60,7 @@
 				<td>Time</td>
 				<td><form:input path="transactionTime" class="input-xlarge"
 						placeholder="Time" disabled="true" /></td>
-						<form:hidden path="transactionTime" />
+				<form:hidden path="transactionTime" />
 			</tr>
 			<tr>
 				<td>Status</td>
@@ -82,12 +80,12 @@
 						theme : 'clean'
 					};
 				</script> <script type="text/javascript"
-						src="https://www.google.com/recaptcha/api/challenge?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS">
+						src="https://www.google.com/recaptcha/api/challenge?k=6LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk">
 					
 				</script>
 					<noscript>
 						<iframe
-							src="https://www.google.com/recaptcha/api/noscript?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS"
+							src="https://www.google.com/recaptcha/api/noscript?k=6LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk"
 							height="260" width="400"></iframe>
 						<br>
 						<textarea name="recaptcha_challenge_field" rows="3" cols="40">

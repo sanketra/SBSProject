@@ -56,7 +56,7 @@ public class ValidationHelper {
 		u.setEmailId(a.getEmailId());
 		u.setFname(a.getFname());
 		u.setLname(a.getLname());
-		u.setDob(a.getDob());
+		u.setDob(new Date(a.getDob()));
 		u.setAddress(a.getAddress());
 		u.setCity(a.getCity());
 		u.setState(a.getState());
