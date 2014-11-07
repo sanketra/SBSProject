@@ -14,9 +14,14 @@
 			alert("First name must be filled out");
 			return false;
 		}
-		var fnamePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (fnamePattern.test(fname) == true) {
+		var fnamePattern1 = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (fnamePattern1.test(fname) == true) {
 			alert('Special characters are not allowed in First Name');
+			return false;
+		}
+		var fnamePattern2 = /^[a-zA-Z ]*$/;
+		if (fnamePattern2.test(fname) != true) {
+			alert('Only alphabets are allowed in Name');
 			return false;
 		}
 		// Last Name
@@ -25,9 +30,14 @@
 			alert("Last name must be filled out");
 			return false;
 		}
-		var lnamePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (lnamePattern.test(lname) == true) {
+		var lnamePattern1 = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (lnamePattern1.test(lname) == true) {
 			alert('Special characters are not allowed in Last Name');
+			return false;
+		}
+		var lnamePattern2 = /^[a-zA-Z ]*$/;
+		if (lnamePattern2.test(lname) != true) {
+			alert('Only alphabets are allowed in Name');
 			return false;
 		}
 		// Email_Id
@@ -58,9 +68,14 @@
 			alert("City must be filled out");
 			return false;
 		}
-		var cityPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (cityPattern.test(city) == true) {
+		var cityPattern1 = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (cityPattern1.test(city) == true) {
 			alert('Special characters are not allowed in City');
+			return false;
+		}
+		var cityPattern2 = /^[a-zA-Z ]*$/;
+		if (cityPattern2.test(city) != true) {
+			alert('Only alphabets are allowed in City');
 			return false;
 		}
 		// State
@@ -69,9 +84,14 @@
 			alert("State must be filled out");
 			return false;
 		}
-		var statePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (statePattern.test(state) == true) {
+		var statePattern1 = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (statePattern1.test(state) == true) {
 			alert('Special characters are not allowed in State');
+			return false;
+		}
+		var statePattern2 = /^[a-zA-Z ]*$/;
+		if (statePattern2.test(state) != true) {
+			alert('Only alphabets are allowed in State');
 			return false;
 		}
 		// Zipcode
@@ -80,9 +100,14 @@
 			alert("Zipcode must be filled out");
 			return false;
 		}
-		var zipPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (zipPattern.test(zipcode) == true) {
+		var zipPattern1 = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (zipPattern1.test(zipcode) == true) {
 			alert('Special characters are not allowed in Zipcode');
+			return false;
+		}
+		var zipPattern2 = /^[0-9]+$/;
+		if (zipPattern2.test(zipcode) != true) {
+			alert('Only numbers are allowed in Zipcode');
 			return false;
 		}
 		// Phone Number
@@ -91,9 +116,14 @@
 			alert("Phone number must be filled out");
 			return false;
 		}
-		var phonePattern = /^[0-9]{3}\-?[0-9]{3}\-?[0-9]{4}$/;
-		if (phonePattern.test(phoneno) != true) {
+		var phonePattern1 = /^[0-9]{3}\-?[0-9]{3}\-?[0-9]{4}$/;
+		if (phonePattern1.test(phoneno) != true) {
 			alert("Enter a valid Phone number");
+			return false;
+		}
+		var phonePattern2 = /^[0-9]+$/;
+		if (phonePattern2.test(phoneno) != true) {
+			alert('Only numbers are allowed in Phone Number');
 			return false;
 		}
 	}
