@@ -1,8 +1,11 @@
 package com.onlinebanking.helpers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import com.onlinebanking.dao.AccountHome;
@@ -75,7 +78,13 @@ public class ValidationHelper {
 		u.setEmailId(a.getEmailId());
 		u.setFname(a.getFname());
 		u.setLname(a.getLname());
-		u.setDob(new Date(a.getDob()));
+		Date dob = new Date();
+		try {
+			dob = new SimpleDateFormat("MM/DD/YYYY", Locale.ENGLISH).parse(a.getDob());
+		} catch (ParseException e) {
+			System.out.print("Taking today's date.");
+		}
+		u.setDob(dob);
 		u.setAddress(a.getAddress());
 		u.setCity(a.getCity());
 		u.setState(a.getState());
