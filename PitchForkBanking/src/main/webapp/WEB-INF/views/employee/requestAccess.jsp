@@ -51,7 +51,6 @@
 
 	}
 </script>
-
 <c:url var="submitAction" value="/employee/submitRequest"></c:url>
 <div class="container" align="right">
 	<form:form name="requestForm" action="${submitAction}"

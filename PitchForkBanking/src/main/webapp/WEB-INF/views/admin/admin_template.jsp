@@ -54,8 +54,7 @@ body {
 </head>
 <body id="body-site">
 	<div class="container-fluid" align="right">
-	<jsp:include page="../admin/admin_header.jsp" /> 
-<%-- 	<jsp:include page="../common/header.jsp" /> --%>
+		<jsp:include page="../admin/admin_header.jsp" />
 	</div>
 	<div class="container-fluid">
 		<div class="row-fluid">
@@ -63,11 +62,13 @@ body {
 				<jsp:include page="admin_sidebar.jsp" />
 			</div>
 			<div class="span10">
-			<article id="content" class="span10">
-				<jsp:include page="../common/response.jsp" />
-				<jsp:include page="${contentView}.jsp" />
-			</article>
-				
+				<article id="content" class="span10">
+					<c:if test="${!empty response}">
+						<jsp:include page="../common/response.jsp" />
+					</c:if>
+					<jsp:include page="${contentView}.jsp" />
+				</article>
+
 			</div>
 		</div>
 	</div>

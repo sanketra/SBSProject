@@ -76,16 +76,6 @@ public class AdminController {
 		return "admin/admin_template";
 	}
 
-	/*
-	 * @RequestMapping(value = "/admin/post/{to_do}", method =
-	 * RequestMethod.POST) public String
-	 * handleAdminPostRequests(HttpServletRequest request, HttpServletResponse
-	 * response ,Model model, final RedirectAttributes redirectAttributes
-	 * ,@PathVariable String to_do ){
-	 * 
-	 * return ""; }
-	 */
-
 	@RequestMapping(value = "/admin/newUsers", method = RequestMethod.GET)
 	public String newUsers(Model model) {
 		List<User> newUsers = userService.listNewUsers();
@@ -304,14 +294,15 @@ public class AdminController {
 	@RequestMapping(value="/admin/admin_editUserTransaction", method = RequestMethod.POST)
 	public String editUserTransaction(HttpServletRequest request, Model model, final RedirectAttributes attributes)
 	{
+		Response status;
 		try
 		{
 			if(request.getParameter("submit").equalsIgnoreCase("delete"))
 			{
 				String transactionId = request.getParameter("transaction_id");
 				Transaction transaction = transactionService.getTransaction(transactionId);
-				transactionService.deleteTransaction(transaction);
-				attributes.addFlashAttribute("response", new Response("success", "deleted transaction"));
+				status = transactionService.deleteTransaction(transaction);
+				attributes.addFlashAttribute("response", status);
 				return "redirect:/admin/admin_accountTransactions";
 			}
 			else if(request.getParameter("submit").equalsIgnoreCase("update"))
@@ -395,18 +386,18 @@ public class AdminController {
 			
 			User u = new User();
 			u = ValidationHelper.getUserFromEmployeeRegistrationModel(p, u);
-			userService.sendUniquePassword(u.getPassword(), u.getEmailId());
-			
-			if (this.userService.getUserById(p.getUserId()) == null) {
-				// new person, add it
-				this.userService.addUser(u);
-			} else {
-				// existing person, call update
-				this.userService.updateUser(u);
-			}
+			Response status = userService.sendUniquePassword(u.getPassword(), u.getEmailId());
+			if (status.getStatus().contentEquals("success")) {
 
-			attributes.addFlashAttribute("response", new Response("success",
-					"Account registration successful!!"));
+				if (this.userService.getUserById(p.getUserId()) == null) {
+					// new person, add it
+					status = this.userService.addUser(u);
+				} else {
+					// existing person, call update
+					status = this.userService.updateUser(u);
+				}
+			}
+			attributes.addFlashAttribute("response", status);
 		}
 
 		else

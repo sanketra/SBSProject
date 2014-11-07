@@ -591,7 +591,9 @@ public class TransactionServiceImpl implements TransactionService {
 			return new Response("error", "invalid transaction details");
 		}
 		Account toAcc = transaction.getAccountByToAccountNum();
+		toAcc = accountHome.findById(toAcc.getAccountNum());
 		Account fromAcc = transaction.getAccountByFromAcountNum();
+		fromAcc = accountHome.findById(fromAcc.getAccountNum());
 		Double amount = transaction.getTransactionAmount();
 		String transactionType = transaction.getTransactionType();
 		
@@ -692,8 +694,7 @@ public class TransactionServiceImpl implements TransactionService {
 			this.requestsHome.merge(t);
 			return new Response("success", "Request approved!");
 		} else {
-			t.setStatus(RequestStatus.DECLINED);
-			this.requestsHome.merge(t);
+			this.requestsHome.delete(t);
 			return new Response("success", "Request declined!");
 		}
 	}

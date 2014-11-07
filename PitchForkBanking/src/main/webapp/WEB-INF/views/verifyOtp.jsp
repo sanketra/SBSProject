@@ -42,12 +42,15 @@ body {
 </head>
 <body>
 	<div class="container">
-		<jsp:include page="common/response.jsp" />
+		<c:if test="${!empty response}">
+			<jsp:include page="common/response.jsp" />
+		</c:if>
 		<c:url var="verifyOtp" value="/verifyOtp"></c:url>
 		<form class="form-signin" action="${verifyOtp}" method="POST">
 			<h4 class="form-signin-heading">Verify OTP</h4>
-			<br>(please check mail for one time password)<br><br><input
-				name="otpPassword" autocomplete="off" type="text"
+			<br>(please check mail for one time password)<br>
+			<br>
+			<input name="otpPassword" autocomplete="off" type="text"
 				class="input-block-level" required="required"
 				placeholder="one time password" /> <br> <input type="submit"
 				value="Verify" class="btn btn-large btn-primary" />
