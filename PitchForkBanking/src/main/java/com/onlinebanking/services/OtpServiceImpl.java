@@ -58,7 +58,6 @@ public class OtpServiceImpl implements OtpService {
 			userotpHome.persist(userotpObj);
 		}
 		// Send OTP via Email to the requester
-		final int[] CHOICES = { 1, 2, 3 };
 		int choice = random.nextInt(10000);
 		choice = choice % 3;
 		System.out.println(choice);
@@ -133,7 +132,8 @@ public class OtpServiceImpl implements OtpService {
 					new javax.mail.Authenticator() {
 						protected PasswordAuthentication getPasswordAuthentication() {
 							return new PasswordAuthentication(
-									"pitchforkbank2@gmail.com", "softwaresecurity");
+									"pitchforkbank2@gmail.com",
+									"softwaresecurity");
 						}
 					});
 			try {
