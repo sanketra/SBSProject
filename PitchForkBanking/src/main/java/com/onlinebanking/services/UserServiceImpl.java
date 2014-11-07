@@ -248,7 +248,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public void sendUniquePassword(String otp, String emailId) {
+	public Response sendUniquePassword(String otp, String emailId) {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port", "465");
@@ -273,8 +273,10 @@ public class UserServiceImpl implements UserService {
 			message.setText("Dear New Employee," + "\n\nYour New Password is " + otp);
 			Transport.send(message);
 		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+			return new Response("error", "Email not sent!");
 		}
+		
+		return new Response("success", "Email Sent!");
 	}
 	
 	private void generatePublicPrivateKeyForUser(User u) throws Exception
