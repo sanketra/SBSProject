@@ -76,7 +76,7 @@
 						theme : 'clean'
 					};
 				</script> <script type="text/javascript"
-						src="https://www.google.com/recaptcha/api/challenge?k=66LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk">
+						src="https://www.google.com/recaptcha/api/challenge?k=6LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk">
 					
 				</script>
 					<noscript>

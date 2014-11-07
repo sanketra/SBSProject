@@ -14,7 +14,7 @@ public interface UserService {
 	public List<User> listCustomers();
 	public List<User> listEmployees();
 	public User getUserById(String id);
-	public void removeUser(String id);
+	public Response removeUser(String id);
 	public User getUserByEmailId(String emailId);
 	public Response isValidUserAccount(int accountNo, String userId);
 	public Response isValidAccount(int accountNo);

@@ -177,12 +177,12 @@ public class AdminController {
 	@RequestMapping(value = "/admin/admin_customerList", method = RequestMethod.POST)
 	public String editCustomer(HttpServletRequest request, Model model,
 			final RedirectAttributes attributes) {
+		Response status;
 		if (request.getParameter("submit").equalsIgnoreCase("delete")) {
 			String emailId = request.getParameter("email_Id");
 			User u = userService.getUserByEmailId(emailId);
-			userService.removeUser(u.getUserId());
-			attributes.addFlashAttribute("response", new Response("success",
-					"deleted user"));
+			status = userService.removeUser(u.getUserId());
+			attributes.addFlashAttribute("response", status);
 			return "redirect:/admin/customerList";
 		} else if (request.getParameter("submit").equalsIgnoreCase("update")) {
 			String emailId = request.getParameter("email_Id");
@@ -201,6 +201,7 @@ public class AdminController {
 			@ModelAttribute("userProfile") UserAppModel userAppModel,
 			HttpServletRequest request, Model model,
 			final RedirectAttributes attributes) {
+		Response status;
 		User u = userService.getUserById(userAppModel.getUserId());
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String uresponse = request.getParameter("recaptcha_response_field");
@@ -218,7 +219,8 @@ public class AdminController {
 			u.setState(userAppModel.getState());
 			u.setZipcode(userAppModel.getZipcode());
 			u.setPhoneno(userAppModel.getPhoneno());
-			userService.updateUser(u);
+			status = userService.updateUser(u);
+			attributes.addFlashAttribute("response", status);
 		}
 		// Wrong Captcha
 		else {
@@ -228,9 +230,8 @@ public class AdminController {
 			model.addAttribute("contentView", "admin_updateUserProfile");
 			return "admin/admin_template";
 		}
-		attributes.addFlashAttribute("response", new Response("success",
-				"Profile updated successflly!"));
-		return "redirect:/admin/customerList";
+		
+		return "redirect:/admin/admin_home";
 	}
 
 	@RequestMapping(value = "/admin/employeeList", method = RequestMethod.GET)
@@ -244,12 +245,12 @@ public class AdminController {
 	@RequestMapping(value = "/admin/admin_employeeList", method = RequestMethod.POST)
 	public String editEmployee(HttpServletRequest request, Model model,
 			final RedirectAttributes attributes) {
+		Response status;
 		if (request.getParameter("submit").equalsIgnoreCase("delete")) {
 			String emailId = request.getParameter("email_Id");
 			User u = userService.getUserByEmailId(emailId);
-			userService.removeUser(u.getUserId());
-			attributes.addFlashAttribute("response", new Response("success",
-					"deleted employee"));
+			status = userService.removeUser(u.getUserId());
+			attributes.addFlashAttribute("response", status);
 			return "redirect:/admin/employeeList";
 		} else if (request.getParameter("submit").equalsIgnoreCase("update")) {
 			String emailId = request.getParameter("email_Id");
@@ -282,7 +283,7 @@ public class AdminController {
 								.parseInt(accountId));
 			}
 		} catch (Exception e) {
-			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error", "Error while accessing user acccount transaction"));
 			return "redirect:/admin/admin_accountTransactions";
 		}
 		model.addAttribute("transactionList", transactions);
@@ -321,7 +322,7 @@ public class AdminController {
 		}
 		catch(Exception e)
 		{
-			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error", "Error While editing user transaction!"));
 			return "redirect:/admin/admin_accountTransactions";
 		}
 	}
@@ -329,6 +330,7 @@ public class AdminController {
 	@RequestMapping(value="/admin/admin_updateUserTransaction", method = RequestMethod.POST)
 	public String updateUserTransaction(@ModelAttribute("userTransaction") TransactionAppModel transactionAppModel, HttpServletRequest request,Model model, final RedirectAttributes attributes)
 	{
+		Response status;
 		try
 		{
 			String challenge = request.getParameter("recaptcha_challenge_field");
@@ -338,8 +340,8 @@ public class AdminController {
 					uresponse, remoteAddress);
 			if (verifyStatus == true)
 			{
-			transactionService.updateTransaction(transactionAppModel);
-			attributes.addFlashAttribute("response", new Response("success", "updated transaction"));
+				status = transactionService.updateTransaction(transactionAppModel);
+				attributes.addFlashAttribute("response", status);
 			}
 			else
 			{
@@ -352,7 +354,7 @@ public class AdminController {
 		}
 		catch(Exception e)
 		{
-			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error", "Error While updating transaction"));
 			return "redirect:/admin/admin_accountTransactions";
 		}
 	}
@@ -446,7 +448,7 @@ public class AdminController {
 	}
 		catch(Exception e)
 		{
-			attributes.addFlashAttribute("response", new Response("error", "Error occurred"));
+			attributes.addFlashAttribute("response", new Response("error", "Error while processing Critical Transaction!"));
 			return "redirect:/admin/processCriticalTransactionRequests";
 		}
 

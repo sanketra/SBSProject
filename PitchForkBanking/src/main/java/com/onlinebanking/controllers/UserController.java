@@ -99,9 +99,13 @@ public class UserController {
 		Authentication auth = SecurityContextHolder.getContext()
 				.getAuthentication();
 		User u = this.userService.getUserByEmailId(auth.getName());
-		session.setAttribute("userId", u.getUserId());
-		session.setAttribute("emailId", u.getEmailId());
-
+		if (u != null) {
+			session.setAttribute("userId", u.getUserId());
+			session.setAttribute("emailId", u.getEmailId());
+		} else if (session.getAttribute("emailId") != null) {
+			u = this.userService.getUserByEmailId((String) session.getAttribute("emailId"));
+		}
+		
 		// If the account_id is already selected, remove it so that user can
 		// select it again.
 		if (session.getAttribute("account_id") != null) {
