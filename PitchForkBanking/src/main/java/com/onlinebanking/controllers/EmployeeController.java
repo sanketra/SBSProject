@@ -164,7 +164,7 @@ public class EmployeeController {
 		{
 			model.addAttribute("response", new Response("error", "Encrypted string not proper"));
 			String newRandomString = PKI.generateRandomString();
-			model.addAttribute("randomString", randomString);
+			model.addAttribute("randomString", newRandomString);
 			model.addAttribute("contentView", "publicKeyVerificationProfile"); 
 			return "employee/emp_template";
 		}
@@ -408,7 +408,7 @@ public class EmployeeController {
 		{
 			model.addAttribute("response", new Response("error", "Encrypted string not proper"));
 			String newRandomString = PKI.generateRandomString();
-			model.addAttribute("randomString", randomString);
+			model.addAttribute("randomString", newRandomString);
 			model.addAttribute("contentView", "publicKeyVerificationTransaction"); 
 			return "employee/emp_template";
 		}

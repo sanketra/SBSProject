@@ -65,7 +65,7 @@ body {
 			<article id="content" class="span10">
 				<c:if test="${!empty response}">
 						<jsp:include page="../common/response.jsp" />
-					</c:if>
+				</c:if>
 				<jsp:include page="${contentView}.jsp" />
 			</article>
 				

@@ -14,8 +14,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 
 import com.onlinebanking.models.Requests;
-import com.onlinebanking.models.Role;
-import com.onlinebanking.models.User;
 
 /**
  * Home object for domain model class Requests.

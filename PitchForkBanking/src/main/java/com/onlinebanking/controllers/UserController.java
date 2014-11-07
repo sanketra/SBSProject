@@ -245,8 +245,8 @@ public class UserController {
 				} else {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
-					return "redirect:/user/debit";
 				}
+				return "redirect:/user/debit";
 			} else if (urls.get("url_2").toString().equals("authorize")) {
 				// send otp
 				otpService.sendOtp(
@@ -263,20 +263,6 @@ public class UserController {
 					session.setAttribute("approveordecline", "decline");
 				}
 				return "verifyOtp";
-
-				// if (request.getParameter("approve") != null) {
-				// status = this.transactionService.updateAccessRequest(
-				// request.getParameter("approve"), "approve");
-				// attributes.addFlashAttribute("response", status);
-				// return "redirect:/user/authorize";
-				// } else if (request.getParameter("decline") != null) {
-				// status = this.transactionService.updateAccessRequest(
-				// request.getParameter("decline"), "decline");
-				// attributes.addFlashAttribute("response", status);
-				// return "redirect:/user/authorize";
-				// }
-				//
-				// return "redirect:/user/authorize";
 			} else if (urls.get("url_2").toString().equals("requestaccount")) {
 				status = this.transactionService.createAccountCreationRequest();
 				attributes.addFlashAttribute("response", status);
