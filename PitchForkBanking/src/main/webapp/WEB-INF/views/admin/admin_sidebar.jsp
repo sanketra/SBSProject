@@ -16,6 +16,8 @@
 		<li><a
 			href="${pageContext.request.contextPath}/admin/processNewAccountRequests">New Account Requests</a></li>
 		<li><a
+			href="${pageContext.request.contextPath}/admin/processCriticalTransactionRequests">Critical Transaction Requests</a></li>
+		<li><a
 			href="${pageContext.request.contextPath}/admin/bank_branch/list">Others</a></li>
 	</ul>
 </aside>
