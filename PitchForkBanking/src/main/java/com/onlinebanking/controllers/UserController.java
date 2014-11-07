@@ -10,11 +10,13 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,14 @@ public class UserController {
 	private AccountService accountService;
 	private TransactionService transactionService;
 	private OtpService otpService;
+	private MessageSource messageSource;
+	
+	
+	@Autowired(required = true)
+	@Qualifier(value = "messageSource")
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
 
 	@Autowired(required = true)
 	@Qualifier(value = "otpService")
@@ -514,16 +524,22 @@ public class UserController {
 			@ModelAttribute("user") @Valid UserAppModel u,
 			BindingResult bindingResult, HttpServletRequest request,
 			final RedirectAttributes attributes) {
-
-		if (bindingResult.hasErrors()) {
-			attributes
-					.addFlashAttribute("response", new Response("error",
-							bindingResult.getFieldError().getObjectName()
-									+ " - "
-									+ bindingResult.getFieldError()
-											.getDefaultMessage()));
-			return "redirect:/user/profile/edit";
+		
+		for (Object object : bindingResult.getAllErrors()) {
+		    if(object instanceof FieldError) {
+		        FieldError fieldError = (FieldError) object;
+ 		        String message = messageSource.getMessage(fieldError, null);
+		        attributes.addFlashAttribute("response", new Response("error",
+						message));
+		        return "redirect:/user/profile/edit";
+		    }
 		}
+			
+		
+
+		
+			
+		
 
 		// get the responses from the user
 		String challenge = request.getParameter("recaptcha_challenge_field");
@@ -747,11 +763,17 @@ public class UserController {
 			@ModelAttribute("user") @Valid UserRegistrationModel p,
 			BindingResult bindingResult, final RedirectAttributes attributes) {
 
-		if (bindingResult.hasErrors()) {
-			attributes.addFlashAttribute("response", new Response("error",
-					bindingResult.getAllErrors().get(0).getDefaultMessage()));
-			return "redirect:/registration";
+		for (Object object : bindingResult.getAllErrors()) {
+		    if(object instanceof FieldError) {
+		        FieldError fieldError = (FieldError) object;
+ 		        String message = messageSource.getMessage(fieldError, null);
+		        attributes.addFlashAttribute("response", new Response("error",
+						message));
+				return "redirect:/registration";
+		    }
 		}
+			
+		
 
 		if (p.getUserId() != null
 				&& this.userService.getUserById(p.getUserId()) != null) {
