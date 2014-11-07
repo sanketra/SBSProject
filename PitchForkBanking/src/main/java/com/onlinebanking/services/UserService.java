@@ -26,4 +26,5 @@ public interface UserService {
 			throws Exception;
 	public Response createAccount(User p);
 	public Response updateNewAccountRequest(String id, String status);
+	public int verifyUserUniquness(User p);
 }
