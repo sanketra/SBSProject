@@ -23,7 +23,6 @@ public interface TransactionService {
 	public Response deleteTransaction(Transaction transaction) throws Exception;
 	public List<Transaction> getAllTransactionsForAccountId(int Id);
 	public List<UserRequest> getAllPendingRequests();
-	public List<UserRequest> getPendingRequests();
 	public List<UserRequest> getApprovedRequests();
 	public Transaction getTransaction(String transactionId);
 	public List<Transaction> getPaymentRequestForAccountId(int id);
@@ -31,6 +30,12 @@ public interface TransactionService {
 	public List<UserRequest> getApprovedProfileRequestsFromUser();
 	public Response updateAccessRequest(String id, String status);
 	public List<UserRequest> getDeclinedRequests();
+
+	public List<UserRequest> getAllPendingAdditionalAccountRequests();
+	public List<UserRequest> getAllPendingUserAccessRequests();
+
 	public void deleteTransactionRequest(int accountId);
 	public void deleteProfileRequest(User u);
+	public List<Transaction> getAllCriticalTransactionRequests();
+	public Response updateCriticalTransactionRequest(String id, String status) throws Exception;
 }

@@ -11,18 +11,18 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class UserRegistrationModel {
 
 	private String userId;
-	@NotEmpty @Email
+	@NotEmpty //@Email
 	private String emailId;
-	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
+	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
 	private String fname;
-	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
+	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
 	private String lname;
 	private Date dob;
 	@NotEmpty 
 	private String address;
-	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
+	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
 	private String city;
-	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
+	@NotEmpty //@Pattern(regexp="[a-zA-Z]+")
 	private String state;
 	@NotEmpty
 	private String password;
@@ -30,23 +30,23 @@ public class UserRegistrationModel {
 	private String confirmPassword;
 	@Size(min=5, max=5) @NotEmpty
 	private String zipcode;
-	@NotEmpty  @Pattern(regexp = "^\\[0-9]{9}$")
+	@NotEmpty  //@Pattern(regexp = "^\\[0-9]{9}$")
 	private String ssn;
-	@NotEmpty @Pattern(regexp="[0-9]{10}")
+	@NotEmpty //@Pattern(regexp="[0-9]{10}")
 	private String phoneno;
 	@NotEmpty
 	private String role;
 	@NotEmpty
 	private String ques1;
-	@NotEmpty @Pattern(regexp="[a-zA-Z0-9]+")
+	@NotEmpty //@Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer1;
 	@NotEmpty 
 	private String ques2;
-	@NotEmpty @Pattern(regexp="[a-zA-Z0-9]+")
+	@NotEmpty //@Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer2;
 	@NotEmpty
 	private String ques3;
-	@NotEmpty @Pattern(regexp="[a-zA-Z0-9]+")
+	@NotEmpty //@Pattern(regexp="[a-zA-Z0-9]+")
 	private String answer3;
 	
 	public Date getDob() {

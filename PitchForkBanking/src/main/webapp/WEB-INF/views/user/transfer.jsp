@@ -14,9 +14,14 @@
 			alert("Name must be filled out");
 			return false;
 		}
-		var namePattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (namePattern.test(name) == true) {
+		var namePattern1 = /[*|\":<>.[\]{}`\\()';@&$]/;
+		if (namePattern1.test(name) == true) {
 			alert('Special characters are not allowed in Name');
+			return false;
+		}
+		var namePattern2 = /^[a-zA-Z ]*$/;
+		if (namePattern2.test(name) != true) {
+			alert('Only alphabets are allowed in Name');
 			return false;
 		}
 		// Account Number
@@ -25,9 +30,14 @@
 			alert("Account Number must be filled out");
 			return false;
 		}
-		var account_toPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (account_toPattern.test(account_to) == true) {
+		var account_toPattern1 = /[*|\":<>[\]{}`\\()';@&$]/;
+		if (account_toPattern1.test(account_to) == true) {
 			alert('Special characters are not allowed in Account Number');
+			return false;
+		}
+		var account_toPattern2 = /^[0-9]+$/;
+		if (account_toPattern2.test(account_to) != true) {
+			alert('Only numbers are allowed in Account Number');
 			return false;
 		}
 		// Email_Id
@@ -47,9 +57,14 @@
 			alert("Amount must be filled out");
 			return false;
 		}
-		var amountPattern = /[*|\":<>.[\]{}`\\()';@&$]/;
-		if (amountPattern.test(amount) == true) {
+		var amountPattern1 = /[*|\":<>[\]{}`\\()';@&$]/;
+		if (amountPattern1.test(amount) == true) {
 			alert('Special characters are not allowed in amount');
+			return false;
+		}
+		var amountPattern2 = /^[0-9]+.?[0-9]+$/;
+		if (amountPattern2.test(amount) != true) {
+			alert('Only numbers are allowed in amount');
 			return false;
 		}
 	}

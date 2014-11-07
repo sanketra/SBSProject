@@ -14,9 +14,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.Response;
@@ -115,12 +117,9 @@ public class AdminController {
 	@RequestMapping(value = "/admin/processRequests", method = RequestMethod.GET)
 	public String accessRequests(Model model) {
 
-		List<UserRequest> pendingRequests = transactionService
-				.getPendingRequests();
-		List<UserRequest> approvedRequests = transactionService
-				.getApprovedRequests();
-		List<UserRequest> declinedRequests = transactionService
-				.getDeclinedRequests();
+		List<UserRequest> pendingRequests = transactionService.getAllPendingUserAccessRequests();
+	    List<UserRequest> approvedRequests = transactionService.getApprovedRequests();
+		List<UserRequest> declinedRequests = transactionService.getDeclinedRequests();
 		model.addAttribute("pendingUserRequests", pendingRequests);
 		model.addAttribute("approvedUserRequests", approvedRequests);
 		model.addAttribute("declinedUserRequests", declinedRequests);
@@ -148,6 +147,33 @@ public class AdminController {
 		}
 
 		return "redirect:/admin/processRequests";
+	}
+	
+	@RequestMapping(value = "/admin/processNewAccountRequests", method = RequestMethod.GET)
+	public String newAccountRequests(Model model) {
+
+		List<UserRequest> pendingAdditionalAccountRequests = transactionService.getAllPendingAdditionalAccountRequests();
+		model.addAttribute("pendingAdditionalAccountRequests", pendingAdditionalAccountRequests);
+		model.addAttribute("contentView", "admin_newAccountRequests");
+
+		return "admin/admin_template";
+	}
+
+	@RequestMapping(value = "/admin/admin_newAccountRequests", method = RequestMethod.POST)
+	public String processNewAccountRequests(Model model, HttpServletRequest request,
+			HttpServletResponse response, final RedirectAttributes attributes) {
+		Response status;
+		if (request.getParameter("approve") != null) {
+			status = this.userService.updateNewAccountRequest(request.getParameter("approve"), "approve");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/processNewAccountRequests";
+		} else if (request.getParameter("decline") != null) {
+			status = this.userService.updateNewAccountRequest(request.getParameter("decline"), "decline");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/processNewAccountRequests";
+		}
+		
+		return "redirect:/admin/processNewAccountRequests";
 	}
 
 	@RequestMapping(value = "/admin/customerList", method = RequestMethod.GET)
@@ -256,7 +282,7 @@ public class AdminController {
 	}
 
 	@RequestMapping(value = "/admin/admin_accountTransactions", method = RequestMethod.POST)
-	public String viewUserTransactions(HttpServletRequest request, Model model) {
+	public String viewUserTransactions(HttpServletRequest request, Model model, final RedirectAttributes attributes) {
 		List<Transaction> transactions = new ArrayList<Transaction>();
 		try {
 			String accountId = request.getParameter("account_id");
@@ -266,7 +292,8 @@ public class AdminController {
 								.parseInt(accountId));
 			}
 		} catch (Exception e) {
-
+			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
+			return "redirect:/admin/admin_accountTransactions";
 		}
 		model.addAttribute("transactionList", transactions);
 		model.addAttribute("contentView", "admin_viewUserTransactions");
@@ -303,7 +330,7 @@ public class AdminController {
 		}
 		catch(Exception e)
 		{
-			attributes.addFlashAttribute("response", new Response("success", e.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
 			return "redirect:/admin/admin_accountTransactions";
 		}
 	}
@@ -334,7 +361,7 @@ public class AdminController {
 		}
 		catch(Exception e)
 		{
-			attributes.addFlashAttribute("response", new Response("success", e.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
 			return "redirect:/admin/admin_accountTransactions";
 		}
 	}
@@ -387,5 +414,51 @@ public class AdminController {
 					"Wrong captcha, please try again!"));
 
 		return "redirect:/admin/employeeRegistration";
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public String handleAllException(Exception ex, 
+			HttpServletRequest request) {
+		ModelAndView model = new ModelAndView("denied");
+		model.addObject("response", new Response("error", "Illegal Operation. Please go back & enter correct details."));
+		return "redirect:/denied";
+	}
+	
+	@RequestMapping(value = "/admin/processCriticalTransactionRequests", method = RequestMethod.GET)
+	public String accessCriticalTransactionRequests(Model model) {
+
+		List<Transaction> criticalTransactions = transactionService.getAllCriticalTransactionRequests();
+		model.addAttribute("criticalTransactions", criticalTransactions);
+
+		model.addAttribute("contentView", "admin_processCriticalTransactionRequests");
+
+		return "admin/admin_template";
+
+	}
+
+	@RequestMapping(value = "/admin/admin_processCriticalTransactionRequests", method = RequestMethod.POST)
+	public String processCriticalTransactionRequests(Model model, HttpServletRequest request,
+			HttpServletResponse response, final RedirectAttributes attributes) {
+		Response status;
+		try {
+		if (request.getParameter("approve") != null) {
+			status = this.transactionService.updateCriticalTransactionRequest(
+					request.getParameter("approve"), "approve");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/processCriticalTransactionRequests";
+		} else if (request.getParameter("decline") != null) {
+			status = this.transactionService.updateCriticalTransactionRequest(
+					request.getParameter("decline"), "decline");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/processCriticalTransactionRequests";
+		}
+	}
+		catch(Exception e)
+		{
+			attributes.addFlashAttribute("response", new Response("error", "Error occurred"));
+			return "redirect:/admin/processCriticalTransactionRequests";
+		}
+
+		return "redirect:/admin/processRequests";
 	}
 }

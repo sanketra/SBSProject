@@ -12,7 +12,11 @@
 		<li><a
 			href="${pageContext.request.contextPath}/admin/accountTransactions">Account Transactions</a></li>
 		<li><a
-			href="${pageContext.request.contextPath}/admin/processRequests">Requests</a></li>
+			href="${pageContext.request.contextPath}/admin/processRequests">User Access Requests</a></li>
+		<li><a
+			href="${pageContext.request.contextPath}/admin/processNewAccountRequests">New Account Requests</a></li>
+		<li><a
+			href="${pageContext.request.contextPath}/admin/processCriticalTransactionRequests">Critical Transaction Requests</a></li>
 		<li><a
 			href="${pageContext.request.contextPath}/admin/bank_branch/list">Others</a></li>
 	</ul>

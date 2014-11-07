@@ -30,12 +30,12 @@ public class UserHome {
 		this.sessionFactory = sf;
 	}
 
-	public void persist(User transientInstance) throws Exception {
+	public void persist(User transientInstance) {
 		log.debug("persisting User instance");
 		try {
 			sessionFactory.getCurrentSession().persist(transientInstance);
 			log.debug("persist successful");
-		} catch (Exception re) {
+		} catch (RuntimeException re) {
 			log.error("persist failed", re);
 			throw re;
 		}
@@ -84,6 +84,23 @@ public class UserHome {
 			return result;
 		} catch (RuntimeException re) {
 			log.error("merge failed", re);
+			throw re;
+		}
+	}
+	
+	public int isUserUnique(User u) {
+		try {
+			String queryString = "Select * from user U where U.emailId = :emailId or U.ssn = :ssn or U.phoneno = :phoneno";
+			@SuppressWarnings("unchecked")
+			List<User> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(User.class)
+					.setParameter("emailId", u.getEmailId())
+					.setParameter("ssn", u.getSsn())
+					.setParameter("phoneno", u.getPhoneno())
+					.list();
+			return results.size();
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
 			throw re;
 		}
 	}

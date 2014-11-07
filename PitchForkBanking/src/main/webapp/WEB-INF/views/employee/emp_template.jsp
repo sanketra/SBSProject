@@ -54,7 +54,7 @@ body {
 </head>
 <body id="body-site">
 	<div class="container-fluid" align="right">
-		<jsp:include page="../common/header.jsp" />
+		<jsp:include page="../common/emp_header.jsp" />
 	</div>
 	<div class="container-fluid">
 		<div class="row-fluid">

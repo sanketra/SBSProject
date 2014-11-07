@@ -301,11 +301,11 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	@Transactional
-	public List<UserRequest> getPendingRequests() {
+	public List<UserRequest> getAllPendingUserAccessRequests() {
 		try {
 
 			List<Requests> pendingRequest = requestsHome
-					.getAllPendingRequests();
+					.getAllPendingUserAccessRequests();
 			List<UserRequest> userRequests = new ArrayList<UserRequest>();
 			for (Requests request : pendingRequest) {
 				String toUserId = request.getToUser();
@@ -331,13 +331,38 @@ public class TransactionServiceImpl implements TransactionService {
 			return new ArrayList<UserRequest>();
 		}
 	}
+	
+	@Override
+	@Transactional
+	public List<UserRequest> getAllPendingAdditionalAccountRequests() {
+		try {
 
+			List<Requests> pendingRequest = requestsHome.getAllPendingAdditionalAccountRequests();
+			List<UserRequest> userRequests = new ArrayList<UserRequest>();
+			for (Requests request : pendingRequest) {
+				String fromUserId = request.getFromUser();
+				User fromUser = userHome.findById(fromUserId);
+
+				UserRequest requestedUser = new UserRequest();
+				requestedUser.setFname(fromUser.getFname());
+				requestedUser.setLname(fromUser.getLname());
+				requestedUser.setRequestType(request.getType());
+				requestedUser.setStatus(request.getStatus());
+				requestedUser.setRequestId(request.getRequestId());
+
+				userRequests.add(requestedUser);
+			}
+			return userRequests;
+		} catch (Exception e) {
+			return new ArrayList<UserRequest>();
+		}
+	}
+	
 	@Override
 	@Transactional
 	public List<UserRequest> getDeclinedRequests() {
 		try {
-			List<Requests> approvedRequest = requestsHome
-					.getAllDeclinedRequests();
+			List<Requests> approvedRequest = requestsHome.getAllDeclinedRequests();
 
 			List<UserRequest> userRequests = new ArrayList<UserRequest>();
 			for (Requests request : approvedRequest) {
@@ -507,7 +532,7 @@ public class TransactionServiceImpl implements TransactionService {
 		Account fromAcc = accountHome.findById(Integer.parseInt(transactionAppModel.getFromAcountNum()));
 		String transactionType = transaction.getTransactionType();
 		
-		if(transaction.getTransactionStatus().equalsIgnoreCase("success") || (amount < Constants.CRITICALTRANSACTION))
+		if(transaction.getTransactionStatus().equalsIgnoreCase("success") || transaction.getTransactionStatus().equalsIgnoreCase("approved") || (amount < Constants.CRITICALTRANSACTION))
 		{
 			if(transactionType.equalsIgnoreCase("Debit"))
 			{
@@ -627,6 +652,37 @@ public class TransactionServiceImpl implements TransactionService {
 
 		return list;
 	}
+	
+	@Override
+	@Transactional
+	public List<Transaction> getAllCriticalTransactionRequests() {
+		return this.transactionHome.getAllCriticalTransactions();
+	}
+	
+	@Override
+	@Transactional
+	public Response updateCriticalTransactionRequest(String id, String status) throws Exception {
+		Transaction t = this.transactionHome.findById(id);
+		TransactionAppModel tm = new TransactionAppModel(t);
+		Response response; 
+		
+		if (status.equals("approve")) {
+			tm.setTransactionStatus(RequestStatus.APPROVED);
+			response = updateTransaction(tm);
+			if (response.getStatus().contentEquals("success")) {
+				t.setTransactionStatus(RequestStatus.SUCCESS);
+				this.transactionHome.merge(t);
+				return new Response("success", "Request approved! - Transaction done");
+			} else {
+				t.setTransactionStatus(RequestStatus.PENDING);
+				return new Response("error", "Transaction Falied!");
+			}
+		} else {
+			t.setTransactionStatus(RequestStatus.DECLINED);
+			this.transactionHome.merge(t);
+			return new Response("success", "Request declined!");
+		}
+	}
 
 	@Override
 	@Transactional
@@ -713,5 +769,4 @@ public class TransactionServiceImpl implements TransactionService {
 			requestsHome.delete(request);
 		}
 	}
-
 }
