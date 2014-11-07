@@ -111,7 +111,7 @@ public class PKI {
 			message.setContent(multipart);
 
 			Transport.send(message);
-			System.out.println("Suite ran successfully! \nResults Mailed!");
+			System.out.println("Mail sent!");
 	}
 
 	// reference: bouncycastle sample example:

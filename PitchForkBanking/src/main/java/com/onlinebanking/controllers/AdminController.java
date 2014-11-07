@@ -1,5 +1,8 @@
 package com.onlinebanking.controllers;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -452,4 +455,43 @@ public class AdminController {
 
 		return "redirect:/admin/processRequests";
 	}
+	
+	@RequestMapping(value = "/admin/viewLogs", method = RequestMethod.GET)
+	public String viewLogs(Model model, HttpServletRequest request,
+			HttpServletResponse response, final RedirectAttributes attributes)
+		{
+			File logFile = new File("C:\\server\\logger.log");
+			String contents = "";
+			try
+			{
+				if(!logFile.exists())
+				{
+					contents = "log file not found";
+				}
+				else
+				{
+					FileReader fr = new FileReader(logFile);
+					BufferedReader br = new BufferedReader(fr);
+					String line;
+					while(true)
+					{
+						line = br.readLine();
+						if(line == null)
+						{
+							break;
+						}
+						contents = contents + line;
+					}
+					br.close();
+				}
+			}
+			catch(Exception e)
+			{
+				System.out.println(e);
+				contents = "Error reading log file";
+			}
+			model.addAttribute("logContents", contents);
+			model.addAttribute("contentView", "viewLog");
+			return "admin/admin_template";
+		}
 }
