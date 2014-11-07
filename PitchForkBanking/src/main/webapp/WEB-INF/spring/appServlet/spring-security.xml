@@ -6,8 +6,6 @@
 			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
-	<!-- Configuring RoleVoter bean to use custom access roles, by default roles 
-		should be in the form ROLE_{XXX} -->
 	<beans:bean id="roleVoter"
 		class="org.springframework.security.access.vote.RoleVoter">
 		<beans:property name="rolePrefix" value=""></beans:property>
@@ -73,8 +71,7 @@
 
 	</beans:bean>
 
-	<!-- Hibernate 4 SessionFactory Bean definition -->
-	<beans:bean id="hibernate4AnnotatedSessionFactory"
+	<beans:bean id="sessionFactoryBean"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<beans:property name="dataSource" ref="dataSource" />
 		<beans:property name="annotatedClasses">
@@ -99,27 +96,27 @@
 	<!-- DAO beans -->
 	<beans:bean id="accountHome" class="com.onlinebanking.dao.AccountHome">
 		<beans:property name="sessionFactory"
-			ref="hibernate4AnnotatedSessionFactory" />
+			ref="sessionFactoryBean" />
 	</beans:bean>
 	<beans:bean id="requestsHome" class="com.onlinebanking.dao.RequestsHome">
 		<beans:property name="sessionFactory"
-			ref="hibernate4AnnotatedSessionFactory" />
+			ref="sessionFactoryBean" />
 	</beans:bean>
 	<beans:bean id="transactionHome" class="com.onlinebanking.dao.TransactionHome">
 		<beans:property name="sessionFactory"
-			ref="hibernate4AnnotatedSessionFactory" />
+			ref="sessionFactoryBean" />
 	</beans:bean>
 	<beans:bean id="userHome" class="com.onlinebanking.dao.UserHome">
 		<beans:property name="sessionFactory"
-			ref="hibernate4AnnotatedSessionFactory" />
+			ref="sessionFactoryBean" />
 	</beans:bean>
 	<beans:bean id="userotpHome" class="com.onlinebanking.dao.UserotpHome">
 		<beans:property name="sessionFactory"
-			ref="hibernate4AnnotatedSessionFactory" />
+			ref="sessionFactoryBean" />
 	</beans:bean>
 	<beans:bean id="userPublicKey" class="com.onlinebanking.dao.UserPublicKeyHome">
 		<beans:property name="sessionFactory"
-			ref="hibernate4AnnotatedSessionFactory" />
+			ref="sessionFactoryBean" />
 	</beans:bean>
 
 	<!-- Service Layer -->
@@ -154,7 +151,7 @@
 	<beans:bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<beans:property name="sessionFactory"
-			ref="hibernate4AnnotatedSessionFactory" />
+			ref="sessionFactoryBean" />
 	</beans:bean>
 
 	<beans:bean id="authSuccessHandler"

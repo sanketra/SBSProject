@@ -108,14 +108,7 @@ public class EmployeeController {
 		
 	}
 	
-/*	@RequestMapping(value="/employee/publicKeyVerificationUserProfile", method = RequestMethod.POST)
-	public String publicKeyVerification(Model model)
-	{
-		String randomString = PKI.generateRandomString();
-		model.addAttribute("randomString", randomString);
-		model.addAttribute("contentView", "publicKeyVerification");
-		return "employee/emp_template";
-	}*/
+
 	
 	@RequestMapping(value="/employee/verifiedEncryptedTextUserProfile", method = RequestMethod.POST)
 	public String verifyEncryptedText(HttpServletRequest request, Model model, final RedirectAttributes attributes) 
@@ -169,7 +162,7 @@ public class EmployeeController {
 		}
 		else
 		{
-			attributes.addFlashAttribute("response", new Response("error", "Encrypted string not proper"));
+			model.addAttribute("response", new Response("error", "Encrypted string not proper"));
 			String newRandomString = PKI.generateRandomString();
 			model.addAttribute("randomString", newRandomString);
 			model.addAttribute("contentView", "publicKeyVerificationProfile"); 
@@ -185,7 +178,6 @@ public class EmployeeController {
 		    if(object instanceof FieldError) {
 		        FieldError fieldError = (FieldError) object;
  		        String message = messageSource.getMessage(fieldError, null);
-		        System.out.println(message);
 		        model.addAttribute("response", new Response("error",message));
 		        model.addAttribute("userProfile", userAppModel);
 				model.addAttribute("contentView", "updateUserProfile");
@@ -243,7 +235,6 @@ public class EmployeeController {
 		    if(object instanceof FieldError) {
 		        FieldError fieldError = (FieldError) object;
  		        String message = messageSource.getMessage(fieldError, null);
-		        System.out.println(message);
 		        model.addAttribute("response", new Response("error",message));
 		        model.addAttribute("userRequest", userRequest);
 				model.addAttribute("contentView", "requestAccess");
@@ -340,14 +331,6 @@ public class EmployeeController {
 
 	}
 	
-/*	@RequestMapping(value="/employee/publicKeyVerificationTransaction", method = RequestMethod.POST)
-	public String publicKeyVerificationTransaction(Model model)
-	{
-		String randomString = PKI.generateRandomString();
-		model.addAttribute("randomString", randomString);
-		model.addAttribute("contentView", "publicKeyVerificationTransaction");
-		return "employee/emp_template";
-	}*/
 	
 	@RequestMapping(value="/employee/verifyEncryptedTextTransaction", method = RequestMethod.POST)
 	public String verifyEncryptedTextTransaction(HttpServletRequest request, Model model, final RedirectAttributes attributes) 
@@ -437,7 +420,6 @@ public class EmployeeController {
 		    if(object instanceof FieldError) {
 		        FieldError fieldError = (FieldError) object;
  		        String message = messageSource.getMessage(fieldError, null);
-		        System.out.println(message);
 		        model.addAttribute("response", new Response("error",message));
 		        model.addAttribute("userTransaction", transactionAppModel);
 				model.addAttribute("contentView", "updateUserTransactions");

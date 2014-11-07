@@ -26,18 +26,18 @@ public class URLHelper {
 		
 		return returnVal;
 	}
-	
+	//referred to stack overflow to split url
 	public static HashMap<String, String> analyseRequest(
 			HttpServletRequest request) {
-
+		//store parts of uri in hash map
 		HashMap<String, String> uris = new HashMap<String, String>();
-
+		
 		String fullUri = request.getRequestURI();
 		String appPath = "PitchForkBanking";
 		String realUri = fullUri.replace(appPath, "");
 
 		StringTokenizer st = new StringTokenizer(realUri, "/");
-
+		//create tokens separated by /
 		for (int i = 1; i <= 4; i++) {
 			String _s;
 			_s = (st.hasMoreTokens()) ? st.nextToken() : "";

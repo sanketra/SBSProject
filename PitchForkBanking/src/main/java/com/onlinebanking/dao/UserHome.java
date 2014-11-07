@@ -1,6 +1,6 @@
 package com.onlinebanking.dao;
 
-// Generated Oct 18, 2014 8:48:50 AM by Hibernate Tools 3.4.0.CR1
+// Generated using hibernate tools
 
 import java.util.List;
 

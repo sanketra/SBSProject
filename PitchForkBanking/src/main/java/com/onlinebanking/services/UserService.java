@@ -14,14 +14,14 @@ public interface UserService {
 	public List<User> listCustomers();
 	public List<User> listEmployees();
 	public User getUserById(String id);
-	public void removeUser(String id);
+	public Response removeUser(String id);
 	public User getUserByEmailId(String emailId);
 	public Response isValidUserAccount(int accountNo, String userId);
 	public Response isValidAccount(int accountNo);
 	public String getUserRole(String emailId);
 	public List<User> listNewUsers();
 	public Response updateUserRegistrationFlag(String id, String status);
-	public void sendUniquePassword(String otp, String emailId);
+	public Response sendUniquePassword(String otp, String emailId);
 	public boolean verifyByDecrypting(String plainText, String encrypted)
 			throws Exception;
 	public Response createAccount(User p);

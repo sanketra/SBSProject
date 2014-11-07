@@ -62,7 +62,7 @@
 			alert('Special characters are not allowed in amount');
 			return false;
 		}
-		var amountPattern2 = /^[0-9]+.?[0-9]+$/;
+		var amountPattern2 = /^[0-9]+.?[0-9]*$/;
 		if (amountPattern2.test(amount) != true) {
 			alert('Only numbers are allowed in amount');
 			return false;
@@ -102,12 +102,12 @@
 						theme : 'clean'
 					};
 				</script> <script type="text/javascript"
-						src="https://www.google.com/recaptcha/api/challenge?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS">
+						src="https://www.google.com/recaptcha/api/challenge?k=6LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk">
 					
 				</script>
 					<noscript>
 						<iframe
-							src="https://www.google.com/recaptcha/api/noscript?k=6LdU5vsSAAAAANqqVjAYmtFDp7gqRk-f71obE5eS"
+							src="https://www.google.com/recaptcha/api/noscript?k=66LfLUv0SAAAAABLMjAJRm4vBHmiwQtn7ySuzfULk"
 							height="260" width="400"></iframe>
 						<br>
 						<textarea name="recaptcha_challenge_field" rows="3" cols="40">
