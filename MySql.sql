@@ -103,3 +103,12 @@ CHANGE COLUMN `amount` `amount` DOUBLE NOT NULL ;
 
 ALTER TABLE `pitchforkbank`.`transaction` 
 CHANGE COLUMN `transactionAmount` `transactionAmount` DOUBLE NOT NULL ;
+
+ALTER TABLE `pitchforkbank`.`user_public_key` 
+CHANGE COLUMN `public key` `publicKey` VARCHAR(255) NOT NULL ;
+ALTER TABLE `pitchforkbank`.`user_public_key` 
+ADD CONSTRAINT `userId_PubKey`
+  FOREIGN KEY (`userId`)
+  REFERENCES `pitchforkbank`.`user` (`userId`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
