@@ -209,9 +209,9 @@ body {
 							placeholder="Last Name" /></td>
 				</tr>
 				<tr>
-					<td>Password</td>
+					<td>Password<br/>(Must have 1 Special character,1 digit,1 UpperCase and 1 lowercase alphabet)</td>
 					<td><form:input type="password" path="password"
-							class="input-xxlarge" placeholder="Password" /></td>
+							class="input-xxlarge" placeholder="Password: Min 8 chars" /></td>
 				</tr>
 				<tr>
 					<td>Confirm Password</td>
@@ -221,13 +221,13 @@ body {
 				<tr>
 					<td>Date of Birth</td>
 					<td><form:input id="datepicker" path="dob"
-							class="input-xxlarge" /></td>
+							class="input-xxlarge" placeholder="dd/mm/yyyy" /></td>
 				</tr>
 
 				<tr>
 					<td>Address</td>
 					<td><form:textarea rows="4" cols="50" path="address"
-							class="input-xxlarge" placeholder="Address" /></td>
+							class="input-xxlarge" placeholder="Only letters and digits. No spaces"/></td>
 				</tr>
 
 				<tr>
@@ -305,18 +305,18 @@ body {
 				<tr>
 					<td>Zipcode</td>
 					<td><form:input path="zipcode" class="input-xxlarge"
-							placeholder="Zipcode" /></td>
+							placeholder="5 digits only" /></td>
 				</tr>
 				<tr>
 					<td>SSN</td>
 					<td><form:input path="ssn" class="input-xxlarge"
-							placeholder="SSN" /></td>
+							placeholder="9 digits only" /></td>
 				</tr>
 
 				<tr>
 					<td>Phone Number</td>
 					<td><form:input path="phoneno" class="input-xxlarge"
-							placeholder="xxx-xxx-xxxx" /></td>
+							placeholder="10 digits only" /></td>
 				</tr>
 
 				<tr>
@@ -353,7 +353,7 @@ body {
 				<tr>
 					<td>Answer 1</td>
 					<td><form:input path="answer1" class="input-xxlarge"
-							placeholder="Answer" /></td>
+							placeholder="Answer(Alphabets and digits)" /></td>
 				</tr>
 
 				<tr>
@@ -374,7 +374,7 @@ body {
 				<tr>
 					<td>Answer 2</td>
 					<td><form:input path="answer2" class="input-xxlarge"
-							placeholder="Answer" /></td>
+							placeholder="Answer(Alphabets and digits)" /></td>
 				</tr>
 
 				<tr>
@@ -401,7 +401,7 @@ body {
 				<tr>
 					<td>Answer 3</td>
 					<td><form:input path="answer3" class="input-xxlarge"
-							placeholder="Answer" /></td>
+							placeholder="Answer(Alphabets and digits)" /></td>
 				</tr>
 
 

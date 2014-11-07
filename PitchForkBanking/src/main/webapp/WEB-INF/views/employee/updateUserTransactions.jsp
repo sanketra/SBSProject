@@ -54,7 +54,7 @@
 			<tr>
 				<td>Amount</td>
 				<td><form:input path="transactionAmount" class="input-xlarge"
-						placeholder="Amount" /></td>
+						placeholder="Amount(Only 2 digits after decimal)" /></td>
 			</tr>
 			<tr>
 				<td>Time</td>
