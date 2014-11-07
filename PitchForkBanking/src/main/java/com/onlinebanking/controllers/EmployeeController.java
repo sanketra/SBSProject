@@ -93,7 +93,10 @@ public class EmployeeController {
 			HttpSession session = request.getSession();
 			session.setAttribute("selectedOperation", selectedOperation);
 			session.setAttribute("selectedRecord", selectedRecord);
-			return "redirect:/employee/publicKeyVerification";
+			String randomString = PKI.generateRandomString();
+			model.addAttribute("randomString", randomString);
+			model.addAttribute("contentView", "publicKeyVerificationProfile");
+			return "employee/emp_template";
 		}
 		else
 		{
@@ -103,14 +106,14 @@ public class EmployeeController {
 		
 	}
 	
-	@RequestMapping(value="/employee/publicKeyVerificationUserProfile", method = RequestMethod.POST)
+/*	@RequestMapping(value="/employee/publicKeyVerificationUserProfile", method = RequestMethod.POST)
 	public String publicKeyVerification(Model model)
 	{
 		String randomString = PKI.generateRandomString();
 		model.addAttribute("randomString", randomString);
 		model.addAttribute("contentView", "publicKeyVerification");
 		return "employee/emp_template";
-	}
+	}*/
 	
 	@RequestMapping(value="/employee/verifiedEncryptedTextUserProfile", method = RequestMethod.POST)
 	public String verifyEncryptedText(HttpServletRequest request, Model model, final RedirectAttributes attributes) 
@@ -135,7 +138,7 @@ public class EmployeeController {
 			session.removeAttribute("selectedRecord");
 			if(operation!=null && !operation.isEmpty())
 			{
-				if(operation.equals("delete"))
+				if(operation.equalsIgnoreCase("delete"))
 				{
 					
 					User u = userService.getUserByEmailId(emailId);
@@ -146,7 +149,7 @@ public class EmployeeController {
 						return "redirect:/employee/user_details";
 					}
 				}
-				else if(operation.equals("update"))
+				else if(operation.equalsIgnoreCase("update"))
 				{
 					User u = userService.getUserByEmailId(emailId);
 					if(u!=null)
@@ -165,7 +168,10 @@ public class EmployeeController {
 		else
 		{
 			attributes.addFlashAttribute("response", new Response("error", "Encrypted string not proper"));
-			return "redirect:/employee/user_details"; 
+			String newRandomString = PKI.generateRandomString();
+			model.addAttribute("randomString", randomString);
+			model.addAttribute("contentView", "publicKeyVerificationProfile"); 
+			return "employee/emp_template";
 		}
 	}
 	
@@ -319,7 +325,10 @@ public class EmployeeController {
 			HttpSession session = request.getSession();
 			session.setAttribute("selectedOperation", selectedOperation);
 			session.setAttribute("selectedTransaction", transactionId);
-			return "redirect:/employee/publicKeyVerificationTransaction";
+			String randomString = PKI.generateRandomString();
+			model.addAttribute("randomString", randomString);
+			model.addAttribute("contentView", "publicKeyVerificationTransaction");
+			return "employee/emp_template";
 		}
 		catch(Exception e)
 		{
@@ -329,14 +338,14 @@ public class EmployeeController {
 
 	}
 	
-	@RequestMapping(value="/employee/publicKeyVerificationTransaction", method = RequestMethod.POST)
+/*	@RequestMapping(value="/employee/publicKeyVerificationTransaction", method = RequestMethod.POST)
 	public String publicKeyVerificationTransaction(Model model)
 	{
 		String randomString = PKI.generateRandomString();
 		model.addAttribute("randomString", randomString);
-		model.addAttribute("contentView", "publicKeyVerification");
+		model.addAttribute("contentView", "publicKeyVerificationTransaction");
 		return "employee/emp_template";
-	}
+	}*/
 	
 	@RequestMapping(value="/employee/verifyEncryptedTextTransaction", method = RequestMethod.POST)
 	public String verifyEncryptedTextTransaction(HttpServletRequest request, Model model, final RedirectAttributes attributes) 
@@ -359,7 +368,7 @@ public class EmployeeController {
 			String transactionId = (String)session.getAttribute("selectedTransaction");
 			if(operation!=null && !operation.isEmpty())
 			{
-				if(operation.equals("delete"))
+				if(operation.equalsIgnoreCase("delete"))
 				{
 					
 					Transaction transaction = transactionService.getTransaction(transactionId);
@@ -377,7 +386,8 @@ public class EmployeeController {
 						catch(Exception e)
 						{
 							attributes.addFlashAttribute("response", new Response("error", "error occurred while deleting"));
-							return "redirect:/employee/viewUserTransactions";
+							System.out.println(e);
+							return viewUserTransactions(request,model,attributes);
 						}
 					}
 					else
@@ -386,7 +396,7 @@ public class EmployeeController {
 						return "redirect:/employee/viewUserTransactions";
 					}
 				}
-				else if(operation.equals("update"))
+				else if(operation.equalsIgnoreCase("update"))
 				{
 					Transaction transaction = transactionService.getTransaction(transactionId);
 					if(transaction!=null)
@@ -409,8 +419,11 @@ public class EmployeeController {
 		}
 		else
 		{
-			attributes.addFlashAttribute("response", new Response("error", "Encrypted string not proper"));
-			return "redirect:/employee/viewUserTransactions"; 
+			model.addAttribute("response", new Response("error", "Encrypted string not proper"));
+			String newRandomString = PKI.generateRandomString();
+			model.addAttribute("randomString", randomString);
+			model.addAttribute("contentView", "publicKeyVerificationTransaction"); 
+			return "employee/emp_template";
 		}
 	}
 
