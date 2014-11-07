@@ -591,7 +591,9 @@ public class TransactionServiceImpl implements TransactionService {
 			return new Response("error", "invalid transaction details");
 		}
 		Account toAcc = transaction.getAccountByToAccountNum();
+		toAcc = accountHome.findById(toAcc.getAccountNum());
 		Account fromAcc = transaction.getAccountByFromAcountNum();
+		fromAcc = accountHome.findById(fromAcc.getAccountNum());
 		Double amount = transaction.getTransactionAmount();
 		String transactionType = transaction.getTransactionType();
 		
