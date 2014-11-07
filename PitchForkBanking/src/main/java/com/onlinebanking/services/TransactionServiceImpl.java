@@ -477,7 +477,7 @@ public class TransactionServiceImpl implements TransactionService {
 				toAcc.setAmount(toAcc.getAmount() - amount);
 			} else {
 				msg = "Transfer waiting admin approval.";
-				t.setTransactionStatus("pending");
+				t.setTransactionStatus(TransactionStatus.ADMINPENDING);
 			}
 			break;
 		default:
@@ -489,7 +489,7 @@ public class TransactionServiceImpl implements TransactionService {
 				toAcc.setAmount(toAcc.getAmount() + amount);
 			} else {
 				msg = "Transfer waiting admin approval.";
-				t.setTransactionStatus("pending");
+				t.setTransactionStatus(TransactionStatus.ADMINPENDING);
 			}
 		}
 
@@ -640,15 +640,6 @@ public class TransactionServiceImpl implements TransactionService {
 	public List<Transaction> getAllTransactionsForAccountId(int id) {
 		List<Transaction> list = this.transactionHome
 				.getAllTransactionsForAccountId(id);
-
-		for (Transaction t : list) {
-			if (t.getAccountByFromAcountNum().getAccountNum() != t
-					.getAccountByToAccountNum().getAccountNum()) {
-				String type = t.getAccountByFromAcountNum().getAccountNum() == id ? "Debit"
-						: "Credit";
-				t.setTransactionType(type);
-			}
-		}
 
 		return list;
 	}
