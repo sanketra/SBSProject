@@ -198,7 +198,7 @@ public class UserController {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
 				}
-				
+
 				return "redirect:/user/transfer";
 			} else if (urls.get("url_2").toString().equals("credit")) {
 				String fromAccount = session.getAttribute("account_id")
@@ -222,7 +222,7 @@ public class UserController {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
 				}
-				
+
 				return "redirect:/user/credit";
 			} else if (urls.get("url_2").toString().equals("debit")) {
 				String fromAccount = session.getAttribute("account_id")
@@ -244,8 +244,7 @@ public class UserController {
 					attributes.addFlashAttribute("response", status);
 				} else {
 					attributes.addFlashAttribute("response", new Response(
-							"error",
-							"Wrong captcha, please try again!"));
+							"error", "Wrong captcha, please try again!"));
 					return "redirect:/user/debit";
 				}
 			} else if (urls.get("url_2").toString().equals("authorize")) {
@@ -254,9 +253,17 @@ public class UserController {
 						this.userService.getUserByEmailId(session.getAttribute(
 								"emailId").toString()),
 						session.getAttribute("emailId").toString());
-				if (true) {
-					return "";
+				if (request.getParameter("approve") != null) {
+					session.setAttribute("requestId",
+							request.getParameter("approve"));
+					session.setAttribute("approveordecline", "approve");
+				} else  {
+					session.setAttribute("requestId",
+							request.getParameter("decline"));
+					session.setAttribute("approveordecline", "decline");
 				}
+				return "verifyOtp";
+
 				// if (request.getParameter("approve") != null) {
 				// status = this.transactionService.updateAccessRequest(
 				// request.getParameter("approve"), "approve");
@@ -713,7 +720,7 @@ public class UserController {
 	@RequestMapping(value = "/verifyOtp", method = RequestMethod.GET)
 	public String verifyOtp() {
 
-		return "setNewPassword";
+		return "verifyOtp";
 	}
 
 	@RequestMapping(value = "/verifyOtp", method = RequestMethod.POST)
@@ -726,7 +733,27 @@ public class UserController {
 				session.getAttribute("emailId").toString()).getUserId();
 		Boolean otpMatch = otpService.verifyOtp(
 				this.otpService.getUserotpById(id), otpPassword);
-		return null;
+		if (otpMatch == true) {
+			if (session.getAttribute("approveordecline").toString()
+					.equals("approve")) {
+				this.transactionService.updateAccessRequest(session
+						.getAttribute("requestId").toString(), "approve");
+				attributes.addFlashAttribute("response", new Response(
+						"success", "Payment accepted!"));
+				return "redirect:/verifyOtp";
+			} else {
+				this.transactionService.updateAccessRequest(session
+						.getAttribute("requestId").toString(), session
+						.getAttribute("approveordecline").toString());
+				attributes.addFlashAttribute("response", new Response("error",
+						"Payment rejected!"));
+				return "redirect:/verifyOtp";
+			}
+		} else {
+			attributes.addFlashAttribute("response", new Response("error",
+					"Wrong one time password"));
+			return "redirect:/verifyOtp";
+		}
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)

@@ -4,15 +4,37 @@
 <%@ page import="net.tanesha.recaptcha.ReCaptcha"%>
 <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory"%>
 
+<title>PitchFork Bank - Debit</title>
+<!-- Validation script -->
+<script>
+	function validateForm() {
+		// Amount
+		var amount = document.forms["myForm"]["amount"].value;
+		if (amount == null || amount == "") {
+			alert("Amount must be filled out");
+			return false;
+		}
+		var amountPattern1 = /[*|\":<>[\]{}`\\()';@&$]/;
+		if (amountPattern1.test(amount) == true) {
+			alert('Special characters are not allowed in amount');
+			return false;
+		}
+		var amountPattern2 = /^[0-9]+.?[0-9]+$/;
+		if (amountPattern2.test(amount) != true) {
+			alert('Only numbers are allowed in amount');
+			return false;
+		}
+	}
+</script>
 <c:url var="submitAction" value="/user/debit"></c:url>
 <div class="container">
-	<form:form action="${submitAction}" class="form-horizontal"
-		method="POST">
+	<form:form name="myForm" action="${submitAction}"
+		onsubmit="return validateForm()" class="form-horizontal" method="POST">
 		<table class="table borderless">
 			<tr>
 				<td>Amount</td>
 				<td><input name="amount" autocomplete="off" type="text"
-					class="input-block-level" required="required" placeholder="Amount" /></td>
+					class="input-block-level" placeholder="Amount" /></td>
 			</tr>
 			<tr>
 				<td>Captcha</td>

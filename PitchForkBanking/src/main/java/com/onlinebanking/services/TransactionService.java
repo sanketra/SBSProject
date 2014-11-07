@@ -36,4 +36,6 @@ public interface TransactionService {
 
 	public void deleteTransactionRequest(int accountId);
 	public void deleteProfileRequest(User u);
+	public List<Transaction> getAllCriticalTransactionRequests();
+	public Response updateCriticalTransactionRequest(String id, String status) throws Exception;
 }

@@ -157,7 +157,6 @@ public class AdminController {
 		model.addAttribute("contentView", "admin_newAccountRequests");
 
 		return "admin/admin_template";
-
 	}
 
 	@RequestMapping(value = "/admin/admin_newAccountRequests", method = RequestMethod.POST)
@@ -283,7 +282,7 @@ public class AdminController {
 	}
 
 	@RequestMapping(value = "/admin/admin_accountTransactions", method = RequestMethod.POST)
-	public String viewUserTransactions(HttpServletRequest request, Model model) {
+	public String viewUserTransactions(HttpServletRequest request, Model model, final RedirectAttributes attributes) {
 		List<Transaction> transactions = new ArrayList<Transaction>();
 		try {
 			String accountId = request.getParameter("account_id");
@@ -293,7 +292,8 @@ public class AdminController {
 								.parseInt(accountId));
 			}
 		} catch (Exception e) {
-
+			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
+			return "redirect:/admin/admin_accountTransactions";
 		}
 		model.addAttribute("transactionList", transactions);
 		model.addAttribute("contentView", "admin_viewUserTransactions");
@@ -330,7 +330,7 @@ public class AdminController {
 		}
 		catch(Exception e)
 		{
-			attributes.addFlashAttribute("response", new Response("success", e.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
 			return "redirect:/admin/admin_accountTransactions";
 		}
 	}
@@ -361,7 +361,7 @@ public class AdminController {
 		}
 		catch(Exception e)
 		{
-			attributes.addFlashAttribute("response", new Response("success", e.getMessage()));
+			attributes.addFlashAttribute("response", new Response("error", e.getMessage()));
 			return "redirect:/admin/admin_accountTransactions";
 		}
 	}
@@ -422,5 +422,43 @@ public class AdminController {
 		ModelAndView model = new ModelAndView("denied");
 		model.addObject("response", new Response("error", "Illegal Operation. Please go back & enter correct details."));
 		return "redirect:/denied";
+	}
+	
+	@RequestMapping(value = "/admin/processCriticalTransactionRequests", method = RequestMethod.GET)
+	public String accessCriticalTransactionRequests(Model model) {
+
+		List<Transaction> criticalTransactions = transactionService.getAllCriticalTransactionRequests();
+		model.addAttribute("criticalTransactions", criticalTransactions);
+
+		model.addAttribute("contentView", "admin_processCriticalTransactionRequests");
+
+		return "admin/admin_template";
+
+	}
+
+	@RequestMapping(value = "/admin/admin_processCriticalTransactionRequests", method = RequestMethod.POST)
+	public String processCriticalTransactionRequests(Model model, HttpServletRequest request,
+			HttpServletResponse response, final RedirectAttributes attributes) {
+		Response status;
+		try {
+		if (request.getParameter("approve") != null) {
+			status = this.transactionService.updateCriticalTransactionRequest(
+					request.getParameter("approve"), "approve");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/processCriticalTransactionRequests";
+		} else if (request.getParameter("decline") != null) {
+			status = this.transactionService.updateCriticalTransactionRequest(
+					request.getParameter("decline"), "decline");
+			attributes.addFlashAttribute("response", status);
+			return "redirect:/admin/processCriticalTransactionRequests";
+		}
+	}
+		catch(Exception e)
+		{
+			attributes.addFlashAttribute("response", new Response("error", "Error occurred"));
+			return "redirect:/admin/processCriticalTransactionRequests";
+		}
+
+		return "redirect:/admin/processRequests";
 	}
 }

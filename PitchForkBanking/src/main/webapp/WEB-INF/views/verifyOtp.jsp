@@ -46,7 +46,7 @@ body {
 		<c:url var="verifyOtp" value="/verifyOtp"></c:url>
 		<form class="form-signin" action="${verifyOtp}" method="POST">
 			<h4 class="form-signin-heading">Verify OTP</h4>
-			<br> One time password<br>(please check mail)<input
+			<br>(please check mail for one time password)<br><br><input
 				name="otpPassword" autocomplete="off" type="text"
 				class="input-block-level" required="required"
 				placeholder="one time password" /> <br> <input type="submit"
