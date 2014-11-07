@@ -25,8 +25,6 @@
 	}
 </script>
 
-
-
 <c:url var="submitAction" value="/employee/updateUserTransaction"></c:url>
 <div class="container">
 	<form:form name="myForm" action="updateUserTransaction"

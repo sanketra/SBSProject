@@ -15,7 +15,6 @@
 <title>View User Transactions</title>
 </head>
 <body>
-
 <div class = "container">
 <c:url var="selectAction" value="/employee/editUserTransaction"></c:url>
 <form action="${selectAction}" class="form-signin" method="POST">

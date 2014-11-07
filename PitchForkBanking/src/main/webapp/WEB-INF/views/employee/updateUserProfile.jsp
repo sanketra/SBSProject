@@ -105,7 +105,6 @@ function validateForm() {
      }
 }
 </script>
-
 <c:url var="submitAction" value="/employee/updateUserProfile"></c:url>
 <div class="container">
 	<form:form name = "myForm" action="${submitAction}" onsubmit="return validateForm()" commandName="userProfile"
