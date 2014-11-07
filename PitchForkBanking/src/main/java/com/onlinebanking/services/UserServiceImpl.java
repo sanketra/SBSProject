@@ -64,7 +64,18 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
+	public int verifyUserUniquness(User p) {
+		return this.userHome.isUserUnique(p); 
+	}
+	
+	@Override
+	@Transactional
 	public Response addUser(User p) {
+		
+		if (this.verifyUserUniquness(p) > 0) {
+			return new Response("error", "User already registered with same Email or SSN or Phoneno!!");
+		}
+		
 		try {
 			p.setPassword(CryptoHelper.getEncryptedString(p.getPassword()));
 			this.userHome.persist(p);

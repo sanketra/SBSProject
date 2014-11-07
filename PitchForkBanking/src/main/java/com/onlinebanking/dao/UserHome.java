@@ -87,6 +87,23 @@ public class UserHome {
 			throw re;
 		}
 	}
+	
+	public int isUserUnique(User u) {
+		try {
+			String queryString = "Select * from user U where U.emailId = :emailId or U.ssn = :ssn or U.phoneno = :phoneno";
+			@SuppressWarnings("unchecked")
+			List<User> results = sessionFactory.getCurrentSession()
+					.createSQLQuery(queryString).addEntity(User.class)
+					.setParameter("emailId", u.getEmailId())
+					.setParameter("ssn", u.getSsn())
+					.setParameter("phoneno", u.getPhoneno())
+					.list();
+			return results.size();
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
 
 	public User getAdmin() {
 		try {
