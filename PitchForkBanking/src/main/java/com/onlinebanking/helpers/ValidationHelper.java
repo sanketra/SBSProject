@@ -52,6 +52,7 @@ public class ValidationHelper {
 		return u;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static User getUserFromUserRegistrationModel(UserRegistrationModel a, User u) {
 		u.setEmailId(a.getEmailId());
 		u.setFname(a.getFname());

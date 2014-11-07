@@ -94,8 +94,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user/home", method = RequestMethod.GET)
 	public String handleRequest(Model model, HttpServletRequest request,
-			HttpServletResponse response) {
-		Logger.getinstance().logRequest(request);
+			HttpServletResponse response) {	
 		HttpSession session = request.getSession();
 		Authentication auth = SecurityContextHolder.getContext()
 				.getAuthentication();
@@ -120,8 +119,7 @@ public class UserController {
 			RequestMethod.GET, RequestMethod.POST })
 	public String handleDashboardRequest(Model model,
 			HttpServletRequest request, HttpServletResponse response,
-			final RedirectAttributes attributes) {
-		Logger.getinstance().logRequest(request);
+			final RedirectAttributes attributes) {							
 
 		HashMap<String, String> urls = URLHelper.analyseRequest(request);
 		HttpSession session = request.getSession();
@@ -208,7 +206,7 @@ public class UserController {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
 				}
-
+				Logger.getinstance().logRequest(request, "Transfer");
 				return "redirect:/user/transfer";
 			} else if (urls.get("url_2").toString().equals("credit")) {
 				String fromAccount = session.getAttribute("account_id")
@@ -232,7 +230,7 @@ public class UserController {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
 				}
-
+				Logger.getinstance().logRequest(request, "Credit	");
 				return "redirect:/user/credit";
 			} else if (urls.get("url_2").toString().equals("debit")) {
 				String fromAccount = session.getAttribute("account_id")
@@ -256,6 +254,7 @@ public class UserController {
 					attributes.addFlashAttribute("response", new Response(
 							"error", "Wrong captcha, please try again!"));
 				}
+				Logger.getinstance().logRequest(request, "Debit");
 				return "redirect:/user/debit";
 			} else if (urls.get("url_2").toString().equals("authorize")) {
 				// send otp
@@ -272,6 +271,7 @@ public class UserController {
 							request.getParameter("decline"));
 					session.setAttribute("approveordecline", "decline");
 				}
+				Logger.getinstance().logRequest(request, "Authorize		");
 				return "verifyOtp";
 			} else if (urls.get("url_2").toString().equals("requestaccount")) {
 				status = this.transactionService.createAccountCreationRequest();
@@ -345,14 +345,14 @@ public class UserController {
 			attributes.addFlashAttribute("response", new Response("error",
 					"Please select an account to proceed!!"));
 			return "redirect:/user/home";
-		}
+		}	
 	}
 
 	@RequestMapping(value = "/user/payment", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String userPayment(HttpServletRequest request, Model model,
 			final RedirectAttributes attributes) {
-		Logger.getinstance().logRequest(request);
+		Logger.getinstance().logRequest(request, "Payment");
 		HttpSession session = request.getSession();
 		Response status;
 		int account_id = 0;
@@ -410,7 +410,7 @@ public class UserController {
 			RequestMethod.GET, RequestMethod.POST })
 	public String merchantRequestPayment(HttpServletRequest request,
 			Model model, final RedirectAttributes attributes) {
-		Logger.getinstance().logRequest(request);
+		Logger.getinstance().logRequest(request	, "Request Payment");
 		HttpSession session = request.getSession();
 		Response status;
 		int account_id = 0;
