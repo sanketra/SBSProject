@@ -30,12 +30,12 @@ public class UserHome {
 		this.sessionFactory = sf;
 	}
 
-	public void persist(User transientInstance) throws Exception {
+	public void persist(User transientInstance) {
 		log.debug("persisting User instance");
 		try {
 			sessionFactory.getCurrentSession().persist(transientInstance);
 			log.debug("persist successful");
-		} catch (Exception re) {
+		} catch (RuntimeException re) {
 			log.error("persist failed", re);
 			throw re;
 		}

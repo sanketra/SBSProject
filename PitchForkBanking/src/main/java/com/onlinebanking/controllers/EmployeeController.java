@@ -18,9 +18,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.onlinebanking.helpers.PKI;
@@ -463,6 +465,14 @@ public class EmployeeController {
 			return "employee/emp_template";
 		}
 
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public String handleAllException(Exception ex, 
+			HttpServletRequest request) {
+		ModelAndView model = new ModelAndView("denied");
+		model.addObject("Response", new Response("error", "Exception"));
+		return "redirect:/denied";
 	}
 }
 

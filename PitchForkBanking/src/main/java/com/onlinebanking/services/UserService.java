@@ -24,4 +24,6 @@ public interface UserService {
 	public void sendUniquePassword(String otp, String emailId);
 	public boolean verifyByDecrypting(String plainText, String encrypted)
 			throws Exception;
+	public Response createAccount(User p);
+	public Response updateNewAccountRequest(String id, String status);
 }
