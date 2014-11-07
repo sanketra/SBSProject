@@ -78,7 +78,7 @@
 			<tr>
 				<td>Name</td>
 				<td><input name="name" autocomplete="off" type="text"
-					class="input-block-level" placeholder="Account Holder Name" /></td>
+					class="input-block-level" placeholder="FirstName LastName" /></td>
 			</tr>
 			<tr>
 				<td>Account Number</td>
