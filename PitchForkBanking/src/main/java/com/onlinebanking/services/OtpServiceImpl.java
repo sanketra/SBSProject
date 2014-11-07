@@ -133,8 +133,7 @@ public class OtpServiceImpl implements OtpService {
 					new javax.mail.Authenticator() {
 						protected PasswordAuthentication getPasswordAuthentication() {
 							return new PasswordAuthentication(
-									"pitchforkbank2@gmail.com",
-									"soft@123@sec");
+									"pitchforkbank2@gmail.com", "softwaresecurity");
 						}
 					});
 			try {
