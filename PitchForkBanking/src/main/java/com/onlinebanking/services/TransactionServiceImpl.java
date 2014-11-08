@@ -658,19 +658,19 @@ public class TransactionServiceImpl implements TransactionService {
 		Response response; 
 		
 		if (status.equals("approve")) {
-			tm.setTransactionStatus(RequestStatus.APPROVED);
+			tm.setTransactionStatus(TransactionStatus.SUCCESS);
 			response = updateTransaction(tm);
 			if (response.getStatus().contentEquals("success")) {
-				t.setTransactionStatus(RequestStatus.SUCCESS);
+				t.setTransactionStatus(TransactionStatus.SUCCESS);
 				this.transactionHome.merge(t);
 				return new Response("success", "Request approved! - Transaction done");
 			} else {
 				t.setTransactionStatus(RequestStatus.PENDING);
+				this.transactionHome.merge(t);
 				return new Response("error", "Transaction Falied!");
 			}
 		} else {
-			t.setTransactionStatus(RequestStatus.DECLINED);
-			this.transactionHome.merge(t);
+			this.transactionHome.delete(t);
 			return new Response("success", "Request declined!");
 		}
 	}

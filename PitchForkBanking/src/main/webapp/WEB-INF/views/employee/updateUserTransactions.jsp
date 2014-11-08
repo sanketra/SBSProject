@@ -64,14 +64,25 @@
 			</tr>
 			<tr>
 				<td>Status</td>
-				<td><form:select path="transactionStatus" class="input-xlarge">
-						<option value="success"
-							${userTransaction.transactionStatus=='approved'? 'selected' : ''}>approved</option>
-						<option value="pending"
-							${userTransaction.transactionStatus=='pending'? 'selected' : ''}>pending</option>
-						<option value="declined"
-							${userTransaction.transactionStatus=='declined'? 'selected' : ''}>declined</option>
+				
+				<c:choose>
+      			<c:when test="${userTransaction.transactionStatus=='Success'}">
+    				<td><form:input path="transactionStatus" class="input-xlarge"
+						placeholder="Transaction Satus" disabled="true" /></td>
+						<form:hidden path="transactionStatus" />
+      			</c:when>
+
+      			<c:otherwise>
+    				<td><form:select path="transactionStatus" class="input-xlarge">
+						<option value="Success"
+							${userTransaction.transactionStatus=='Success'? 'selected' : ''}>Success</option>
+						<option value="AdminPending"
+							${userTransaction.transactionStatus=='AdminPending'? 'selected' : ''}>Admin Pending</option>
+						<option value="UserPending"
+							${userTransaction.transactionStatus=='UserPending'? 'selected' : ''}>User Pending</option>
 					</form:select></td>
+      			</c:otherwise>
+				</c:choose>
 			</tr>
 			<tr>
 				<td>Captcha</td>
