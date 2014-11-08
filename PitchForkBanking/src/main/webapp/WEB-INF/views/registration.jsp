@@ -211,7 +211,7 @@ body {
 				<tr>
 					<td>Password<br/>(Must have 1 Special character,1 digit,1 UpperCase and 1 lowercase alphabet)</td>
 					<td><form:input type="password" path="password"
-							class="input-xxlarge" placeholder="Password: Min 8 chars" /></td>
+							class="input-xxlarge" placeholder="Password: between 8 -15 chars only" /></td>
 				</tr>
 				<tr>
 					<td>Confirm Password</td>
@@ -221,7 +221,7 @@ body {
 				<tr>
 					<td>Date of Birth</td>
 					<td><form:input id="datepicker" path="dob"
-							class="input-xxlarge" placeholder="dd/mm/yyyy" /></td>
+							class="input-xxlarge" placeholder="mm/dd/yyyy" /></td>
 				</tr>
 
 				<tr>

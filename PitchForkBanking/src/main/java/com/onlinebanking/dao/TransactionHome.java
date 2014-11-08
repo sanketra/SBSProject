@@ -144,10 +144,10 @@ public class TransactionHome {
 	public List<Transaction> getAllCriticalTransactions() {
 		log.debug("finding Critical Transaction Requests");
 		try {
-			String queryString = "Select * from transaction T where T.transactionStatus = 'pending' ";
+			String queryString = "Select * from transaction T where T.transactionStatus = :status ";
 			Session s = sessionFactory.getCurrentSession();
 			List<Transaction> results = s.createSQLQuery(queryString).
-					addEntity(Transaction.class).
+					addEntity(Transaction.class).setParameter("status", TransactionStatus.ADMINPENDING).
 					list();
 			log.debug("find by example successful, result size: "
 					+ results.size());

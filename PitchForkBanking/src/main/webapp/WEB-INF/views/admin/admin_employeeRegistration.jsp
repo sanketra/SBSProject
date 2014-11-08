@@ -136,14 +136,13 @@ function validateForm() {
 			<tr>
 				<td>Date of Birth</td>
 				<td><form:input id="datepicker" path="dob"
-						class="input-xxlarge" placeholder="yyyy/mm/dd" /></td>
+						class="input-xxlarge" placeholder="mm/dd/yyyy" /></td>
 			</tr>
 			<tr>
 				<td>Address</td>
 				<td><form:textarea rows="4" cols="50" path="address"
 						class="input-xxlarge" placeholder="Address" /></td>
 			</tr>
-
 			<tr>
 				<td>City</td>
 				<td><form:input path="city" class="input-xxlarge"

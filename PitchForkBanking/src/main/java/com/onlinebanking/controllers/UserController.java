@@ -685,12 +685,12 @@ public class UserController {
 		// verify security questions
 		String ans1 = request.getParameter("Answer1").toString();
 		String ans2 = request.getParameter("Answer2").toString();
-		String ans3 = request.getParameter("Answer2").toString();
+		String ans3 = request.getParameter("Answer3").toString();
 		Boolean questionMatch = (ans1.equals(this.userService
 				.getUserById(userId).getAnswer1().toString())
 				&& ans2.equals(this.userService.getUserById(userId)
-						.getAnswer1().toString()) && ans3
-				.equals(this.userService.getUserById(userId).getAnswer1()
+						.getAnswer2().toString()) && ans3
+				.equals(this.userService.getUserById(userId).getAnswer3()
 						.toString()));
 		// block user based on attempts
 		if (i > 3) {

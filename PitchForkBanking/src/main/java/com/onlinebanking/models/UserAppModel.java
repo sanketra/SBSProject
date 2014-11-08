@@ -15,7 +15,7 @@ public class UserAppModel {
 	private String fname;
 	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String lname;
-	@NotEmpty @Pattern(regexp= "[a-zA-Z0-9]+")
+	@NotEmpty @Pattern(regexp="[A-Za-z0-9'\\.\\-\\,\\s]{1,100}")
 	private String address;
 	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String city;

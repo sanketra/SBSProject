@@ -15,17 +15,17 @@ public class UserRegistrationModel {
 	private String fname;
 	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String lname;
-	@NotEmpty @Pattern(regexp="(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)")
+	@NotEmpty @Pattern(regexp="^(0?[1-9]|1[012])[/-](0?[1-9]|[12][0-9]|3[01])[/-](1[0-9][0-9][0-9]|2[0][0][0-9]|2[0][1][0-4])$")
 	private String dob;
-	@NotEmpty @Pattern(regexp= "[a-zA-Z0-9]+") 
+	@NotEmpty @Pattern(regexp="[A-Za-z0-9'\\.\\-\\,\\s]{1,100}") 
 	private String address;
 	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String city;
 	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String state;
-	@NotEmpty  @Pattern(regexp= "^(?=.*[A-Z].*)(?=.*[!@#$&*].*)(?=.*[0-9].*)(?=.*[a-z].*).{8}$")
+	@NotEmpty @Pattern(regexp= "^(?=.*[A-Z].*)(?=.*[!@#$&*].*)(?=.*[0-9].*)(?=.*[a-z].*).{8,15}$")
 	private String password;
-	@NotEmpty @Pattern(regexp= "^(?=.*[A-Z].*)(?=.*[!@#$&*].*)(?=.*[0-9].*)(?=.*[a-z].*).{8}$")
+	@NotEmpty @Pattern(regexp= "^(?=.*[A-Z].*)(?=.*[!@#$&*].*)(?=.*[0-9].*)(?=.*[a-z].*).{8,15}$")
 	private String confirmPassword;
 	@Size(min=5, max=5) @NotEmpty @Pattern(regexp = "[0-9]{5}")
 	private String zipcode;
