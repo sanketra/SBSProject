@@ -28,7 +28,7 @@ public class EmployeeRegistrationModel {
 	@NotEmpty @Pattern(regexp="[a-zA-Z]+")
 	private String state;
 	@NotEmpty @Pattern(regexp= "^(?=.*[A-Z].*)(?=.*[!@#$&*].*)(?=.*[0-9].*)(?=.*[a-z].*).{8,15}$")
-	private String password = "newpassword";
+	private String password = "A@1aaaaa";
 	@Size(min=5, max=5) @NotEmpty @Pattern(regexp="[0-9]{5}")
 	private String zipcode;
 	@NotEmpty @Pattern(regexp = "[0-9]{9}")
