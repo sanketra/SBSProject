@@ -36,17 +36,21 @@
 			<tr>
 				<td>From Account</td>
 				<td><form:input path="fromAcountNum" class="input-xlarge"
-						placeholder="From Account" disabled="true" /></td>
+						placeholder="From Account" disabled="true" />
+						</td>
+						<form:hidden path="fromAcountNum" />
 			</tr>
 			<tr>
 				<td>To Account</td>
 				<td><form:input path="toAccountNum" class="input-xlarge"
 						placeholder="To Account" disabled="true" /></td>
+						<form:hidden path="toAccountNum" />
 			</tr>
 			<tr>
 				<td>Type of Transaction</td>
 				<td><form:input path="transactionType" class="input-xlarge"
 						placeholder="Transaction Type" disabled="true" /></td>
+						<form:hidden path="transactionType" />
 			</tr>
 			<tr>
 				<td>Amount</td>
@@ -57,17 +61,28 @@
 				<td>Time</td>
 				<td><form:input path="transactionTime" class="input-xlarge"
 						placeholder="Time" disabled="true" /></td>
+						<form:hidden path="transactionTime" />
 			</tr>
 			<tr>
 				<td>Status</td>
-				<td><form:select path="transactionStatus" class="input-xlarge">
-						<option value="approved"
-							${userTransaction.transactionStatus=='approved'? 'selected' : ''}>approved</option>
-						<option value="pending"
-							${userTransaction.transactionStatus=='pending'? 'selected' : ''}>pending</option>
-						<option value="declined"
-							${userTransaction.transactionStatus=='declined'? 'selected' : ''}>declined</option>
+								<c:choose>
+      			<c:when test="${userTransaction.transactionStatus=='Success'}">
+    				<td><form:input path="transactionStatus" class="input-xlarge"
+						placeholder="Transaction Satus" disabled="true" /></td>
+						<form:hidden path="transactionStatus" />
+      			</c:when>
+
+      			<c:otherwise>
+    				<td><form:select path="transactionStatus" class="input-xlarge">
+						<option value="Success"
+							${userTransaction.transactionStatus=='Success'? 'selected' : ''}>Success</option>
+						<option value="AdminPending"
+							${userTransaction.transactionStatus=='AdminPending'? 'selected' : ''}>Admin Pending</option>
+						<option value="UserPending"
+							${userTransaction.transactionStatus=='UserPending'? 'selected' : ''}>User Pending</option>
 					</form:select></td>
+      			</c:otherwise>
+				</c:choose>
 			</tr>
 			<tr>
 				<td>Captcha</td>
